@@ -26,25 +26,30 @@ const PropertyFilters = ({ onFilterChange }: PropertyFiltersProps) => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Input
           type="number"
-          placeholder="Prix minimum"
+          placeholder="Prix minimum (FCFA)"
           value={filters.minPrice}
           onChange={(e) => handleChange("minPrice", e.target.value)}
           className="w-full"
         />
         <Input
           type="number"
-          placeholder="Prix maximum"
+          placeholder="Prix maximum (FCFA)"
           value={filters.maxPrice}
           onChange={(e) => handleChange("maxPrice", e.target.value)}
           className="w-full"
         />
-        <Input
-          type="text"
-          placeholder="Localisation"
+        <select
           value={filters.location}
           onChange={(e) => handleChange("location", e.target.value)}
-          className="w-full"
-        />
+          className="w-full rounded-md border border-gray-300 p-2"
+        >
+          <option value="">Localisation</option>
+          <option value="brazzaville">Brazzaville</option>
+          <option value="pointe-noire">Pointe-Noire</option>
+          <option value="dolisie">Dolisie</option>
+          <option value="nkayi">Nkayi</option>
+          <option value="ouesso">Ouesso</option>
+        </select>
         <select
           value={filters.type}
           onChange={(e) => handleChange("type", e.target.value)}
@@ -54,6 +59,7 @@ const PropertyFilters = ({ onFilterChange }: PropertyFiltersProps) => {
           <option value="apartment">Appartement</option>
           <option value="house">Maison</option>
           <option value="office">Bureau</option>
+          <option value="land">Terrain</option>
         </select>
       </div>
     </div>

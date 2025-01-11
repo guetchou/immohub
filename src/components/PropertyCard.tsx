@@ -11,6 +11,15 @@ interface PropertyCardProps {
 }
 
 const PropertyCard = ({ id, title, price, location, type, surface, imageUrl }: PropertyCardProps) => {
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'XAF',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
   return (
     <Link to={`/property/${id}`} className="group">
       <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-[1.02]">
@@ -31,7 +40,7 @@ const PropertyCard = ({ id, title, price, location, type, surface, imageUrl }: P
             <span>{surface} m²</span>
           </div>
           <div className="text-xl font-bold text-real-accent">
-            {price.toLocaleString()} €
+            {formatPrice(price)}
           </div>
         </div>
       </div>
