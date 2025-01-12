@@ -14,6 +14,7 @@ import NewsSection from "@/components/NewsSection";
 import Services from "@/components/Services";
 import HowItWorks from "@/components/HowItWorks";
 import PriceSimulator from "@/components/PriceSimulator";
+import AppointmentSystem from "@/components/AppointmentSystem";
 
 const Index = () => {
   const { toast } = useToast();
@@ -43,13 +44,20 @@ const Index = () => {
               <SearchBar />
             </div>
           </div>
-          
+
           <div className="container mx-auto px-4">
             <PropertyFilters onFilterChange={handleFilterChange} />
           </div>
 
           <div className="container mx-auto px-4">
             <PriceSimulator />
+          </div>
+
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-semibold text-real-primary mb-6">
+              Planifier une visite
+            </h2>
+            <AppointmentSystem />
           </div>
 
           <Statistics />
