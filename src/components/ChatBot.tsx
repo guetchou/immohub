@@ -6,7 +6,11 @@ import { Input } from "./ui/input";
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{text: string; isUser: boolean}>>([
-    { text: "Bonjour ! Comment puis-je vous aider ?", isUser: false }
+    { text: "Bonjour ! Je suis votre assistant virtuel. Comment puis-je vous aider ?", isUser: false },
+    { text: "Je peux vous aider à :", isUser: false },
+    { text: "1. Trouver un bien immobilier", isUser: false },
+    { text: "2. Planifier une visite", isUser: false },
+    { text: "3. Contacter un agent", isUser: false }
   ]);
   const [newMessage, setNewMessage] = useState("");
 
@@ -16,22 +20,34 @@ const ChatBot = () => {
     setMessages([...messages, { text: newMessage, isUser: true }]);
     setNewMessage("");
     
-    // Simuler une réponse du chatbot
+    // Simuler une réponse intelligente du chatbot
     setTimeout(() => {
-      setMessages(prev => [...prev, {
-        text: "Je vais transmettre votre message à un agent qui vous répondra dans les plus brefs délais.",
-        isUser: false
-      }]);
+      let response = "Je vais vous mettre en relation avec un agent immobilier.";
+      
+      if (newMessage.toLowerCase().includes("visite")) {
+        response = "Je peux vous aider à planifier une visite. Quel jour vous conviendrait le mieux ?";
+      } else if (newMessage.toLowerCase().includes("prix")) {
+        response = "Les prix varient selon la localisation et le type de bien. Pouvez-vous me préciser vos critères ?";
+      } else if (newMessage.toLowerCase().includes("localisation")) {
+        response = "Nous avons des biens disponibles dans plusieurs quartiers de Brazzaville et Pointe-Noire. Quelle zone vous intéresse ?";
+      }
+
+      setMessages(prev => [...prev, { text: response, isUser: false }]);
     }, 1000);
   };
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <div className="bg-white rounded-lg shadow-xl w-80 h-96 flex flex-col">
+        <div className="bg-white rounded-lg shadow-xl w-80 h-[500px] flex flex-col">
           <div className="bg-real-primary text-white p-4 rounded-t-lg flex justify-between items-center">
-            <h3 className="font-semibold">Chat ImmoHub</h3>
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+            <h3 className="font-semibold">Assistant ImmoHub</h3>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setIsOpen(false)}
+              className="text-white hover:text-gray-200"
+            >
               <span className="sr-only">Fermer</span>
               ×
             </Button>
@@ -63,8 +79,9 @@ const ChatBot = () => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Écrivez votre message..."
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                className="flex-1"
               />
-              <Button onClick={handleSend}>
+              <Button onClick={handleSend} className="bg-real-primary hover:bg-real-primary/90">
                 <Send className="h-4 w-4" />
               </Button>
             </div>
@@ -73,7 +90,7 @@ const ChatBot = () => {
       ) : (
         <Button
           onClick={() => setIsOpen(true)}
-          className="rounded-full h-14 w-14 shadow-lg"
+          className="rounded-full h-14 w-14 shadow-lg bg-real-primary hover:bg-real-primary/90"
         >
           <MessageSquare className="h-6 w-6" />
         </Button>
