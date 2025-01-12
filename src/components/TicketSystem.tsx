@@ -4,13 +4,15 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 
+type TicketPriority = "low" | "medium" | "high";
+
 interface Ticket {
   id: string;
   title: string;
   description: string;
   status: "open" | "in-progress" | "closed";
   type: string;
-  priority: "low" | "medium" | "high";
+  priority: TicketPriority;
   createdAt: Date;
 }
 
@@ -20,7 +22,7 @@ const TicketSystem = () => {
     title: "",
     description: "",
     type: "complaint",
-    priority: "medium" as const,
+    priority: "medium" as TicketPriority,
   });
   const { toast } = useToast();
 
@@ -80,7 +82,7 @@ const TicketSystem = () => {
           <select
             className="w-full p-2 border rounded"
             value={newTicket.priority}
-            onChange={(e) => setNewTicket({ ...newTicket, priority: e.target.value as "low" | "medium" | "high"})}
+            onChange={(e) => setNewTicket({ ...newTicket, priority: e.target.value as TicketPriority })}
           >
             <option value="low">Basse priorité</option>
             <option value="medium">Priorité moyenne</option>
