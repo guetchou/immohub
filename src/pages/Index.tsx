@@ -1,6 +1,3 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import ChatBot from "@/components/ChatBot";
 import HeroBanner from "@/components/HeroBanner";
 import FeaturedProperties from "@/components/FeaturedProperties";
 import Statistics from "@/components/Statistics";
@@ -9,18 +6,23 @@ import Services from "@/components/Services";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import NewsSection from "@/components/NewsSection";
+import WhyChooseUs from "@/components/WhyChooseUs";
+import ImageCarousel from "@/components/ImageCarousel";
 import MovingServices from "@/components/moving/MovingServices";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
-      
-      <main className="flex-grow">
+    <div className="min-h-screen bg-gray-50">
+      <main>
         <HeroBanner />
         
-        <div className="space-y-12">
+        <div className="py-12">
+          <ImageCarousel />
+        </div>
+        
+        <div className="space-y-16">
           <FeaturedProperties />
+          <WhyChooseUs />
           <HowItWorks />
           <Services />
           
@@ -40,9 +42,6 @@ const Index = () => {
           <NewsSection />
         </div>
       </main>
-
-      <ChatBot />
-      <Footer />
     </div>
   );
 };
