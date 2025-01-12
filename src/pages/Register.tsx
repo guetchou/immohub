@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
+import { UserRole } from "@/types/user";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -11,9 +13,20 @@ const Register = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "USER" as UserRole,
   });
+  
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const roles = [
+    { value: "USER", label: "Utilisateur" },
+    { value: "TENANT", label: "Locataire" },
+    { value: "OWNER", label: "Propriétaire" },
+    { value: "AGENCY", label: "Agence immobilière" },
+    { value: "BROKER", label: "Démarcheur/Courtier" },
+    { value: "LAND_OWNER", label: "Propriétaire terrain" },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +90,22 @@ const Register = () => {
               onChange={handleChange}
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Type de compte</Label>
+            <RadioGroup
+              defaultValue={formData.role}
+              onValueChange={(value) => setFormData({ ...formData, role: value as UserRole })}
+              className="grid grid-cols-2 gap-4"
+            >
+              {roles.map((role) => (
+                <div key={role.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={role.value} id={role.value} />
+                  <Label htmlFor={role.value}>{role.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
           </div>
 
           <div className="space-y-2">
