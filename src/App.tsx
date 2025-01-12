@@ -4,6 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Properties from "./pages/Properties";
+import PropertyDetail from "./pages/PropertyDetail";
+import Contact from "./pages/Contact";
+import Favorites from "./pages/Favorites";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -13,13 +19,19 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/properties" element={<Index />} />
-          <Route path="/property/:id" element={<Index />} />
-          <Route path="/contact" element={<Index />} />
-          <Route path="/favorites" element={<Index />} />
-        </Routes>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/properties" element={<Properties />} />
+              <Route path="/property/:id" element={<PropertyDetail />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/favorites" element={<Favorites />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
