@@ -13,6 +13,7 @@ import FAQ from "@/components/FAQ";
 import NewsSection from "@/components/NewsSection";
 import Services from "@/components/Services";
 import HowItWorks from "@/components/HowItWorks";
+import PriceSimulator from "@/components/PriceSimulator";
 
 const Index = () => {
   const { toast } = useToast();
@@ -45,6 +46,10 @@ const Index = () => {
           
           <div className="container mx-auto px-4">
             <PropertyFilters onFilterChange={handleFilterChange} />
+          </div>
+
+          <div className="container mx-auto px-4">
+            <PriceSimulator />
           </div>
 
           <Statistics />
