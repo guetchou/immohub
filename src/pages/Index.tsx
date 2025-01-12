@@ -1,4 +1,6 @@
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ChatBot from "@/components/ChatBot";
 import PropertyFilters from "@/components/PropertyFilters";
 import PropertyList from "@/components/PropertyList";
 import SearchBar from "@/components/SearchBar";
@@ -17,9 +19,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <main className="container mx-auto px-4 py-8">
+      
+      <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="space-y-8">
           <div className="text-center space-y-4">
             <h1 className="text-4xl font-bold text-real-primary">
@@ -48,6 +51,9 @@ const Index = () => {
           </section>
         </div>
       </main>
+
+      <ChatBot />
+      <Footer />
     </div>
   );
 };
