@@ -6,6 +6,13 @@ import PropertyList from "@/components/PropertyList";
 import SearchBar from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import Testimonials from "@/components/Testimonials";
+import Statistics from "@/components/Statistics";
+import Partners from "@/components/Partners";
+import FAQ from "@/components/FAQ";
+import NewsSection from "@/components/NewsSection";
+import Services from "@/components/Services";
+import HowItWorks from "@/components/HowItWorks";
 
 const Index = () => {
   const { toast } = useToast();
@@ -22,23 +29,27 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 py-8 flex-grow">
+      <main className="flex-grow">
         <div className="space-y-8">
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold text-real-primary">
-              Trouvez votre bien immobilier idéal au Congo
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Découvrez les meilleures opportunités immobilières à Brazzaville, Pointe-Noire et dans tout le Congo
-            </p>
-            <SearchBar />
+          <div className="bg-real-primary text-white py-16">
+            <div className="container mx-auto px-4 text-center space-y-4">
+              <h1 className="text-4xl md:text-5xl font-bold">
+                Trouvez votre bien immobilier idéal au Congo
+              </h1>
+              <p className="text-xl opacity-90 max-w-2xl mx-auto">
+                Découvrez les meilleures opportunités immobilières à Brazzaville, Pointe-Noire et dans tout le Congo
+              </p>
+              <SearchBar />
+            </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="container mx-auto px-4">
             <PropertyFilters onFilterChange={handleFilterChange} />
           </div>
 
-          <section>
+          <Statistics />
+          
+          <div className="container mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-real-primary">
                 Propriétés disponibles
@@ -48,7 +59,14 @@ const Index = () => {
               </Button>
             </div>
             <PropertyList />
-          </section>
+          </div>
+
+          <HowItWorks />
+          <Services />
+          <Testimonials />
+          <Partners />
+          <NewsSection />
+          <FAQ />
         </div>
       </main>
 
