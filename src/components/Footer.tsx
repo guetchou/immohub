@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, WhatsApp } from "lucide-react";
+import { Facebook, Instagram, Twitter, MessageSquare } from "lucide-react";
 import { Button } from "./ui/button";
 
 const Footer = () => {
@@ -44,7 +44,7 @@ const Footer = () => {
                 <Twitter className="h-5 w-5" />
               </Button>
               <Button variant="ghost" size="icon" className="hover:text-real-accent">
-                <WhatsApp className="h-5 w-5" />
+                <MessageSquare className="h-5 w-5" />
               </Button>
             </div>
           </div>
