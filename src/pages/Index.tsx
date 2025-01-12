@@ -15,6 +15,8 @@ import Services from "@/components/Services";
 import HowItWorks from "@/components/HowItWorks";
 import PriceSimulator from "@/components/PriceSimulator";
 import AppointmentSystem from "@/components/AppointmentSystem";
+import MovingCalculator from "@/components/moving/MovingCalculator";
+import MovingServices from "@/components/moving/MovingServices";
 
 const Index = () => {
   const { toast } = useToast();
@@ -50,8 +52,25 @@ const Index = () => {
           </div>
 
           <div className="container mx-auto px-4">
-            <PriceSimulator />
+            <h2 className="text-2xl font-semibold text-real-primary mb-6">
+              Services de Déménagement
+            </h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <MovingCalculator />
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold">Pourquoi choisir notre service ?</h3>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>Équipe professionnelle et expérimentée</li>
+                  <li>Matériel adapté et de qualité</li>
+                  <li>Assurance tous risques incluse</li>
+                  <li>Devis gratuit et sans engagement</li>
+                  <li>Service client disponible 7j/7</li>
+                </ul>
+              </div>
+            </div>
           </div>
+
+          <MovingServices />
 
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-semibold text-real-primary mb-6">
