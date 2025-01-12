@@ -13,6 +13,9 @@ import Favorites from "./pages/Favorites";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Messages from "./pages/Messages";
+import Dashboard from "./pages/Dashboard";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -51,6 +54,16 @@ const App = () => (
                     </ProtectedRoute>
                   } 
                 />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute roles={["ADMIN"]}>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
               </Routes>
             </main>
             <Footer />
