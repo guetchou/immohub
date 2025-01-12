@@ -5,6 +5,7 @@ import VisitTypeSelector from "./appointment/VisitTypeSelector";
 import TimeSlotSelector from "./appointment/TimeSlotSelector";
 import ContactForm from "./appointment/ContactForm";
 import { useAppointment } from "@/hooks/useAppointment";
+import { fr } from "date-fns/locale";
 
 const AppointmentSystem = () => {
   const { formData, updateFormData, createAppointment, resetForm } = useAppointment();
