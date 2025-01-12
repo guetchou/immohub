@@ -8,6 +8,9 @@ import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 import Contact from "./pages/Contact";
 import Favorites from "./pages/Favorites";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Messages from "./pages/Messages";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -28,6 +31,9 @@ const App = () => (
               <Route path="/property/:id" element={<PropertyDetail />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/favorites" element={<Favorites />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/messages" element={<Messages />} />
             </Routes>
           </main>
           <Footer />

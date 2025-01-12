@@ -35,6 +35,11 @@ const Header = () => {
                   <MessageSquare className="h-5 w-5" />
                 </Link>
               </Button>
+              <Button variant="outline" asChild>
+                <Link to="/register">
+                  Inscription
+                </Link>
+              </Button>
               <Button variant="default" asChild>
                 <Link to="/login">
                   Connexion
