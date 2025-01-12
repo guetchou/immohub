@@ -16,6 +16,7 @@ import Messages from "./pages/Messages";
 import Dashboard from "./pages/Dashboard";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import RentDashboard from "./components/rent/RentDashboard";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -59,6 +60,14 @@ const App = () => (
                   element={
                     <ProtectedRoute roles={["ADMIN"]}>
                       <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/rent" 
+                  element={
+                    <ProtectedRoute>
+                      <RentDashboard />
                     </ProtectedRoute>
                   } 
                 />
