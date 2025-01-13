@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
+import { ArrowLeft } from "lucide-react";
 import { UserRole } from "@/types/user";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +20,7 @@ const Register = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const roles = [
     { value: "USER", label: "Utilisateur" },
@@ -41,11 +44,22 @@ const Register = () => {
       return;
     }
 
-    toast({
-      title: "Inscription réussie",
-      description: "Bienvenue sur ImmoHub Congo",
-    });
-    navigate("/login");
+    try {
+      // Simulate registration success
+      await login(formData.email, formData.password);
+      toast({
+        title: "Inscription réussie",
+        description: "Bienvenue sur ImmoHub Congo",
+      });
+      navigate("/");
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast({
+        title: "Erreur d'inscription",
+        description: "Une erreur est survenue lors de l'inscription",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,6 +71,15 @@ const Register = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Button 
+        variant="ghost" 
+        className="mb-4"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Retour
+      </Button>
+
       <div className="max-w-md mx-auto space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">Créer un compte</h1>
@@ -76,6 +99,7 @@ const Register = () => {
               value={formData.name}
               onChange={handleChange}
               required
+              className="w-full"
             />
           </div>
 
@@ -89,6 +113,7 @@ const Register = () => {
               value={formData.email}
               onChange={handleChange}
               required
+              className="w-full"
             />
           </div>
 
@@ -117,6 +142,7 @@ const Register = () => {
               value={formData.password}
               onChange={handleChange}
               required
+              className="w-full"
             />
           </div>
 
@@ -129,6 +155,7 @@ const Register = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
+              className="w-full"
             />
           </div>
 
@@ -139,9 +166,9 @@ const Register = () => {
 
         <div className="text-center text-sm">
           <span className="text-gray-600">Déjà membre ?</span>{" "}
-          <a href="/login" className="text-real-primary hover:underline">
+          <Link to="/login" className="text-real-primary hover:underline">
             Connectez-vous
-          </a>
+          </Link>
         </div>
       </div>
     </div>
