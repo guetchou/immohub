@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { User, UserRole } from "@/types/user";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -15,6 +15,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const { toast } = useToast();
+
+  console.log("AuthProvider rendered with user:", user);
 
   const login = async (email: string, password: string) => {
     try {
