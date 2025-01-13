@@ -199,7 +199,7 @@ const Dashboard = () => {
     }
   };
 
-  if (!hasRole(["admin"])) {
+  if (!hasRole(["ADMIN"])) {
     return <Navigate to="/" replace />;
   }
 
