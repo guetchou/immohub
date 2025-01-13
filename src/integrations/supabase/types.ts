@@ -356,36 +356,48 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          business_address: string | null
+          company_name: string | null
           created_at: string
           full_name: string | null
           id: string
           last_login: string | null
+          license_number: string | null
           phone: string | null
           role: string | null
           status: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          business_address?: string | null
+          company_name?: string | null
           created_at?: string
           full_name?: string | null
           id: string
           last_login?: string | null
+          license_number?: string | null
           phone?: string | null
           role?: string | null
           status?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          business_address?: string | null
+          company_name?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
           last_login?: string | null
+          license_number?: string | null
           phone?: string | null
           role?: string | null
           status?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
@@ -457,7 +469,19 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      app_role: "admin" | "agent" | "supervisor" | "super_admin"
+      app_role:
+        | "admin"
+        | "agent"
+        | "tenant"
+        | "landlord"
+        | "agency"
+        | "broker"
+        | "canvasser"
+        | "land_owner"
+        | "insurance"
+        | "notary"
+        | "supervisor"
+        | "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never

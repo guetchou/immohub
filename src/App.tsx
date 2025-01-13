@@ -14,15 +14,14 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Messages from "./pages/Messages";
 import Dashboard from "./pages/Dashboard";
+import TenantDashboard from "./pages/dashboards/TenantDashboard";
+import LandlordDashboard from "./pages/dashboards/LandlordDashboard";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import RentDashboard from "./components/rent/RentDashboard";
 import APIKeyManager from "./components/settings/APIKeyManager";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import PropertySaleCalculator from "./components/calculators/PropertySaleCalculator";
-import AdministrativeAssistance from "./components/assistance/AdministrativeAssistance";
-import InsuranceSimulator from "./components/insurance/InsuranceSimulator";
 
 const queryClient = new QueryClient();
 
@@ -68,26 +67,23 @@ const App = () => (
                   } 
                 />
                 <Route 
-                  path="/rent" 
+                  path="/tenant-dashboard" 
                   element={
-                    <ProtectedRoute>
-                      <RentDashboard />
+                    <ProtectedRoute roles={["TENANT"]}>
+                      <TenantDashboard />
                     </ProtectedRoute>
                   } 
                 />
                 <Route 
-                  path="/settings/api-keys" 
+                  path="/landlord-dashboard" 
                   element={
-                    <ProtectedRoute roles={["ADMIN"]}>
-                      <APIKeyManager />
+                    <ProtectedRoute roles={["LANDLORD"]}>
+                      <LandlordDashboard />
                     </ProtectedRoute>
                   } 
                 />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
-                <Route path="/calculator" element={<PropertySaleCalculator />} />
-                <Route path="/assistance" element={<AdministrativeAssistance />} />
-                <Route path="/insurance" element={<InsuranceSimulator />} />
               </Routes>
             </main>
             <Footer />
