@@ -1,131 +1,169 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Building2, Home, Trees } from "lucide-react";
+import { NavBar } from "@/components/navigation/NavBar";
 
-const PropertySaleCalculator = () => {
-  const [propertyDetails, setPropertyDetails] = useState({
+type PropertyType = "house" | "apartment" | "land";
+
+interface PropertyDetails {
+  type: PropertyType;
+  surface: number;
+  rooms?: number;
+  yearBuilt?: number;
+  condition: "new" | "good" | "renovate";
+}
+
+export default function PropertySaleCalculator() {
+  const [details, setDetails] = useState<PropertyDetails>({
     type: "house",
-    surface: "",
-    rooms: "",
-    location: "",
+    surface: 0,
+    rooms: 0,
+    yearBuilt: new Date().getFullYear(),
     condition: "good",
-    yearBuilt: "",
   });
 
   const { toast } = useToast();
 
-  const calculateEstimatedPrice = () => {
+  const calculatePrice = () => {
     let basePrice = 0;
-    const surfaceValue = Number(propertyDetails.surface);
-    
-    switch (propertyDetails.type) {
+    const currentYear = new Date().getFullYear();
+
+    // Base price calculation by type and surface
+    switch (details.type) {
       case "house":
-        basePrice = surfaceValue * 500000;
+        basePrice = details.surface * 1500;
         break;
       case "apartment":
-        basePrice = surfaceValue * 450000;
+        basePrice = details.surface * 2000;
         break;
       case "land":
-        basePrice = surfaceValue * 100000;
+        basePrice = details.surface * 500;
         break;
     }
 
-    // Ajustements selon l'état et l'année
-    const age = new Date().getFullYear() - Number(propertyDetails.yearBuilt);
-    const conditionMultiplier = propertyDetails.condition === "good" ? 1.1 : 0.9;
-    const ageDeduction = Math.max(0.7, 1 - (age * 0.01));
+    // Condition multiplier
+    const conditionMultiplier = {
+      new: 1.2,
+      good: 1,
+      renovate: 0.8,
+    }[details.condition];
 
-    const finalPrice = basePrice * conditionMultiplier * ageDeduction;
+    // Age depreciation (for buildings only)
+    let ageFactor = 1;
+    if (details.type !== "land" && details.yearBuilt) {
+      const age = currentYear - details.yearBuilt;
+      ageFactor = Math.max(0.7, 1 - (age * 0.01));
+    }
+
+    const finalPrice = basePrice * conditionMultiplier * ageFactor;
 
     toast({
-      title: "Estimation de prix",
-      description: `Prix estimé: ${finalPrice.toLocaleString()} FCFA`,
+      title: "Estimation du prix",
+      description: `Prix estimé: ${finalPrice.toLocaleString()} CFA`,
     });
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Home className="h-6 w-6" />
-          Calculateur de Prix Immobilier
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Type de bien</label>
-            <select
-              className="w-full p-2 border rounded-md"
-              value={propertyDetails.type}
-              onChange={(e) => setPropertyDetails({ ...propertyDetails, type: e.target.value })}
+    <div className="min-h-screen bg-background">
+      <NavBar />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-6">Calculateur de prix immobilier</h1>
+        
+        <div className="space-y-6 max-w-md">
+          <div>
+            <Label>Type de bien</Label>
+            <RadioGroup
+              value={details.type}
+              onValueChange={(value: PropertyType) => 
+                setDetails(prev => ({ ...prev, type: value }))}
+              className="grid grid-cols-3 gap-4 mt-2"
             >
-              <option value="house">Maison</option>
-              <option value="apartment">Appartement</option>
-              <option value="land">Terrain</option>
-            </select>
+              <div>
+                <RadioGroupItem value="house" id="house" />
+                <Label htmlFor="house">Maison</Label>
+              </div>
+              <div>
+                <RadioGroupItem value="apartment" id="apartment" />
+                <Label htmlFor="apartment">Appartement</Label>
+              </div>
+              <div>
+                <RadioGroupItem value="land" id="land" />
+                <Label htmlFor="land">Terrain</Label>
+              </div>
+            </RadioGroup>
           </div>
-          
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Surface (m²)</label>
+
+          <div>
+            <Label htmlFor="surface">Surface (m²)</Label>
             <Input
+              id="surface"
               type="number"
-              value={propertyDetails.surface}
-              onChange={(e) => setPropertyDetails({ ...propertyDetails, surface: e.target.value })}
-              placeholder="Surface en m²"
+              value={details.surface}
+              onChange={(e) => 
+                setDetails(prev => ({ ...prev, surface: Number(e.target.value) }))}
+              className="mt-1"
             />
           </div>
 
-          {propertyDetails.type !== "land" && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Nombre de pièces</label>
-              <Input
-                type="number"
-                value={propertyDetails.rooms}
-                onChange={(e) => setPropertyDetails({ ...propertyDetails, rooms: e.target.value })}
-                placeholder="Nombre de pièces"
-              />
-            </div>
+          {details.type !== "land" && (
+            <>
+              <div>
+                <Label htmlFor="rooms">Nombre de pièces</Label>
+                <Input
+                  id="rooms"
+                  type="number"
+                  value={details.rooms}
+                  onChange={(e) => 
+                    setDetails(prev => ({ ...prev, rooms: Number(e.target.value) }))}
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="yearBuilt">Année de construction</Label>
+                <Input
+                  id="yearBuilt"
+                  type="number"
+                  value={details.yearBuilt}
+                  onChange={(e) => 
+                    setDetails(prev => ({ ...prev, yearBuilt: Number(e.target.value) }))}
+                  className="mt-1"
+                />
+              </div>
+            </>
           )}
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">État du bien</label>
-            <select
-              className="w-full p-2 border rounded-md"
-              value={propertyDetails.condition}
-              onChange={(e) => setPropertyDetails({ ...propertyDetails, condition: e.target.value })}
+          <div>
+            <Label>État du bien</Label>
+            <RadioGroup
+              value={details.condition}
+              onValueChange={(value: "new" | "good" | "renovate") => 
+                setDetails(prev => ({ ...prev, condition: value }))}
+              className="grid grid-cols-3 gap-4 mt-2"
             >
-              <option value="good">Bon état</option>
-              <option value="needs_work">Travaux nécessaires</option>
-            </select>
+              <div>
+                <RadioGroupItem value="new" id="new" />
+                <Label htmlFor="new">Neuf</Label>
+              </div>
+              <div>
+                <RadioGroupItem value="good" id="good" />
+                <Label htmlFor="good">Bon état</Label>
+              </div>
+              <div>
+                <RadioGroupItem value="renovate" id="renovate" />
+                <Label htmlFor="renovate">À rénover</Label>
+              </div>
+            </RadioGroup>
           </div>
 
-          {propertyDetails.type !== "land" && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Année de construction</label>
-              <Input
-                type="number"
-                value={propertyDetails.yearBuilt}
-                onChange={(e) => setPropertyDetails({ ...propertyDetails, yearBuilt: e.target.value })}
-                placeholder="Année de construction"
-              />
-            </div>
-          )}
+          <Button onClick={calculatePrice} className="w-full">
+            Calculer le prix
+          </Button>
         </div>
-
-        <Button 
-          onClick={calculateEstimatedPrice}
-          className="w-full mt-4"
-        >
-          Calculer l'estimation
-        </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
-};
-
-export default PropertySaleCalculator;
+}
