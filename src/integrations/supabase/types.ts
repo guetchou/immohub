@@ -302,6 +302,69 @@ export type Database = {
           },
         ]
       }
+      contents: {
+        Row: {
+          id: string
+          title: string
+          content: string | null
+          type: string
+          status: string | null
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          content?: string | null
+          type: string
+          status?: string | null
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          content?: string | null
+          type?: string
+          status?: string | null
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      media: {
+        Row: {
+          id: string
+          filename: string
+          file_path: string
+          content_type: string
+          size: number
+          uploaded_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          filename: string
+          file_path: string
+          content_type: string
+          size: number
+          uploaded_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          filename?: string
+          file_path?: string
+          content_type?: string
+          size?: number
+          uploaded_by?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       fiscal_years: {
         Row: {
           closed_at: string | null
@@ -390,7 +453,7 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           full_name?: string | null
-          id?: string
+          id: string
           last_login?: string | null
           license_number?: string | null
           phone?: string | null
@@ -447,7 +510,7 @@ export type Database = {
           created_at?: string
           id?: string
           server_url: string
-          updated_at?: string
+          updated_at: string
         }
         Update: {
           api_pass?: string

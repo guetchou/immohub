@@ -12,14 +12,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { ChartContainer } from "@/components/ui/chart";
 import { Loader2, Upload, Trash2, PenSquare } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
+
+type Content = Database['public']['Tables']['contents']['Row'];
+type Media = Database['public']['Tables']['media']['Row'];
 
 const Dashboard = () => {
   const { user, hasRole } = useAuth();
   const { toast } = useToast();
-  const [contents, setContents] = useState([]);
-  const [medias, setMedias] = useState([]);
+  const [contents, setContents] = useState<Content[]>([]);
+  const [medias, setMedias] = useState<Media[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
   const [newContent, setNewContent] = useState({
     title: "",
     content: "",
@@ -39,7 +42,7 @@ const Dashboard = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setContents(data);
+      setContents(data || []);
     } catch (error) {
       console.error('Error fetching contents:', error);
       toast({
@@ -58,7 +61,7 @@ const Dashboard = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setMedias(data);
+      setMedias(data || []);
     } catch (error) {
       console.error('Error fetching media:', error);
       toast({
@@ -69,10 +72,10 @@ const Dashboard = () => {
     }
   };
 
-  const handleFileUpload = async (event) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setLoading(true);
-      const file = event.target.files[0];
+      const file = event.target.files?.[0];
       if (!file) return;
 
       const formData = new FormData();
@@ -108,7 +111,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleContentSubmit = async (e) => {
+  const handleContentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
@@ -116,7 +119,7 @@ const Dashboard = () => {
         .from('contents')
         .insert([{
           ...newContent,
-          created_by: user.id
+          created_by: user?.id
         }]);
 
       if (error) throw error;
@@ -140,7 +143,7 @@ const Dashboard = () => {
     }
   };
 
-  const deleteContent = async (id) => {
+  const deleteContent = async (id: string) => {
     try {
       const { error } = await supabase
         .from('contents')
@@ -165,7 +168,7 @@ const Dashboard = () => {
     }
   };
 
-  const deleteMedia = async (id, filePath) => {
+  const deleteMedia = async (id: string, filePath: string) => {
     try {
       const { error: storageError } = await supabase.storage
         .from('media')
@@ -196,11 +199,11 @@ const Dashboard = () => {
     }
   };
 
-  if (!hasRole(["ADMIN"])) {
+  if (!hasRole(["admin"])) {
     return <Navigate to="/" replace />;
   }
 
-  const formatPrice = (amount) => {
+  const formatPrice = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'XAF',
@@ -268,29 +271,35 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          <Card className="mt-4">
-            <CardHeader>
-              <CardTitle>Activité mensuelle</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer className="h-[300px]">
-                <BarChart data={[
-                  { name: 'Jan', value: 400 },
-                  { name: 'Fév', value: 300 },
-                  { name: 'Mar', value: 600 },
-                  { name: 'Avr', value: 800 },
-                  { name: 'Mai', value: 700 }
-                ]}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#8884d8" />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
+          <div className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Activité mensuelle</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <BarChart
+                    width={800}
+                    height={300}
+                    data={[
+                      { name: 'Jan', value: 400 },
+                      { name: 'Fév', value: 300 },
+                      { name: 'Mar', value: 600 },
+                      { name: 'Avr', value: 800 },
+                      { name: 'Mai', value: 700 }
+                    ]}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value" fill="#8884d8" />
+                  </BarChart>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="content">
