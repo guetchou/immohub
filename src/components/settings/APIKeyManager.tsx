@@ -3,19 +3,24 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 import {
-  Box,
-  VStack,
-  Heading,
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
-  useToast,
   Card,
-  CardBody,
-  Text,
-} from "@chakra-ui/react";
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 const schema = yup.object({
   mtnApiKey: yup.string().required("Clé API MTN requise"),
@@ -27,9 +32,9 @@ type FormData = yup.InferType<typeof schema>;
 
 const APIKeyManager = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const toast = useToast();
+  const { toast } = useToast();
   
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const form = useForm<FormData>({
     resolver: yupResolver(schema)
   });
 
@@ -37,24 +42,19 @@ const APIKeyManager = () => {
     setIsSubmitting(true);
     try {
       console.log("Submitting API keys:", data);
-      // Ici, nous simulerons la sauvegarde des clés API
+      // Simulation de la sauvegarde des clés API
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
         title: "Clés API sauvegardées",
         description: "Vos clés API ont été mises à jour avec succès.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
       });
     } catch (error) {
       console.error("Error saving API keys:", error);
       toast({
+        variant: "destructive",
         title: "Erreur",
         description: "Une erreur est survenue lors de la sauvegarde des clés API.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
       });
     } finally {
       setIsSubmitting(false);
@@ -66,65 +66,70 @@ const APIKeyManager = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
+      className="p-4"
     >
       <Card>
-        <CardBody>
-          <VStack spacing={6} align="stretch">
-            <Heading size="lg">Gestion des Clés API</Heading>
-            <Text color="gray.600">
-              Configurez vos clés API pour les différents services de paiement
-            </Text>
+        <CardHeader>
+          <CardTitle>Gestion des Clés API</CardTitle>
+          <CardDescription>
+            Configurez vos clés API pour les différents services de paiement
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="mtnApiKey"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Clé API MTN Money</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Entrez votre clé API MTN" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <VStack spacing={4}>
-                <FormControl isInvalid={!!errors.mtnApiKey}>
-                  <FormLabel>Clé API MTN Money</FormLabel>
-                  <Input
-                    {...register("mtnApiKey")}
-                    type="password"
-                    placeholder="Entrez votre clé API MTN"
-                  />
-                  {errors.mtnApiKey && (
-                    <Text color="red.500">{errors.mtnApiKey.message}</Text>
-                  )}
-                </FormControl>
+              <FormField
+                control={form.control}
+                name="airtelApiKey"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Clé API Airtel Money</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Entrez votre clé API Airtel" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormControl isInvalid={!!errors.airtelApiKey}>
-                  <FormLabel>Clé API Airtel Money</FormLabel>
-                  <Input
-                    {...register("airtelApiKey")}
-                    type="password"
-                    placeholder="Entrez votre clé API Airtel"
-                  />
-                  {errors.airtelApiKey && (
-                    <Text color="red.500">{errors.airtelApiKey.message}</Text>
-                  )}
-                </FormControl>
+              <FormField
+                control={form.control}
+                name="stripeApiKey"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Clé API Stripe</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Entrez votre clé API Stripe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormControl isInvalid={!!errors.stripeApiKey}>
-                  <FormLabel>Clé API Stripe</FormLabel>
-                  <Input
-                    {...register("stripeApiKey")}
-                    type="password"
-                    placeholder="Entrez votre clé API Stripe"
-                  />
-                  {errors.stripeApiKey && (
-                    <Text color="red.500">{errors.stripeApiKey.message}</Text>
-                  )}
-                </FormControl>
-
-                <Button
-                  type="submit"
-                  colorScheme="blue"
-                  isLoading={isSubmitting}
-                  width="full"
-                >
-                  Sauvegarder les clés API
-                </Button>
-              </VStack>
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Sauvegarde en cours..." : "Sauvegarder les clés API"}
+              </Button>
             </form>
-          </VStack>
-        </CardBody>
+          </Form>
+        </CardContent>
       </Card>
     </motion.div>
   );
