@@ -1,4 +1,5 @@
 import { AdvancedSearch } from "@/components/search/AdvancedSearch";
+import { motion } from "framer-motion";
 
 const HeroBanner = () => {
   return (
@@ -13,17 +14,33 @@ const HeroBanner = () => {
       </div>
       
       <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-4xl md:text-6xl font-bold mb-6"
+        >
           Votre Partenaire Immobilier au Congo
-        </h1>
-        <p className="text-xl md:text-2xl mb-8 opacity-90">
+        </motion.h1>
+        
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-xl md:text-2xl mb-8 opacity-90"
+        >
           Découvrez les meilleures opportunités immobilières à Brazzaville, 
           Pointe-Noire et dans tout le Congo
-        </p>
+        </motion.p>
         
-        <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 animate-scale-in">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+          className="bg-white/90 backdrop-blur-sm rounded-lg p-4"
+        >
           <AdvancedSearch />
-        </div>
+        </motion.div>
       </div>
     </div>
   );
