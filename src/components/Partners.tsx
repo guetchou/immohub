@@ -4,43 +4,43 @@ import { Card, CardContent } from "@/components/ui/card";
 const partners = [
   {
     id: 1,
-    name: "Banque Atlantique",
-    logo: "https://placehold.co/200x100",
+    name: "Banque Congolaise de l'Habitat BCH",
+    logo: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&auto=format&fit=crop&q=60",
     description: "Partenaire financier principal pour vos projets immobiliers",
-    link: "https://banqueatlantique.net"
+    link: "https://bch.cg"
   },
   {
     id: 2,
     name: "BGFI Bank",
-    logo: "https://placehold.co/200x100",
+    logo: "https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?w=800&auto=format&fit=crop&q=60",
     description: "Solutions de financement adaptées à vos besoins",
     link: "https://bgfi.com"
   },
   {
     id: 3,
     name: "Ecobank",
-    logo: "https://placehold.co/200x100",
+    logo: "https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=800&auto=format&fit=crop&q=60",
     description: "Accompagnement personnalisé pour votre investissement",
     link: "https://ecobank.com"
   },
   {
     id: 4,
     name: "MTN Congo",
-    logo: "https://placehold.co/200x100",
+    logo: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&auto=format&fit=crop&q=60",
     description: "Solutions de paiement mobile pour vos transactions",
     link: "https://mtn.cg"
   },
   {
     id: 5,
     name: "Airtel Congo",
-    logo: "https://placehold.co/200x100",
+    logo: "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=800&auto=format&fit=crop&q=60",
     description: "Facilitez vos paiements avec Airtel Money",
     link: "https://airtel.cg"
   },
   {
     id: 6,
     name: "Assurances NSIA",
-    logo: "https://placehold.co/200x100",
+    logo: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&auto=format&fit=crop&q=60",
     description: "Protection et assurance de vos biens immobiliers",
     link: "https://nsia-assurances.com"
   }
@@ -62,11 +62,13 @@ const Partners = () => {
             <Card key={partner.id} className="hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-4">
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className="h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300"
-                  />
+                  <div className="w-full h-48 relative overflow-hidden rounded-lg mb-4">
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
                   <h3 className="text-xl font-semibold">{partner.name}</h3>
                   <p className="text-gray-600">{partner.description}</p>
                   <Button variant="outline" asChild>
