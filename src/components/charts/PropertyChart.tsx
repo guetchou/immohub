@@ -30,6 +30,8 @@ const PropertyChart = () => {
         <div style={{ height: "400px" }}>
           <Bar
             data={data}
+            width={800}
+            height={400}
             keys={["ventes", "locations"]}
             indexBy="month"
             margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
