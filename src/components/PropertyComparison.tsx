@@ -28,13 +28,37 @@ const PropertyComparison = () => {
 
   const fetchProperties = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: propertiesData, error: propertiesError } = await supabase
         .from("properties")
-        .select("*")
+        .select(`
+          id,
+          title,
+          surface_area,
+          bedrooms,
+          bathrooms,
+          city,
+          address,
+          property_prices (
+            price
+          )
+        `)
         .eq("status", "available");
 
-      if (error) throw error;
-      setProperties(data || []);
+      if (propertiesError) throw propertiesError;
+
+      // Transform the data to match the Property interface
+      const transformedProperties = propertiesData.map(property => ({
+        id: property.id,
+        title: property.title,
+        price: property.property_prices?.[0]?.price || 0,
+        surface_area: property.surface_area || 0,
+        bedrooms: property.bedrooms || 0,
+        bathrooms: property.bathrooms || 0,
+        city: property.city,
+        address: property.address,
+      }));
+
+      setProperties(transformedProperties);
     } catch (error) {
       console.error("Error fetching properties:", error);
       toast({
