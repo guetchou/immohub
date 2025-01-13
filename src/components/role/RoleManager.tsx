@@ -11,11 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
+import { Database } from "@/integrations/supabase/types";
+
+type UserType = Database["public"]["Enums"]["user_type"];
 
 export const RoleManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [currentRole, setCurrentRole] = useState<string>("");
+  const [currentRole, setCurrentRole] = useState<UserType>("TENANT");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +36,9 @@ export const RoleManager = () => {
         .single();
 
       if (error) throw error;
-      setCurrentRole(data?.user_type || "");
+      if (data?.user_type) {
+        setCurrentRole(data.user_type as UserType);
+      }
     } catch (error) {
       console.error("Error fetching role:", error);
       toast({
@@ -46,7 +51,7 @@ export const RoleManager = () => {
     }
   };
 
-  const updateRole = async (newRole: string) => {
+  const updateRole = async (newRole: UserType) => {
     try {
       const { error } = await supabase
         .from("profiles")
