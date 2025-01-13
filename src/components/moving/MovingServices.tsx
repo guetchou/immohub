@@ -1,70 +1,57 @@
-import { Package, Truck, Warehouse, Clock, Shield, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Truck, Package, Clock, Shield } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import MovingCalculator from "./MovingCalculator";
+
+const services = [
+  {
+    icon: Truck,
+    title: "Transport sécurisé",
+    description: "Véhicules adaptés et équipés pour tous types de biens",
+  },
+  {
+    icon: Package,
+    title: "Emballage professionnel",
+    description: "Matériel de qualité pour protéger vos biens",
+  },
+  {
+    icon: Clock,
+    title: "Ponctualité",
+    description: "Respect des délais et des horaires convenus",
+  },
+  {
+    icon: Shield,
+    title: "Assurance incluse",
+    description: "Vos biens sont assurés pendant le transport",
+  },
+];
 
 const MovingServices = () => {
-  const services = [
-    {
-      icon: Truck,
-      title: "Transport",
-      description: "Transport sécurisé de vos biens avec des véhicules adaptés",
-      price: "À partir de 50.000 FCFA",
-    },
-    {
-      icon: Package,
-      title: "Emballage",
-      description: "Service d'emballage professionnel avec matériaux fournis",
-      price: "À partir de 25.000 FCFA",
-    },
-    {
-      icon: Warehouse,
-      title: "Stockage",
-      description: "Solutions de stockage temporaire sécurisées",
-      price: "À partir de 50.000 FCFA/mois",
-    },
-    {
-      icon: Clock,
-      title: "Express",
-      description: "Service de déménagement express sous 24h",
-      price: "À partir de 100.000 FCFA",
-    },
-    {
-      icon: Shield,
-      title: "Assurance",
-      description: "Assurance tous risques pour vos biens",
-      price: "5% du montant total",
-    },
-    {
-      icon: CheckCircle,
-      title: "Premium",
-      description: "Service complet clé en main",
-      price: "Sur devis",
-    },
-  ];
-
   return (
-    <div className="py-12 bg-gray-50">
+    <section className="py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-real-primary text-center mb-12">
-          Nos Services de Déménagement
+        <h2 className="text-3xl font-bold text-center text-real-primary mb-8">
+          Services de Déménagement
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
-            <div
-              key={service.title}
-              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <service.icon className="h-12 w-12 text-real-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-              <p className="text-gray-600 mb-4">{service.description}</p>
-              <p className="text-real-primary font-semibold mb-4">{service.price}</p>
-              <Button className="w-full bg-real-primary hover:bg-real-primary/90">
-                Réserver
-              </Button>
-            </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {services.map((service, index) => (
+            <Card key={index} className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 text-center">
+                <div className="flex justify-center mb-4">
+                  <service.icon className="w-12 h-12 text-real-primary" />
+                </div>
+                <CardTitle className="mb-2">{service.title}</CardTitle>
+                <p className="text-gray-600">{service.description}</p>
+              </CardContent>
+            </Card>
           ))}
         </div>
+
+        <div className="max-w-2xl mx-auto">
+          <MovingCalculator />
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
