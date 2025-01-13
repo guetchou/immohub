@@ -32,6 +32,9 @@ const PropertyDetail = () => {
         .from('properties')
         .select(`
           *,
+          property_types (
+            name
+          ),
           property_prices (
             price,
             currency,
@@ -53,12 +56,12 @@ const PropertyDetail = () => {
           title: data.title,
           price: data.property_prices?.[0]?.price || 0,
           location: `${data.city}, ${data.address}`,
-          type: data.type,
-          surface: data.surface_area,
-          bedrooms: data.bedrooms,
-          bathrooms: data.bathrooms,
-          description: data.description,
-          imageUrl: data.image_url || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750",
+          type: data.property_types?.name || 'Non spécifié',
+          surface: data.surface_area || 0,
+          bedrooms: data.bedrooms || 0,
+          bathrooms: data.bathrooms || 0,
+          description: data.description || '',
+          imageUrl: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750", // Default image
           latitude: data.latitude,
           longitude: data.longitude
         });
