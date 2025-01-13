@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
 import { UserRole } from "@/types/user";
 import { useAuth } from "@/contexts/AuthContext";
 import { NavBar } from "@/components/navigation/NavBar";
+import { useRoleRedirect } from "@/hooks/useRoleRedirect";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,14 +20,16 @@ const Register = () => {
     role: "USER" as UserRole,
   });
   
-  const navigate = useNavigate();
   const { toast } = useToast();
   const { login } = useAuth();
+  
+  // Utiliser notre nouveau hook de redirection
+  useRoleRedirect();
 
   const roles = [
     { value: "USER", label: "Utilisateur" },
     { value: "TENANT", label: "Locataire" },
-    { value: "OWNER", label: "Propriétaire" },
+    { value: "LANDLORD", label: "Propriétaire" },
     { value: "AGENCY", label: "Agence immobilière" },
     { value: "BROKER", label: "Démarcheur/Courtier" },
     { value: "LAND_OWNER", label: "Propriétaire terrain" },
@@ -72,13 +75,11 @@ const Register = () => {
     }
 
     try {
-      // Simulate registration success
       await login(formData.email, formData.password);
       toast({
         title: "Inscription réussie",
         description: "Bienvenue sur ImmoHub Congo",
       });
-      navigate("/");
     } catch (error) {
       console.error("Registration error:", error);
       toast({

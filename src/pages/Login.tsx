@@ -4,23 +4,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRoleRedirect } from "@/hooks/useRoleRedirect";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const { toast } = useToast();
+  
+  // Utiliser notre nouveau hook de redirection
+  useRoleRedirect();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt with:", { email });
-    
-    // TODO: Implement actual authentication
-    toast({
-      title: "Connexion réussie",
-      description: "Bienvenue sur ImmoHub Congo",
-    });
-    navigate("/");
+    try {
+      await login(email, password);
+      console.log("Login successful for:", email);
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue sur ImmoHub Congo",
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        title: "Erreur de connexion",
+        description: "Vérifiez vos identifiants et réessayez",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { User, UserRole } from "@/types/user";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AuthContextType {
   user: User | null;
@@ -13,22 +14,53 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const { toast } = useToast();
 
   const login = async (email: string, password: string) => {
-    // TODO: Implement actual authentication
-    console.log("Login attempt:", email);
-    // Simuler un utilisateur connecté
-    setUser({
-      id: "1",
-      name: "John Doe",
-      email,
-      role: "USER",
-      createdAt: new Date(),
-    });
+    try {
+      // TODO: Implement actual authentication
+      console.log("Login attempt:", email);
+      
+      // Simuler un délai d'authentification
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simuler un utilisateur connecté avec un rôle
+      const role = email.includes('admin') ? 'ADMIN' as UserRole :
+                   email.includes('tenant') ? 'TENANT' as UserRole :
+                   email.includes('landlord') ? 'LANDLORD' as UserRole :
+                   email.includes('agency') ? 'AGENCY' as UserRole :
+                   email.includes('broker') ? 'BROKER' as UserRole :
+                   'USER' as UserRole;
+
+      setUser({
+        id: "1",
+        name: "John Doe",
+        email,
+        role,
+        createdAt: new Date(),
+      });
+
+      toast({
+        title: "Connexion réussie",
+        description: `Bienvenue ${email}`,
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        title: "Erreur de connexion",
+        description: "Une erreur est survenue lors de la connexion",
+        variant: "destructive",
+      });
+      throw error;
+    }
   };
 
   const logout = () => {
     setUser(null);
+    toast({
+      title: "Déconnexion réussie",
+      description: "À bientôt !",
+    });
   };
 
   const hasRole = (roles: UserRole[]) => {
