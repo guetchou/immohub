@@ -1,5 +1,4 @@
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AdvancedSearch } from "@/components/search/AdvancedSearch";
 
 const HeroBanner = () => {
   return (
@@ -22,20 +21,8 @@ const HeroBanner = () => {
           Pointe-Noire et dans tout le Congo
         </p>
         
-        <div className="bg-white rounded-lg p-4 max-w-2xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <input
-                type="text"
-                placeholder="Rechercher une propriété..."
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-real-primary text-gray-800"
-              />
-            </div>
-            <Button className="bg-real-primary hover:bg-real-primary/90">
-              <Search className="w-4 h-4 mr-2" />
-              Rechercher
-            </Button>
-          </div>
+        <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 animate-scale-in">
+          <AdvancedSearch />
         </div>
       </div>
     </div>

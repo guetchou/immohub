@@ -1,6 +1,6 @@
 import HeroBanner from "@/components/HeroBanner";
 import FeaturedProperties from "@/components/FeaturedProperties";
-import Statistics from "@/components/Statistics";
+import AnimatedStats from "@/components/stats/AnimatedStats";
 import Partners from "@/components/Partners";
 import Services from "@/components/Services";
 import HowItWorks from "@/components/HowItWorks";
@@ -26,8 +26,8 @@ const Index = () => {
           <HowItWorks />
           <Services />
           
-          <div className="bg-gradient-to-r from-real-primary to-blue-800 py-16">
-            <Statistics />
+          <div className="bg-gradient-to-r from-real-primary to-blue-800 py-16 text-white">
+            <AnimatedStats />
           </div>
           
           <div className="container mx-auto px-4">
