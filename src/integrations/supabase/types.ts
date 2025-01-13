@@ -464,6 +464,184 @@ export type Database = {
         }
         Relationships: []
       }
+      properties: {
+        Row: {
+          address: string
+          bathrooms: number | null
+          bedrooms: number | null
+          city: string
+          country: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          owner_id: string | null
+          postal_code: string | null
+          status: string | null
+          surface_area: number | null
+          title: string
+          type_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address: string
+          bathrooms?: number | null
+          bedrooms?: number | null
+          city: string
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          owner_id?: string | null
+          postal_code?: string | null
+          status?: string | null
+          surface_area?: number | null
+          title: string
+          type_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string
+          bathrooms?: number | null
+          bedrooms?: number | null
+          city?: string
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          owner_id?: string | null
+          postal_code?: string | null
+          status?: string | null
+          surface_area?: number | null
+          title?: string
+          type_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "properties_type_id_fkey"
+            columns: ["type_id"]
+            isOneToOne: false
+            referencedRelation: "property_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_features: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          property_id: string | null
+          value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          property_id?: string | null
+          value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          property_id?: string | null
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_features_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_prices: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          end_date: string | null
+          id: string
+          period: string | null
+          price: number
+          price_type: string
+          property_id: string | null
+          start_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          end_date?: string | null
+          id?: string
+          period?: string | null
+          price: number
+          price_type: string
+          property_id?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          end_date?: string | null
+          id?: string
+          period?: string | null
+          price?: number
+          price_type?: string
+          property_id?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_prices_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_types: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       test_results: {
         Row: {
           answers: Json

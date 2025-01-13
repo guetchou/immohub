@@ -1,41 +1,67 @@
+import { useEffect, useState } from "react";
 import PropertyCard from "./PropertyCard";
-
-// Données temporaires pour la démo
-const MOCK_PROPERTIES = [
-  {
-    id: "1",
-    title: "Appartement moderne au cœur de Brazzaville",
-    price: 250000000,
-    location: "Brazzaville",
-    type: "Appartement",
-    surface: 75,
-    imageUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
-  },
-  {
-    id: "2",
-    title: "Villa avec jardin",
-    price: 450000000,
-    location: "Pointe-Noire",
-    type: "Maison",
-    surface: 200,
-    imageUrl: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750",
-  },
-  {
-    id: "3",
-    title: "Local commercial",
-    price: 180000000,
-    location: "Dolisie",
-    type: "Bureau",
-    surface: 120,
-    imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c",
-  },
-];
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const PropertyList = () => {
+  const [properties, setProperties] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const fetchProperties = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('properties')
+        .select(`
+          *,
+          property_types(name),
+          property_prices(
+            price,
+            currency,
+            price_type,
+            period
+          )
+        `)
+        .eq('status', 'available')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      console.log("Fetched properties:", data);
+      setProperties(data || []);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les propriétés",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="flex justify-center p-8">Chargement...</div>;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {MOCK_PROPERTIES.map((property) => (
-        <PropertyCard key={property.id} {...property} />
+      {properties.map((property) => (
+        <PropertyCard
+          key={property.id}
+          id={property.id}
+          title={property.title}
+          price={property.property_prices?.[0]?.price || 0}
+          location={`${property.city}, ${property.address}`}
+          type={property.property_types?.name || ""}
+          surface={property.surface_area || 0}
+          imageUrl={property.image_url || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"}
+        />
       ))}
     </div>
   );
