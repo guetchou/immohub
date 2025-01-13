@@ -38,7 +38,7 @@ const PropertyComparison = () => {
           bathrooms,
           city,
           address,
-          property_prices (
+          property_prices!inner (
             price
           )
         `)
@@ -50,7 +50,7 @@ const PropertyComparison = () => {
       const transformedProperties = propertiesData.map(property => ({
         id: property.id,
         title: property.title,
-        price: property.property_prices?.[0]?.price || 0,
+        price: property.property_prices[0]?.price || 0,
         surface_area: property.surface_area || 0,
         bedrooms: property.bedrooms || 0,
         bathrooms: property.bathrooms || 0,
@@ -58,6 +58,7 @@ const PropertyComparison = () => {
         address: property.address,
       }));
 
+      console.log("Transformed properties:", transformedProperties);
       setProperties(transformedProperties);
     } catch (error) {
       console.error("Error fetching properties:", error);
