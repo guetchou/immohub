@@ -20,6 +20,9 @@ import RentDashboard from "./components/rent/RentDashboard";
 import APIKeyManager from "./components/settings/APIKeyManager";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import PropertySaleCalculator from "./components/calculators/PropertySaleCalculator";
+import AdministrativeAssistance from "./components/assistance/AdministrativeAssistance";
+import InsuranceSimulator from "./components/insurance/InsuranceSimulator";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +85,9 @@ const App = () => (
                 />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
+                <Route path="/calculator" element={<PropertySaleCalculator />} />
+                <Route path="/assistance" element={<AdministrativeAssistance />} />
+                <Route path="/insurance" element={<InsuranceSimulator />} />
               </Routes>
             </main>
             <Footer />
