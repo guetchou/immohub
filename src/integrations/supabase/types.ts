@@ -416,6 +416,36 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          read: boolean | null
+          receiver_id: string | null
+          sender_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          receiver_id?: string | null
+          sender_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          receiver_id?: string | null
+          sender_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -430,6 +460,7 @@ export type Database = {
           role: string | null
           status: string | null
           updated_at: string
+          user_type: Database["public"]["Enums"]["user_type"] | null
           website: string | null
         }
         Insert: {
@@ -445,6 +476,7 @@ export type Database = {
           role?: string | null
           status?: string | null
           updated_at?: string
+          user_type?: Database["public"]["Enums"]["user_type"] | null
           website?: string | null
         }
         Update: {
@@ -460,6 +492,7 @@ export type Database = {
           role?: string | null
           status?: string | null
           updated_at?: string
+          user_type?: Database["public"]["Enums"]["user_type"] | null
           website?: string | null
         }
         Relationships: []
@@ -475,6 +508,7 @@ export type Database = {
           description: string | null
           id: string
           latitude: number | null
+          location_point: unknown | null
           longitude: number | null
           owner_id: string | null
           postal_code: string | null
@@ -494,6 +528,7 @@ export type Database = {
           description?: string | null
           id?: string
           latitude?: number | null
+          location_point?: unknown | null
           longitude?: number | null
           owner_id?: string | null
           postal_code?: string | null
@@ -513,6 +548,7 @@ export type Database = {
           description?: string | null
           id?: string
           latitude?: number | null
+          location_point?: unknown | null
           longitude?: number | null
           owner_id?: string | null
           postal_code?: string | null
@@ -669,6 +705,56 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          owner_id: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          property_id: string | null
+          status: string | null
+          tenant_id: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          owner_id?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          property_id?: string | null
+          status?: string | null
+          tenant_id?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          owner_id?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          property_id?: string | null
+          status?: string | null
+          tenant_id?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vicidial_config: {
         Row: {
           api_pass: string
@@ -723,6 +809,7 @@ export type Database = {
         | "notary"
         | "supervisor"
         | "super_admin"
+      user_type: "AGENT" | "OWNER" | "TENANT"
     }
     CompositeTypes: {
       [_ in never]: never
