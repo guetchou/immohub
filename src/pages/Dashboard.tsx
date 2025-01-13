@@ -2,24 +2,212 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Statistics from "@/components/Statistics";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-
-const data = [
-  { name: 'Jan', value: 400 },
-  { name: 'Fév', value: 300 },
-  { name: 'Mar', value: 600 },
-  { name: 'Avr', value: 800 },
-  { name: 'Mai', value: 700 },
-];
+import { ChartContainer } from "@/components/ui/chart";
+import { Loader2, Upload, Trash2, PenSquare } from "lucide-react";
 
 const Dashboard = () => {
   const { user, hasRole } = useAuth();
+  const { toast } = useToast();
+  const [contents, setContents] = useState([]);
+  const [medias, setMedias] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [newContent, setNewContent] = useState({
+    title: "",
+    content: "",
+    type: "page"
+  });
+
+  useEffect(() => {
+    fetchContents();
+    fetchMedias();
+  }, []);
+
+  const fetchContents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('contents')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setContents(data);
+    } catch (error) {
+      console.error('Error fetching contents:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les contenus",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const fetchMedias = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('media')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMedias(data);
+    } catch (error) {
+      console.error('Error fetching media:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les médias",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleFileUpload = async (event) => {
+    try {
+      setLoading(true);
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-media`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) throw new Error(result.error);
+
+      toast({
+        title: "Succès",
+        description: "Fichier téléchargé avec succès"
+      });
+
+      fetchMedias();
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Erreur",
+        description: "Erreur lors du téléchargement",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleContentSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from('contents')
+        .insert([{
+          ...newContent,
+          created_by: user.id
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Contenu créé avec succès"
+      });
+
+      setNewContent({ title: "", content: "", type: "page" });
+      fetchContents();
+    } catch (error) {
+      console.error('Content creation error:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer le contenu",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteContent = async (id) => {
+    try {
+      const { error } = await supabase
+        .from('contents')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Contenu supprimé avec succès"
+      });
+
+      fetchContents();
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le contenu",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const deleteMedia = async (id, filePath) => {
+    try {
+      const { error: storageError } = await supabase.storage
+        .from('media')
+        .remove([filePath]);
+
+      if (storageError) throw storageError;
+
+      const { error: dbError } = await supabase
+        .from('media')
+        .delete()
+        .eq('id', id);
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: "Succès",
+        description: "Média supprimé avec succès"
+      });
+
+      fetchMedias();
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le média",
+        variant: "destructive"
+      });
+    }
+  };
 
   if (!hasRole(["ADMIN"])) {
     return <Navigate to="/" replace />;
   }
+
+  const formatPrice = (amount) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'XAF',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -28,8 +216,9 @@ const Dashboard = () => {
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="content">Contenus</TabsTrigger>
+          <TabsTrigger value="media">Médias</TabsTrigger>
           <TabsTrigger value="users">Utilisateurs</TabsTrigger>
-          <TabsTrigger value="properties">Propriétés</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -74,7 +263,7 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">€24,500</div>
+                <div className="text-2xl font-bold">{formatPrice(24500000)}</div>
               </CardContent>
             </Card>
           </div>
@@ -84,8 +273,14 @@ const Dashboard = () => {
               <CardTitle>Activité mensuelle</CardTitle>
             </CardHeader>
             <CardContent>
-              <ChartContainer className="h-[300px]" config={{}}>
-                <BarChart data={data}>
+              <ChartContainer className="h-[300px]">
+                <BarChart data={[
+                  { name: 'Jan', value: 400 },
+                  { name: 'Fév', value: 300 },
+                  { name: 'Mar', value: 600 },
+                  { name: 'Avr', value: 800 },
+                  { name: 'Mai', value: 700 }
+                ]}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
@@ -98,24 +293,128 @@ const Dashboard = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="users">
+        <TabsContent value="content">
           <Card>
             <CardHeader>
-              <CardTitle>Statistiques utilisateurs</CardTitle>
+              <CardTitle>Gestion des contenus</CardTitle>
             </CardHeader>
             <CardContent>
-              <Statistics />
+              <form onSubmit={handleContentSubmit} className="space-y-4 mb-8">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Titre</Label>
+                  <Input
+                    id="title"
+                    value={newContent.title}
+                    onChange={(e) => setNewContent({ ...newContent, title: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="content">Contenu</Label>
+                  <Textarea
+                    id="content"
+                    value={newContent.content}
+                    onChange={(e) => setNewContent({ ...newContent, content: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="type">Type</Label>
+                  <select
+                    id="type"
+                    className="w-full p-2 border rounded"
+                    value={newContent.type}
+                    onChange={(e) => setNewContent({ ...newContent, type: e.target.value })}
+                  >
+                    <option value="page">Page</option>
+                    <option value="article">Article</option>
+                    <option value="announcement">Annonce</option>
+                  </select>
+                </div>
+                <Button type="submit" disabled={loading}>
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Créer le contenu
+                </Button>
+              </form>
+
+              <div className="space-y-4">
+                {contents.map((content) => (
+                  <Card key={content.id}>
+                    <CardContent className="pt-6">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold">{content.title}</h3>
+                          <p className="text-sm text-gray-500">{content.type}</p>
+                          <p className="mt-2">{content.content}</p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => deleteContent(content.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="properties">
+        <TabsContent value="media">
           <Card>
             <CardHeader>
-              <CardTitle>Statistiques propriétés</CardTitle>
+              <CardTitle>Gestion des médias</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Contenu des statistiques des propriétés à venir...</p>
+              <div className="mb-8">
+                <Label htmlFor="file">Télécharger un fichier</Label>
+                <Input
+                  id="file"
+                  type="file"
+                  onChange={handleFileUpload}
+                  disabled={loading}
+                  className="mt-2"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {medias.map((media) => (
+                  <Card key={media.id}>
+                    <CardContent className="pt-6">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold">{media.filename}</h3>
+                          <p className="text-sm text-gray-500">
+                            {(media.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => deleteMedia(media.id, media.file_path)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="users">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gestion des utilisateurs</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Contenu de la gestion des utilisateurs à implémenter */}
+              <p>Fonctionnalité à venir...</p>
             </CardContent>
           </Card>
         </TabsContent>
