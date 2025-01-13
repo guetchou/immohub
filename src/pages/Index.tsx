@@ -9,6 +9,7 @@ import NewsSection from "@/components/NewsSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import ImageCarousel from "@/components/ImageCarousel";
 import MovingServices from "@/components/moving/MovingServices";
+import AIAssistant from "@/components/ai/AIAssistant";
 
 const Index = () => {
   return (
@@ -32,6 +33,10 @@ const Index = () => {
           
           <div className="container mx-auto px-4">
             <MovingServices />
+          </div>
+
+          <div className="container mx-auto px-4">
+            <AIAssistant />
           </div>
           
           <div className="bg-gray-50">
