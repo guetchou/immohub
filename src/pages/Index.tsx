@@ -10,6 +10,7 @@ import WhyChooseUs from "@/components/WhyChooseUs";
 import ImageCarousel from "@/components/ImageCarousel";
 import MovingServices from "@/components/moving/MovingServices";
 import AIAssistant from "@/components/ai/AIAssistant";
+import MortgageSimulator from "@/components/calculators/MortgageSimulator";
 
 const Index = () => {
   return (
@@ -26,6 +27,10 @@ const Index = () => {
           <WhyChooseUs />
           <HowItWorks />
           <Services />
+          
+          <div className="container mx-auto px-4 py-12">
+            <MortgageSimulator />
+          </div>
           
           <div className="bg-gradient-to-r from-real-primary to-blue-800 py-16 text-white">
             <AnimatedStats />
