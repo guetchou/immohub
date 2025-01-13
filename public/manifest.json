@@ -1,0 +1,16 @@
+{
+  "name": "ImmoHub Congo",
+  "short_name": "ImmoHub",
+  "description": "Votre partenaire immobilier au Congo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a365d",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

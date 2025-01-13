@@ -12,6 +12,7 @@ import MovingServices from "@/components/moving/MovingServices";
 import AIAssistant from "@/components/ai/AIAssistant";
 import MortgageSimulator from "@/components/calculators/MortgageSimulator";
 import PropertyComparison from "@/components/PropertyComparison";
+import MarketTrends from "@/components/market/MarketTrends";
 
 const Index = () => {
   return (
@@ -24,6 +25,10 @@ const Index = () => {
         </div>
         
         <div className="space-y-16">
+          <div className="container mx-auto px-4">
+            <MarketTrends />
+          </div>
+
           <FeaturedProperties />
           <PropertyComparison />
           <WhyChooseUs />
