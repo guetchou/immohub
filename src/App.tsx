@@ -16,10 +16,14 @@ import Messages from "./pages/Messages";
 import Dashboard from "./pages/Dashboard";
 import TenantDashboard from "./pages/dashboards/TenantDashboard";
 import LandlordDashboard from "./pages/dashboards/LandlordDashboard";
+import AgencyDashboard from "./pages/dashboards/AgencyDashboard";
+import BrokerDashboard from "./pages/dashboards/BrokerDashboard";
+import CanvasserDashboard from "./pages/dashboards/CanvasserDashboard";
+import LandOwnerDashboard from "./pages/dashboards/LandOwnerDashboard";
+import InsuranceDashboard from "./pages/dashboards/InsuranceDashboard";
+import NotaryDashboard from "./pages/dashboards/NotaryDashboard";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import RentDashboard from "./components/rent/RentDashboard";
-import APIKeyManager from "./components/settings/APIKeyManager";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -79,6 +83,54 @@ const App = () => (
                   element={
                     <ProtectedRoute roles={["LANDLORD"]}>
                       <LandlordDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/agency-dashboard" 
+                  element={
+                    <ProtectedRoute roles={["AGENCY"]}>
+                      <AgencyDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/broker-dashboard" 
+                  element={
+                    <ProtectedRoute roles={["BROKER"]}>
+                      <BrokerDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/canvasser-dashboard" 
+                  element={
+                    <ProtectedRoute roles={["CANVASSER"]}>
+                      <CanvasserDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/land-owner-dashboard" 
+                  element={
+                    <ProtectedRoute roles={["LAND_OWNER"]}>
+                      <LandOwnerDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/insurance-dashboard" 
+                  element={
+                    <ProtectedRoute roles={["INSURANCE"]}>
+                      <InsuranceDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/notary-dashboard" 
+                  element={
+                    <ProtectedRoute roles={["NOTARY"]}>
+                      <NotaryDashboard />
                     </ProtectedRoute>
                   } 
                 />
