@@ -65,6 +65,8 @@ const MarketTrends = () => {
       <CardContent>
         <div className="h-[400px]">
           <Line
+            width={800}
+            height={400}
             data={[
               {
                 id: "Prix moyen",
