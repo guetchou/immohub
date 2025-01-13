@@ -11,6 +11,7 @@ import ImageCarousel from "@/components/ImageCarousel";
 import MovingServices from "@/components/moving/MovingServices";
 import AIAssistant from "@/components/ai/AIAssistant";
 import MortgageSimulator from "@/components/calculators/MortgageSimulator";
+import PropertyComparison from "@/components/PropertyComparison";
 
 const Index = () => {
   return (
@@ -24,6 +25,7 @@ const Index = () => {
         
         <div className="space-y-16">
           <FeaturedProperties />
+          <PropertyComparison />
           <WhyChooseUs />
           <HowItWorks />
           <Services />
