@@ -9,10 +9,11 @@ import NewsSection from "@/components/NewsSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import ImageCarousel from "@/components/ImageCarousel";
 import MovingServices from "@/components/moving/MovingServices";
-import AIAssistant from "@/components/ai/AIAssistant";
-import MortgageSimulator from "@/components/calculators/MortgageSimulator";
 import PropertyComparison from "@/components/PropertyComparison";
 import MarketTrends from "@/components/market/MarketTrends";
+import MortgageCalculator from "@/components/calculators/MortgageCalculator";
+import PropertyAlerts from "@/components/alerts/PropertyAlerts";
+import FloatingChatButton from "@/components/chat/FloatingChatButton";
 
 const Index = () => {
   return (
@@ -30,14 +31,18 @@ const Index = () => {
           </div>
 
           <FeaturedProperties />
+          
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <PropertyAlerts />
+              <MortgageCalculator />
+            </div>
+          </div>
+          
           <PropertyComparison />
           <WhyChooseUs />
           <HowItWorks />
           <Services />
-          
-          <div className="container mx-auto px-4 py-12">
-            <MortgageSimulator />
-          </div>
           
           <div className="bg-gradient-to-r from-real-primary to-blue-800 py-16 text-white">
             <AnimatedStats />
@@ -45,10 +50,6 @@ const Index = () => {
           
           <div className="container mx-auto px-4">
             <MovingServices />
-          </div>
-
-          <div className="container mx-auto px-4">
-            <AIAssistant />
           </div>
           
           <div className="bg-gray-50">
@@ -59,6 +60,8 @@ const Index = () => {
           <NewsSection />
         </div>
       </main>
+      
+      <FloatingChatButton />
     </div>
   );
 };
