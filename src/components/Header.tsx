@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Menu } from "lucide-react";
+import { Menu, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import MainNav from "./navigation/MainNav";
 import { useAuth } from "@/contexts/AuthContext";
+import ChatBot from "./ChatBot";
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -104,6 +105,7 @@ const Header = () => {
           </div>
         </div>
       </div>
+      <ChatBot />
     </header>
   );
 };
