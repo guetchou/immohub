@@ -66,7 +66,7 @@ const PropertyFilters = ({ onFilterChange }: PropertyFiltersProps) => {
             <SelectValue placeholder="Type de bien" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Tous les types</SelectItem>
+            <SelectItem value="all">Tous les types</SelectItem>
             {propertyTypes.map((type) => (
               <SelectItem key={type.id} value={type.id}>
                 {type.name}
@@ -83,7 +83,7 @@ const PropertyFilters = ({ onFilterChange }: PropertyFiltersProps) => {
             <SelectValue placeholder="Ville" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Toutes les villes</SelectItem>
+            <SelectItem value="all">Toutes les villes</SelectItem>
             <SelectItem value="brazzaville">Brazzaville</SelectItem>
             <SelectItem value="pointe-noire">Pointe-Noire</SelectItem>
             <SelectItem value="dolisie">Dolisie</SelectItem>
