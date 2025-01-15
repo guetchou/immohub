@@ -16,7 +16,12 @@ const LiveChat = () => {
   useEffect(() => {
     if (user) {
       const subscription = supabase
-        .channel('messages')
+        .channel('messages', {
+          config: {
+            broadcast: { self: true },
+            presence: { key: user.id },
+          }
+        })
         .on('INSERT', payload => {
           setMessages(prev => [...prev, payload.new]);
         })
