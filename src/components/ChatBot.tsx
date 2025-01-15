@@ -19,6 +19,8 @@ const ChatBot = () => {
   const handleSend = () => {
     if (!newMessage.trim()) return;
     
+    console.log("User sent message:", newMessage);
+    
     // Ajouter le message de l'utilisateur
     setMessages(prev => [...prev, { text: newMessage, isUser: true }]);
     setNewMessage("");
@@ -35,6 +37,7 @@ const ChatBot = () => {
         response = "Nous avons des biens disponibles dans plusieurs quartiers de Brazzaville et Pointe-Noire. Quelle zone vous intéresse ?";
       }
 
+      console.log("Bot responding with:", response);
       setMessages(prev => [...prev, { text: response, isUser: false }]);
       
       toast({

@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Send, Phone, MessageSquare } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface Message {
   id: string;
@@ -25,40 +26,70 @@ const LiveChat = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      console.log("Setting up chat subscription for user:", user.id);
-      
-      const channel = supabase
-        .channel('messages')
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'messages'
-          },
-          (payload: { new: SupabaseMessage }) => {
-            console.log("Received new message:", payload.new);
-            const formattedMessage: Message = {
-              id: payload.new.id,
-              content: payload.new.content,
-              sender: payload.new.sender_id,
-            };
-            setMessages(prev => [...prev, formattedMessage]);
-          }
-        )
-        .subscribe((status) => {
-          console.log("Subscription status:", status);
-        });
-
-      return () => {
-        console.log("Cleaning up chat subscription");
-        supabase.removeChannel(channel);
-      };
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    if (!user) {
+      console.log("User not authenticated, redirecting to login");
+      navigate("/login");
+      return;
     }
-  }, [user]);
+
+    console.log("Setting up chat subscription for user:", user.id);
+    
+    const channel = supabase
+      .channel('messages')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages'
+        },
+        (payload: { new: SupabaseMessage }) => {
+          console.log("Received new message:", payload.new);
+          const formattedMessage: Message = {
+            id: payload.new.id,
+            content: payload.new.content,
+            sender: payload.new.sender_id,
+          };
+          setMessages(prev => [...prev, formattedMessage]);
+        }
+      )
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
+
+    // Charger les messages existants
+    const loadExistingMessages = async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error("Error loading messages:", error);
+        return;
+      }
+
+      if (data) {
+        const formattedMessages: Message[] = data.map(msg => ({
+          id: msg.id,
+          content: msg.content,
+          sender: msg.sender_id,
+        }));
+        setMessages(formattedMessages);
+      }
+    };
+
+    loadExistingMessages();
+
+    return () => {
+      console.log("Cleaning up chat subscription");
+      supabase.removeChannel(channel);
+    };
+  }, [user, navigate]);
 
   const handleSend = async () => {
     if (!newMessage.trim() || !user) return;
@@ -71,7 +102,7 @@ const LiveChat = () => {
           {
             content: newMessage,
             sender_id: user.id,
-            receiver_id: 'SUPPORT_AGENT_ID' // ID de l'agent de support
+            receiver_id: 'SUPPORT_AGENT_ID'
           }
         ]);
 
