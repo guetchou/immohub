@@ -1,56 +1,80 @@
-import { Facebook, Instagram, Twitter, MessageSquare } from "lucide-react";
+import { Facebook, Instagram, Twitter, MessageSquare, Mail, Phone, MapPin } from "lucide-react";
 import { Button } from "./ui/button";
 
 const Footer = () => {
   return (
-    <footer className="bg-real-primary text-white py-8 mt-12">
+    <footer className="bg-real-dark text-white py-12 mt-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-xl font-bold mb-4">ImmoHub Congo</h3>
-            <p className="text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="space-y-4">
+            <h3 className="text-2xl font-bold text-real-light">ImmoHub Congo</h3>
+            <p className="text-sm text-gray-300">
               Votre partenaire immobilier de confiance au Congo
             </p>
           </div>
           
-          <div>
-            <h4 className="font-semibold mb-4">Liens Rapides</h4>
-            <ul className="space-y-2">
-              <li><a href="/properties" className="hover:text-real-accent">Propriétés</a></li>
-              <li><a href="/contact" className="hover:text-real-accent">Contact</a></li>
-              <li><a href="/about" className="hover:text-real-accent">À propos</a></li>
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-real-light">Liens Rapides</h4>
+            <ul className="space-y-3">
+              <li>
+                <a href="/properties" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Propriétés
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a href="/about" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4" />
+                  À propos
+                </a>
+              </li>
             </ul>
           </div>
           
-          <div>
-            <h4 className="font-semibold mb-4">Contact</h4>
-            <ul className="space-y-2 text-sm">
-              <li>Brazzaville, Congo</li>
-              <li>+242 06 123 4567</li>
-              <li>contact@immohub.cg</li>
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-real-light">Contact</h4>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-center gap-2 text-gray-300">
+                <MapPin className="w-4 h-4 text-real-accent" />
+                Brazzaville, Congo
+              </li>
+              <li className="flex items-center gap-2 text-gray-300">
+                <Phone className="w-4 h-4 text-real-accent" />
+                +242 06 123 4567
+              </li>
+              <li className="flex items-center gap-2 text-gray-300">
+                <Mail className="w-4 h-4 text-real-accent" />
+                contact@immohub.cg
+              </li>
             </ul>
           </div>
           
-          <div>
-            <h4 className="font-semibold mb-4">Suivez-nous</h4>
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-real-light">Suivez-nous</h4>
             <div className="flex space-x-4">
-              <Button variant="ghost" size="icon" className="hover:text-real-accent">
+              <Button variant="ghost" size="icon" className="hover:text-real-accent text-gray-300">
                 <Facebook className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="hover:text-real-accent">
+              <Button variant="ghost" size="icon" className="hover:text-real-accent text-gray-300">
                 <Instagram className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="hover:text-real-accent">
+              <Button variant="ghost" size="icon" className="hover:text-real-accent text-gray-300">
                 <Twitter className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="hover:text-real-accent">
+              <Button variant="ghost" size="icon" className="hover:text-real-accent text-gray-300">
                 <MessageSquare className="h-5 w-5" />
               </Button>
             </div>
           </div>
         </div>
         
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm text-gray-400">
           <p>&copy; {new Date().getFullYear()} ImmoHub Congo. Tous droits réservés.</p>
         </div>
       </div>
