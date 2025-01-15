@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { Calendar, Mail, Phone, MessageSquare, MapPin } from "lucide-react";
+import { Calendar, Mail, Phone, MessageSquare, MapPin, Clock } from "lucide-react";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
