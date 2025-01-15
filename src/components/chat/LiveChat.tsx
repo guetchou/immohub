@@ -6,8 +6,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { Send, Phone, MessageSquare } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
+interface Message {
+  id: string;
+  content: string;
+  sender: string;
+}
+
+interface SupabaseMessage {
+  id: string;
+  content: string;
+  sender_id: string;
+  receiver_id: string;
+}
+
 const LiveChat = () => {
-  const [messages, setMessages] = useState<Array<{id: string; content: string; sender: string}>>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const { user } = useAuth();
   const { toast } = useToast();
@@ -29,8 +42,13 @@ const LiveChat = () => {
             schema: 'public',
             table: 'messages'
           },
-          payload => {
-            setMessages(prev => [...prev, payload.new]);
+          (payload: { new: SupabaseMessage }) => {
+            const formattedMessage: Message = {
+              id: payload.new.id,
+              content: payload.new.content,
+              sender: payload.new.sender_id,
+            };
+            setMessages(prev => [...prev, formattedMessage]);
           }
         )
         .subscribe();
