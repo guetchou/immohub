@@ -22,9 +22,17 @@ const LiveChat = () => {
             presence: { key: user.id },
           }
         })
-        .on('INSERT', payload => {
-          setMessages(prev => [...prev, payload.new]);
-        })
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages'
+          },
+          payload => {
+            setMessages(prev => [...prev, payload.new]);
+          }
+        )
         .subscribe();
 
       return () => {
