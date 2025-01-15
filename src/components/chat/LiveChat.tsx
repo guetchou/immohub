@@ -20,6 +20,8 @@ interface SupabaseMessage {
   receiver_id: string;
 }
 
+const SUPPORT_AGENT_ID = '00000000-0000-0000-0000-000000000000';
+
 const LiveChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -29,7 +31,6 @@ const LiveChat = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
     if (!user) {
       console.log("User not authenticated, redirecting to login");
       navigate("/login");
@@ -61,11 +62,11 @@ const LiveChat = () => {
         console.log("Subscription status:", status);
       });
 
-    // Charger les messages existants
     const loadExistingMessages = async () => {
       const { data, error } = await supabase
         .from('messages')
         .select('*')
+        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
         .order('created_at', { ascending: true });
 
       if (error) {
@@ -102,7 +103,7 @@ const LiveChat = () => {
           {
             content: newMessage,
             sender_id: user.id,
-            receiver_id: 'SUPPORT_AGENT_ID'
+            receiver_id: SUPPORT_AGENT_ID
           }
         ]);
 
