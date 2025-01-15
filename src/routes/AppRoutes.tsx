@@ -4,11 +4,12 @@ import Favorites from "@/pages/Favorites";
 import Messages from "@/pages/Messages";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
-import MortgageCalculator from "@/components/calculators/MortgageCalculator";
 import Index from "@/pages/Index";
 import Properties from "@/pages/Properties";
 import PropertyDetail from "@/pages/PropertyDetail";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import CustomerService from "@/components/crm/CustomerService";
+import AdvancedMortgageCalculator from "@/components/calculators/AdvancedMortgageCalculator";
 
 const AppRoutes = () => {
   return (
@@ -17,6 +18,8 @@ const AppRoutes = () => {
       <Route path="/properties" element={<Properties />} />
       <Route path="/property/:id" element={<PropertyDetail />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/customer-service" element={<CustomerService />} />
+      <Route path="/calculator" element={<AdvancedMortgageCalculator />} />
       <Route path="/favorites" element={
         <ProtectedRoute>
           <Favorites />
@@ -27,7 +30,6 @@ const AppRoutes = () => {
           <Messages />
         </ProtectedRoute>
       } />
-      <Route path="/calculator" element={<MortgageCalculator />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
     </Routes>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Menu, MessageSquare, Sun, Moon } from "lucide-react";
+import { Menu, MessageSquare, Sun, Moon, Calculator, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,6 +9,7 @@ import {
 import MainNav from "./navigation/MainNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "next-themes";
+import LiveChat from "./chat/LiveChat";
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -34,6 +35,18 @@ const Header = () => {
               {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
 
+            <Link to="/calculator">
+              <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300">
+                <Calculator className="h-5 w-5" />
+              </Button>
+            </Link>
+
+            <Link to="/customer-service">
+              <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300">
+                <Phone className="h-5 w-5" />
+              </Button>
+            </Link>
+
             <div className="md:hidden">
               <Sheet>
                 <SheetTrigger asChild>
@@ -51,6 +64,12 @@ const Header = () => {
                     </Link>
                     <Link to="/contact" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
                       Contact
+                    </Link>
+                    <Link to="/calculator" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
+                      Calculateur
+                    </Link>
+                    <Link to="/customer-service" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
+                      Service Client
                     </Link>
                     {isAuthenticated ? (
                       <>
@@ -115,6 +134,7 @@ const Header = () => {
           </div>
         </div>
       </div>
+      <LiveChat />
     </header>
   );
 };
