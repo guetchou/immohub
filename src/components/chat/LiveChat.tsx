@@ -28,13 +28,10 @@ const LiveChat = () => {
 
   useEffect(() => {
     if (user) {
-      const subscription = supabase
-        .channel('messages', {
-          config: {
-            broadcast: { self: true },
-            presence: { key: user.id },
-          }
-        })
+      console.log("Setting up chat subscription for user:", user.id);
+      
+      const channel = supabase
+        .channel('messages')
         .on(
           'postgres_changes',
           {
@@ -43,6 +40,7 @@ const LiveChat = () => {
             table: 'messages'
           },
           (payload: { new: SupabaseMessage }) => {
+            console.log("Received new message:", payload.new);
             const formattedMessage: Message = {
               id: payload.new.id,
               content: payload.new.content,
@@ -51,25 +49,29 @@ const LiveChat = () => {
             setMessages(prev => [...prev, formattedMessage]);
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log("Subscription status:", status);
+        });
 
       return () => {
-        subscription.unsubscribe();
+        console.log("Cleaning up chat subscription");
+        supabase.removeChannel(channel);
       };
     }
   }, [user]);
 
   const handleSend = async () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !user) return;
 
     try {
+      console.log("Sending message:", newMessage);
       const { error } = await supabase
         .from('messages')
         .insert([
           {
             content: newMessage,
-            sender_id: user?.id,
-            receiver_id: 'SUPPORT_AGENT_ID' // Replace with actual support agent ID
+            sender_id: user.id,
+            receiver_id: 'SUPPORT_AGENT_ID' // ID de l'agent de support
           }
         ]);
 

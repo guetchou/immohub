@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MessageSquare, Send } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useToast } from "./ui/use-toast";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,11 +14,13 @@ const ChatBot = () => {
     { text: "3. Contacter un agent", isUser: false }
   ]);
   const [newMessage, setNewMessage] = useState("");
+  const { toast } = useToast();
 
   const handleSend = () => {
     if (!newMessage.trim()) return;
     
-    setMessages([...messages, { text: newMessage, isUser: true }]);
+    // Ajouter le message de l'utilisateur
+    setMessages(prev => [...prev, { text: newMessage, isUser: true }]);
     setNewMessage("");
     
     // Simuler une réponse intelligente du chatbot
@@ -33,13 +36,18 @@ const ChatBot = () => {
       }
 
       setMessages(prev => [...prev, { text: response, isUser: false }]);
+      
+      toast({
+        title: "Message reçu",
+        description: "Notre assistant traite votre demande",
+      });
     }, 1000);
   };
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <div className="bg-white rounded-lg shadow-xl w-80 h-[500px] flex flex-col">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-80 h-[500px] flex flex-col">
           <div className="bg-real-primary text-white p-4 rounded-t-lg flex justify-between items-center">
             <h3 className="font-semibold">Assistant ImmoHub</h3>
             <Button 
@@ -63,7 +71,7 @@ const ChatBot = () => {
                   className={`rounded-lg px-4 py-2 max-w-[80%] ${
                     msg.isUser
                       ? 'bg-real-primary text-white'
-                      : 'bg-gray-100 text-gray-800'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
                   }`}
                 >
                   {msg.text}
@@ -72,7 +80,7 @@ const ChatBot = () => {
             ))}
           </div>
           
-          <div className="p-4 border-t">
+          <div className="p-4 border-t dark:border-gray-700">
             <div className="flex gap-2">
               <Input
                 value={newMessage}
