@@ -1,4 +1,4 @@
-import { Truck, Package, Clock, Shield } from "lucide-react";
+import { Truck, Package, Clock, Shield, Calendar, MapPin, Home, Tool } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MovingCalculator from "./MovingCalculator";
 
@@ -23,14 +23,34 @@ const services = [
     title: "Assurance incluse",
     description: "Vos biens sont assurés pendant le transport",
   },
+  {
+    icon: Calendar,
+    title: "Planification flexible",
+    description: "Dates et horaires adaptés à vos besoins",
+  },
+  {
+    icon: MapPin,
+    title: "Couverture nationale",
+    description: "Service disponible dans tout le Congo",
+  },
+  {
+    icon: Home,
+    title: "Stockage sécurisé",
+    description: "Espaces de stockage climatisés et surveillés",
+  },
+  {
+    icon: Tool,
+    title: "Montage/Démontage",
+    description: "Service complet pour vos meubles",
+  },
 ];
 
 const MovingServices = () => {
   return (
-    <section className="py-12">
+    <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center text-real-primary mb-8">
-          Services de Déménagement
+          Services de Déménagement Professionnels
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -47,7 +67,7 @@ const MovingServices = () => {
           ))}
         </div>
 
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <MovingCalculator />
         </div>
       </div>
