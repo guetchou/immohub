@@ -1,4 +1,4 @@
-import { Truck, Package, Clock, Shield, Calendar, MapPin, Home, Tool } from "lucide-react";
+import { Truck, Package, Clock, Shield, Calendar, MapPin, Home, Wrench } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MovingCalculator from "./MovingCalculator";
 
@@ -39,7 +39,7 @@ const services = [
     description: "Espaces de stockage climatisés et surveillés",
   },
   {
-    icon: Tool,
+    icon: Wrench,
     title: "Montage/Démontage",
     description: "Service complet pour vos meubles",
   },
