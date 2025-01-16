@@ -8,7 +8,7 @@ import Index from "@/pages/Index";
 import Properties from "@/pages/Properties";
 import PropertyDetail from "@/pages/PropertyDetail";
 import Calculator from "@/pages/Calculator";
-import CustomerService from "@/components/crm/CustomerService";
+import CustomerService from "@/pages/CustomerService";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { UserRole } from "@/types/user";
 
