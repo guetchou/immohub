@@ -7,9 +7,9 @@ import Register from "@/pages/Register";
 import Index from "@/pages/Index";
 import Properties from "@/pages/Properties";
 import PropertyDetail from "@/pages/PropertyDetail";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import Calculator from "@/pages/Calculator";
 import CustomerService from "@/components/crm/CustomerService";
-import AdvancedMortgageCalculator from "@/components/calculators/AdvancedMortgageCalculator";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const AppRoutes = () => {
   return (
@@ -18,8 +18,8 @@ const AppRoutes = () => {
       <Route path="/properties" element={<Properties />} />
       <Route path="/property/:id" element={<PropertyDetail />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/calculator" element={<Calculator />} />
       <Route path="/customer-service" element={<CustomerService />} />
-      <Route path="/calculator" element={<AdvancedMortgageCalculator />} />
       <Route path="/favorites" element={
         <ProtectedRoute>
           <Favorites />
