@@ -1,86 +1,87 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { NavBar } from "@/components/navigation/NavBar";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { Send } from "lucide-react";
 
 interface Message {
   id: string;
+  content: string;
   sender_id: string;
   receiver_id: string;
-  content: string;
   created_at: string;
 }
 
 const Messages = () => {
-  const { user } = useAuth();
-  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [selectedReceiver, setSelectedReceiver] = useState("");
-  const [availableReceivers, setAvailableReceivers] = useState<Array<{id: string, full_name: string}>>([]);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
-      fetchMessages();
-      fetchAvailableReceivers();
-    }
-  }, [user]);
+    if (!user) return;
 
-  const fetchMessages = async () => {
-    try {
+    const fetchMessages = async () => {
       const { data, error } = await supabase
         .from("messages")
         .select("*")
-        .or(`sender_id.eq.${user?.id},receiver_id.eq.${user?.id}`)
-        .order("created_at", { ascending: false });
+        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+        .order("created_at", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching messages:", error);
+        return;
+      }
+
       setMessages(data || []);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les messages",
-        variant: "destructive",
-      });
-    }
-  };
+    };
 
-  const fetchAvailableReceivers = async () => {
+    fetchMessages();
+
+    // Souscrire aux nouveaux messages
+    const channel = supabase
+      .channel("messages")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `sender_id=eq.${user.id},receiver_id=eq.${user.id}`,
+        },
+        (payload) => {
+          console.log("Nouveau message reçu:", payload);
+          setMessages((prev) => [...prev, payload.new as Message]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  const sendMessage = async () => {
+    if (!user || !newMessage.trim()) return;
+
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, full_name")
-        .neq("id", user?.id);
-
-      if (error) throw error;
-      setAvailableReceivers(data || []);
-    } catch (error) {
-      console.error("Error fetching receivers:", error);
-    }
-  };
-
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !selectedReceiver) return;
-
-    try {
-      const { error } = await supabase.from("messages").insert({
-        content: newMessage,
-        sender_id: user?.id,
-        receiver_id: selectedReceiver,
-      });
+      const { error } = await supabase.from("messages").insert([
+        {
+          content: newMessage,
+          sender_id: user.id,
+          receiver_id: "00000000-0000-0000-0000-000000000000", // ID de l'agent de support
+        },
+      ]);
 
       if (error) throw error;
 
       setNewMessage("");
-      fetchMessages();
-      
       toast({
-        title: "Succès",
-        description: "Message envoyé avec succès",
+        title: "Message envoyé",
+        description: "Votre message a été envoyé avec succès",
       });
     } catch (error) {
       console.error("Error sending message:", error);
@@ -92,74 +93,53 @@ const Messages = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow">
-        <div className="p-4 border-b">
-          <h1 className="text-xl font-semibold">Messages</h1>
-        </div>
+    <div className="min-h-screen bg-background">
+      <NavBar />
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="p-4 bg-primary text-white">
+            <h1 className="text-xl font-bold">Messages</h1>
+          </div>
 
-        <div className="h-[400px] overflow-y-auto p-4 space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex flex-col space-y-1 ${
-                message.sender_id === user?.id ? "items-end" : "items-start"
-              }`}
-            >
+          <div className="h-[500px] overflow-y-auto p-4 space-y-4">
+            {messages.map((message) => (
               <div
-                className={`rounded-lg px-4 py-2 max-w-[80%] ${
-                  message.sender_id === user?.id
-                    ? "bg-real-primary text-white"
-                    : "bg-gray-100"
+                key={message.id}
+                className={`flex ${
+                  message.sender_id === user?.id ? "justify-end" : "justify-start"
                 }`}
               >
-                <p className="text-sm">{message.content}</p>
-                <span className="text-xs opacity-75">
-                  {formatDate(message.created_at)}
-                </span>
+                <div
+                  className={`max-w-[70%] rounded-lg px-4 py-2 ${
+                    message.sender_id === user?.id
+                      ? "bg-primary text-white"
+                      : "bg-gray-100"
+                  }`}
+                >
+                  <p>{message.content}</p>
+                  <span className="text-xs opacity-70">
+                    {new Date(message.created_at).toLocaleString()}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <form onSubmit={handleSend} className="p-4 border-t">
-          <div className="flex flex-col space-y-2">
-            <select
-              value={selectedReceiver}
-              onChange={(e) => setSelectedReceiver(e.target.value)}
-              className="w-full p-2 border rounded mb-2"
-              required
-            >
-              <option value="">Sélectionner un destinataire</option>
-              {availableReceivers.map((receiver) => (
-                <option key={receiver.id} value={receiver.id}>
-                  {receiver.full_name || "Utilisateur"}
-                </option>
-              ))}
-            </select>
-            <div className="flex space-x-2">
+          <div className="p-4 border-t">
+            <div className="flex gap-2">
               <Input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Écrivez votre message..."
-                className="flex-1"
-                required
+                onKeyPress={(e) => e.key === "Enter" && sendMessage()}
               />
-              <Button type="submit">Envoyer</Button>
+              <Button onClick={sendMessage}>
+                <Send className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
