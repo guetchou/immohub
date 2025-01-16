@@ -10,6 +10,7 @@ import PropertyDetail from "@/pages/PropertyDetail";
 import Calculator from "@/pages/Calculator";
 import CustomerService from "@/components/crm/CustomerService";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { UserRole } from "@/types/user";
 
 const AppRoutes = () => {
   return (
@@ -32,6 +33,33 @@ const AppRoutes = () => {
       } />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      
+      {/* Role-specific dashboard routes */}
+      <Route path="/tenant-dashboard" element={
+        <ProtectedRoute roles={["TENANT" as UserRole]}>
+          <div>Tableau de bord locataire</div>
+        </ProtectedRoute>
+      } />
+      <Route path="/landlord-dashboard" element={
+        <ProtectedRoute roles={["LANDLORD" as UserRole]}>
+          <div>Tableau de bord propriétaire</div>
+        </ProtectedRoute>
+      } />
+      <Route path="/agency-dashboard" element={
+        <ProtectedRoute roles={["AGENCY" as UserRole]}>
+          <div>Tableau de bord agence</div>
+        </ProtectedRoute>
+      } />
+      <Route path="/broker-dashboard" element={
+        <ProtectedRoute roles={["BROKER" as UserRole]}>
+          <div>Tableau de bord courtier</div>
+        </ProtectedRoute>
+      } />
+      <Route path="/admin-dashboard" element={
+        <ProtectedRoute roles={["ADMIN" as UserRole]}>
+          <div>Tableau de bord administrateur</div>
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 };

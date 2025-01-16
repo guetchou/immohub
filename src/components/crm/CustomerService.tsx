@@ -4,7 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Phone, Mail, MessageSquare } from "lucide-react";
+import { Phone, Mail, MessageSquare, Clock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const CustomerService = () => {
   const [formData, setFormData] = useState({
@@ -12,15 +14,27 @@ const CustomerService = () => {
     email: "",
     phone: "",
     message: "",
+    subject: "",
   });
+  
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      // Implement your form submission logic here
-      console.log("Form submitted:", formData);
+      const { error } = await supabase
+        .from('support_tickets')
+        .insert([
+          {
+            user_id: user?.id,
+            subject: formData.subject,
+            message: formData.message,
+          }
+        ]);
+
+      if (error) throw error;
       
       toast({
         title: "Message envoyé",
@@ -32,6 +46,7 @@ const CustomerService = () => {
         email: "",
         phone: "",
         message: "",
+        subject: "",
       });
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -55,6 +70,13 @@ const CustomerService = () => {
             <h2 className="text-xl font-semibold mb-4">Contactez-nous</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
+                <Input
+                  placeholder="Sujet"
+                  value={formData.subject}
+                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                  required
+                  className="mb-2"
+                />
                 <Input
                   placeholder="Votre nom"
                   value={formData.name}
@@ -85,7 +107,7 @@ const CustomerService = () => {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required
-                  className="min-h-[100px]"
+                  className="min-h-[150px]"
                 />
               </div>
               <Button type="submit" className="w-full bg-real-primary hover:bg-real-primary/90">
@@ -124,6 +146,19 @@ const CustomerService = () => {
             <Card className="p-6">
               <div className="flex items-center gap-4">
                 <div className="bg-real-primary/10 p-3 rounded-full">
+                  <Clock className="h-6 w-6 text-real-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Horaires d'ouverture</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Lundi - Vendredi</p>
+                  <p className="text-sm text-gray-500">8h00 - 18h00</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-real-primary/10 p-3 rounded-full">
                   <MessageSquare className="h-6 w-6 text-real-primary" />
                 </div>
                 <div>
@@ -132,6 +167,13 @@ const CustomerService = () => {
                   <Button 
                     variant="link" 
                     className="text-real-primary p-0 h-auto font-normal hover:text-real-primary/90"
+                    onClick={() => {
+                      // Trigger live chat
+                      toast({
+                        title: "Chat en direct",
+                        description: "Un agent va vous répondre dans quelques instants",
+                      });
+                    }}
                   >
                     Démarrer une conversation
                   </Button>

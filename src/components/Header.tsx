@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, MessageSquare, Sun, Moon, Calculator, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,12 @@ import LiveChat from "./chat/LiveChat";
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   return (
     <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800">
@@ -83,7 +89,7 @@ const Header = () => {
                           Tableau de bord
                         </Link>
                         <button
-                          onClick={() => logout()}
+                          onClick={handleLogout}
                           className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors text-left"
                         >
                           Déconnexion
@@ -112,7 +118,7 @@ const Header = () => {
                       Tableau de bord
                     </Link>
                   </Button>
-                  <Button variant="default" onClick={() => logout()} className="bg-real-primary hover:bg-real-primary/90 btn-modern">
+                  <Button variant="default" onClick={handleLogout} className="bg-real-primary hover:bg-real-primary/90 btn-modern">
                     Déconnexion
                   </Button>
                 </>
