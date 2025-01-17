@@ -1,0 +1,4 @@
+project_id = "nhectfwlukgjzbkuslqn"
+
+[process-payment]
+verify_jwt = true
