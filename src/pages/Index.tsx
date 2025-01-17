@@ -8,31 +8,31 @@ import Testimonials from "@/components/Testimonials";
 import NewsSection from "@/components/NewsSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import ImageCarousel from "@/components/ImageCarousel";
-import MovingServices from "@/components/moving/MovingServices";
-import PropertyComparison from "@/components/PropertyComparison";
-import MarketTrends from "@/components/market/MarketTrends";
-import ChatBot from "@/components/ChatBot";
-import PropertyMap from "@/components/location/PropertyMap";
-import SocialShare from "@/components/social/SocialShare";
+import FAQ from "@/components/FAQ";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import PropertyMap from "@/components/location/PropertyMap";
+import SocialShare from "@/components/social/SocialShare";
 
 const Index = () => {
   const [properties, setProperties] = useState([]);
 
   useEffect(() => {
     const fetchProperties = async () => {
+      console.log("Fetching properties for map...");
       const { data, error } = await supabase
         .from('properties')
         .select('id, title, latitude, longitude')
         .not('latitude', 'is', null)
-        .not('longitude', 'is', null);
+        .not('longitude', 'is', null)
+        .limit(10);
       
       if (error) {
         console.error('Error fetching properties:', error);
         return;
       }
       
+      console.log("Fetched properties:", data);
       setProperties(data);
     };
 
@@ -49,49 +49,46 @@ const Index = () => {
         </div>
         
         <div className="space-y-16">
-          <div className="container mx-auto px-4">
-            <MarketTrends />
-          </div>
-
           <FeaturedProperties />
           
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6">Découvrez nos propriétés sur la carte</h2>
+            <h2 className="text-2xl font-bold mb-6 text-real-primary">
+              Découvrez nos propriétés sur la carte
+            </h2>
             <PropertyMap properties={properties} />
           </div>
           
-          <PropertyComparison />
-          
           <WhyChooseUs />
-          <HowItWorks />
-          <Services />
           
           <div className="bg-gradient-to-r from-real-primary to-blue-800 py-16 text-white">
             <AnimatedStats />
           </div>
           
-          <div className="container mx-auto px-4">
-            <MovingServices />
-          </div>
+          <HowItWorks />
+          
+          <Services />
           
           <div className="bg-gray-50">
             <Testimonials />
           </div>
           
+          <Partners />
+          
+          <NewsSection />
+          
+          <FAQ />
+          
           <div className="container mx-auto px-4 py-8">
-            <h2 className="text-2xl font-bold mb-6">Partagez ImmoHub</h2>
+            <h2 className="text-2xl font-bold mb-6 text-real-primary">
+              Partagez ImmoHub
+            </h2>
             <SocialShare 
               title="Découvrez ImmoHub - Votre partenaire immobilier au Congo" 
               url={window.location.href} 
             />
           </div>
-          
-          <Partners />
-          <NewsSection />
         </div>
       </main>
-      
-      <ChatBot />
     </div>
   );
 };
