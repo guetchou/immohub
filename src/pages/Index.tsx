@@ -11,9 +11,7 @@ import ImageCarousel from "@/components/ImageCarousel";
 import MovingServices from "@/components/moving/MovingServices";
 import PropertyComparison from "@/components/PropertyComparison";
 import MarketTrends from "@/components/market/MarketTrends";
-import MortgageCalculator from "@/components/calculators/MortgageCalculator";
-import PropertyAlerts from "@/components/alerts/PropertyAlerts";
-import FloatingChatButton from "@/components/chat/FloatingChatButton";
+import ChatBot from "@/components/ChatBot";
 
 const Index = () => {
   return (
@@ -32,14 +30,8 @@ const Index = () => {
 
           <FeaturedProperties />
           
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <PropertyAlerts />
-              <MortgageCalculator />
-            </div>
-          </div>
-          
           <PropertyComparison />
+          
           <WhyChooseUs />
           <HowItWorks />
           <Services />
@@ -61,7 +53,7 @@ const Index = () => {
         </div>
       </main>
       
-      <FloatingChatButton />
+      <ChatBot />
     </div>
   );
 };

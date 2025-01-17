@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeftRight, X } from "lucide-react";
+import { ArrowLeftRight, X, MapPin, Home, Bath, Bed, Ruler } from "lucide-react";
 
 interface Property {
   id: string;
@@ -15,6 +15,7 @@ interface Property {
   bathrooms: number;
   city: string;
   address: string;
+  image_url?: string;
 }
 
 const PropertyComparison = () => {
@@ -28,6 +29,7 @@ const PropertyComparison = () => {
 
   const fetchProperties = async () => {
     try {
+      console.log("Fetching properties for comparison");
       const { data: propertiesData, error: propertiesError } = await supabase
         .from("properties")
         .select(`
@@ -46,7 +48,6 @@ const PropertyComparison = () => {
 
       if (propertiesError) throw propertiesError;
 
-      // Transform the data to match the Property interface
       const transformedProperties = propertiesData.map(property => ({
         id: property.id,
         title: property.title,
@@ -73,6 +74,10 @@ const PropertyComparison = () => {
   const addToComparison = (property: Property) => {
     if (selectedProperties.length < 3) {
       setSelectedProperties([...selectedProperties, property]);
+      toast({
+        title: "Propriété ajoutée",
+        description: "La propriété a été ajoutée à la comparaison",
+      });
     } else {
       toast({
         title: "Maximum atteint",
@@ -85,6 +90,10 @@ const PropertyComparison = () => {
     setSelectedProperties(
       selectedProperties.filter((p) => p.id !== propertyId)
     );
+    toast({
+      title: "Propriété retirée",
+      description: "La propriété a été retirée de la comparaison",
+    });
   };
 
   const formatPrice = (price: number) => {
@@ -117,23 +126,33 @@ const PropertyComparison = () => {
                 </Button>
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-lg mb-4">{property.title}</h3>
-                  <div className="space-y-2">
-                    <p className="text-real-primary font-bold">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-gray-500" />
+                      <p className="text-gray-600">
+                        {property.city}, {property.address}
+                      </p>
+                    </div>
+                    <p className="text-real-primary font-bold text-xl">
                       {formatPrice(property.price)}
                     </p>
-                    <p className="text-gray-600">
-                      {property.city}, {property.address}
-                    </p>
-                    <div className="flex gap-2 flex-wrap">
-                      <Badge variant="secondary">
-                        {property.surface_area} m²
-                      </Badge>
-                      <Badge variant="secondary">
-                        {property.bedrooms} chambres
-                      </Badge>
-                      <Badge variant="secondary">
-                        {property.bathrooms} SDB
-                      </Badge>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2">
+                        <Ruler className="h-4 w-4 text-gray-500" />
+                        <span>{property.surface_area} m²</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Bed className="h-4 w-4 text-gray-500" />
+                        <span>{property.bedrooms} chambres</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Bath className="h-4 w-4 text-gray-500" />
+                        <span>{property.bathrooms} SDB</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Home className="h-4 w-4 text-gray-500" />
+                        <span>{Math.round(property.price / property.surface_area).toLocaleString()} FCFA/m²</span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -149,12 +168,15 @@ const PropertyComparison = () => {
               <Card key={property.id} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-lg mb-4">{property.title}</h3>
-                  <div className="space-y-2">
-                    <p className="text-real-primary font-bold">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-gray-500" />
+                      <p className="text-gray-600">
+                        {property.city}, {property.address}
+                      </p>
+                    </div>
+                    <p className="text-real-primary font-bold text-xl">
                       {formatPrice(property.price)}
-                    </p>
-                    <p className="text-gray-600">
-                      {property.city}, {property.address}
                     </p>
                     <div className="flex gap-2 flex-wrap">
                       <Badge variant="secondary">
@@ -168,7 +190,7 @@ const PropertyComparison = () => {
                       </Badge>
                     </div>
                     <Button
-                      className="w-full mt-4"
+                      className="w-full"
                       onClick={() => addToComparison(property)}
                     >
                       <ArrowLeftRight className="mr-2 h-4 w-4" />
