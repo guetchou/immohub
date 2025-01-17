@@ -15,63 +15,27 @@ const ChatBot = () => {
     { text: "3. Questions sur le marché immobilier", isUser: false }
   ]);
   const [newMessage, setNewMessage] = useState("");
-  const [apiKey, setApiKey] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const loadApiKey = async () => {
-      try {
-        const { data: { key }, error } = await supabase.functions.invoke('get-perplexity-key');
-        if (error) throw error;
-        setApiKey(key);
-      } catch (error) {
-        console.error("Error loading API key:", error);
-      }
-    };
-    loadApiKey();
-  }, []);
 
   const handleSend = async () => {
     if (!newMessage.trim()) return;
     
     console.log("User sent message:", newMessage);
     
-    // Add user message
     setMessages(prev => [...prev, { text: newMessage, isUser: true }]);
     setNewMessage("");
     setIsLoading(true);
     
     try {
-      const response = await fetch('https://api.perplexity.ai/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'llama-3.1-sonar-small-128k-online',
-          messages: [
-            {
-              role: 'system',
-              content: 'Vous êtes un assistant immobilier expert pour ImmoHub Congo. Répondez de manière précise et professionnelle aux questions concernant l\'immobilier au Congo.'
-            },
-            {
-              role: 'user',
-              content: newMessage
-            }
-          ],
-          temperature: 0.2,
-          max_tokens: 1000,
-        }),
+      const { data, error } = await supabase.functions.invoke('get-ai-response', {
+        body: { message: newMessage }
       });
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la communication avec l\'IA');
-      }
+      if (error) throw error;
 
-      const data = await response.json();
-      const aiResponse = data.choices[0].message.content;
+      const aiResponse = data.response;
+      console.log("AI Response:", aiResponse);
 
       setMessages(prev => [...prev, { text: aiResponse, isUser: false }]);
       
