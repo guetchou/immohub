@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, MessageSquare, Sun, Moon, Calculator, Phone } from "lucide-react";
+import { Menu, MessageSquare, Sun, Moon, Calculator, Phone, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,16 +9,82 @@ import {
 import MainNav from "./navigation/MainNav";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "next-themes";
-import LiveChat from "./chat/LiveChat";
+import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "./ui/use-toast";
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [favoritesCount, setFavoritesCount] = useState(0);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUnreadMessages();
+      fetchFavoritesCount();
+    }
+  }, [isAuthenticated]);
+
+  const fetchUnreadMessages = async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('messages')
+      .select('id')
+      .eq('receiver_id', user.id)
+      .eq('read', false);
+      
+    if (error) {
+      console.error('Error fetching unread messages:', error);
+      return;
+    }
+    
+    setUnreadMessages(data?.length || 0);
+  };
+
+  const fetchFavoritesCount = async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('favorites')
+      .select('id')
+      .eq('user_id', user.id);
+      
+    if (error) {
+      console.error('Error fetching favorites:', error);
+      return;
+    }
+    
+    setFavoritesCount(data?.length || 0);
+  };
 
   const handleLogout = async () => {
-    await logout();
-    navigate('/');
+    try {
+      await logout();
+      navigate('/');
+      toast({
+        title: "Déconnexion réussie",
+        duration: 2000,
+      });
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast({
+        title: "Erreur lors de la déconnexion",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+    toast({
+      title: `Mode ${theme === "dark" ? "clair" : "sombre"} activé`,
+      duration: 2000,
+    });
   };
 
   return (
@@ -35,11 +101,37 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              onClick={toggleTheme}
               className="text-gray-700 dark:text-gray-300"
             >
               {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
+
+            {isAuthenticated && (
+              <>
+                <Link to="/favorites">
+                  <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300 relative">
+                    <Heart className="h-5 w-5" />
+                    {favoritesCount > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-real-primary">
+                        {favoritesCount}
+                      </Badge>
+                    )}
+                  </Button>
+                </Link>
+
+                <Link to="/messages">
+                  <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300 relative">
+                    <MessageSquare className="h-5 w-5" />
+                    {unreadMessages > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-real-primary">
+                        {unreadMessages}
+                      </Badge>
+                    )}
+                  </Button>
+                </Link>
+              </>
+            )}
 
             <Link to="/calculator">
               <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300">
@@ -140,7 +232,6 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <LiveChat />
     </header>
   );
 };

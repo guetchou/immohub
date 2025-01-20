@@ -9,11 +9,8 @@ import Favorites from "@/pages/Favorites";
 import CustomerService from "@/pages/CustomerService";
 import Calculator from "@/pages/Calculator";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { useAuth } from "@/contexts/AuthContext";
 
 const AppRoutes = () => {
-  const { user } = useAuth();
-
   return (
     <Routes>
       {/* Public routes */}
