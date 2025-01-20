@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface PropertyMapProps {
   properties?: Array<{
@@ -15,6 +16,7 @@ interface PropertyMapProps {
 const PropertyMap = ({ properties = [] }: PropertyMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -22,14 +24,30 @@ const PropertyMap = ({ properties = [] }: PropertyMapProps) => {
 
       try {
         console.log('Fetching Mapbox key from Edge Function');
-        const { data: { key }, error } = await supabase.functions.invoke('get-mapbox-key');
+        const { data, error } = await supabase.functions.invoke('get-mapbox-key');
+        
         if (error) {
           console.error('Error fetching Mapbox key:', error);
-          throw error;
+          toast({
+            title: "Error loading map",
+            description: "Please try again later",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (!data?.key) {
+          console.error('No Mapbox key returned from Edge Function');
+          toast({
+            title: "Error loading map",
+            description: "Map configuration is missing",
+            variant: "destructive",
+          });
+          return;
         }
 
         console.log('Initializing Mapbox map');
-        mapboxgl.accessToken = key;
+        mapboxgl.accessToken = data.key;
         
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
@@ -51,6 +69,11 @@ const PropertyMap = ({ properties = [] }: PropertyMapProps) => {
 
       } catch (error) {
         console.error('Error initializing map:', error);
+        toast({
+          title: "Error loading map",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
       }
     };
 
@@ -59,7 +82,7 @@ const PropertyMap = ({ properties = [] }: PropertyMapProps) => {
     return () => {
       map.current?.remove();
     };
-  }, [properties]);
+  }, [properties, toast]);
 
   return (
     <div className="w-full h-[400px] rounded-lg overflow-hidden shadow-lg">
