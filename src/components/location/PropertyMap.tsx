@@ -21,9 +21,14 @@ const PropertyMap = ({ properties = [] }: PropertyMapProps) => {
       if (!mapContainer.current) return;
 
       try {
+        console.log('Fetching Mapbox key from Edge Function');
         const { data: { key }, error } = await supabase.functions.invoke('get-mapbox-key');
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching Mapbox key:', error);
+          throw error;
+        }
 
+        console.log('Initializing Mapbox map');
         mapboxgl.accessToken = key;
         
         map.current = new mapboxgl.Map({

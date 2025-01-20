@@ -12,11 +12,11 @@ serve(async (req) => {
   }
 
   try {
-    // Get the Mapbox key from environment variables
-    const key = Deno.env.get('MAPBOX_PUBLIC_TOKEN')
+    console.log('Fetching Mapbox key from environment variables');
+    const key = Deno.env.get('MAPBOX_PUBLIC_TOKEN');
     
     if (!key) {
-      console.error('MAPBOX_PUBLIC_TOKEN not found in environment variables')
+      console.error('MAPBOX_PUBLIC_TOKEN not found in environment variables');
       return new Response(
         JSON.stringify({ error: 'Mapbox key not configured' }), 
         { 
@@ -26,7 +26,7 @@ serve(async (req) => {
       )
     }
 
-    // Return the key
+    console.log('Successfully retrieved Mapbox key');
     return new Response(
       JSON.stringify({ key }), 
       { 
@@ -35,7 +35,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Error in get-mapbox-key function:', error)
+    console.error('Error in get-mapbox-key function:', error);
     return new Response(
       JSON.stringify({ error: 'Internal server error' }), 
       { 
