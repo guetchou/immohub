@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
-import { MessageSquare, Send, Phone, Bot } from "lucide-react";
+import { MessageSquare, Send, Phone, Mail, Video, MessageCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,8 +17,9 @@ const ChatBot = () => {
     { text: "Bonjour ! Je suis votre assistant virtuel ImmoHub. Comment puis-je vous aider ?", isUser: false },
     { text: "Je peux vous aider avec :", isUser: false },
     { text: "1. Recherche de propriétés", isUser: false },
-    { text: "2. Planification de visites", isUser: false },
-    { text: "3. Questions sur le marché immobilier", isUser: false }
+    { text: "2. Questions sur le marché immobilier", isUser: false },
+    { text: "3. Planification de visites", isUser: false },
+    { text: "4. Conseils d'investissement", isUser: false }
   ]);
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -62,11 +69,32 @@ const ChatBot = () => {
     }
   };
 
-  const handleCall = () => {
-    toast({
-      title: "Appel en cours",
-      description: "Un agent va vous contacter dans quelques instants",
-    });
+  const handleContactAgent = (method: string) => {
+    switch (method) {
+      case 'call':
+        toast({
+          title: "Appel en cours",
+          description: "Un agent va vous contacter dans quelques instants",
+        });
+        break;
+      case 'email':
+        window.location.href = "mailto:contact@immohub.cg";
+        break;
+      case 'whatsapp':
+        window.open("https://wa.me/242061234567", "_blank");
+        break;
+      case 'sms':
+        window.location.href = "sms:+242061234567";
+        break;
+      case 'video':
+        toast({
+          title: "Appel vidéo",
+          description: "Un lien pour l'appel vidéo va vous être envoyé par email",
+        });
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -75,7 +103,7 @@ const ChatBot = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-80 h-[500px] flex flex-col">
           <div className="bg-real-primary text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <Bot className="h-5 w-5" />
+              <MessageSquare className="h-5 w-5" />
               <h3 className="font-semibold">Assistant ImmoHub</h3>
             </div>
             <Button 
@@ -131,15 +159,37 @@ const ChatBot = () => {
                 <Send className="h-4 w-4" />
               </Button>
             </div>
-            <div className="mt-2 flex justify-center">
-              <Button
-                variant="outline"
-                onClick={handleCall}
-                className="text-real-primary hover:text-real-primary/90"
-              >
-                <Phone className="h-4 w-4 mr-2" />
-                Nous appeler
-              </Button>
+            <div className="mt-2 flex justify-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="text-real-primary hover:text-real-primary/90">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Contacter un agent
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => handleContactAgent('call')}>
+                    <Phone className="h-4 w-4 mr-2" />
+                    Appeler
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleContactAgent('video')}>
+                    <Video className="h-4 w-4 mr-2" />
+                    Appel vidéo
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleContactAgent('email')}>
+                    <Mail className="h-4 w-4 mr-2" />
+                    Email
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleContactAgent('whatsapp')}>
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    WhatsApp
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleContactAgent('sms')}>
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    SMS
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

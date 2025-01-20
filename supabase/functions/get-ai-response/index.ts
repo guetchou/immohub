@@ -7,6 +7,8 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -16,13 +18,43 @@ serve(async (req) => {
   try {
     const { message } = await req.json();
     console.log("Received message:", message);
-    
-    // For now, return a simple response
-    const response = `Je suis désolé, je suis temporairement indisponible. Un agent va vous contacter rapidement.`;
-    console.log("Sending response:", response);
+
+    // Call OpenAI API
+    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: `Tu es un assistant immobilier professionnel pour ImmoHub Congo. 
+            Tu dois aider les utilisateurs à:
+            - Trouver des propriétés
+            - Répondre aux questions sur le marché immobilier
+            - Planifier des visites
+            - Expliquer les processus immobiliers
+            - Donner des conseils sur l'investissement immobilier
+            Réponds toujours en français de manière professionnelle et courtoise.`
+          },
+          { role: 'user', content: message }
+        ],
+      }),
+    });
+
+    if (!openAIResponse.ok) {
+      throw new Error(`OpenAI API error: ${await openAIResponse.text()}`);
+    }
+
+    const result = await openAIResponse.json();
+    const aiResponse = result.choices[0].message.content;
+    console.log("AI Response:", aiResponse);
 
     return new Response(
-      JSON.stringify({ response }),
+      JSON.stringify({ response: aiResponse }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
