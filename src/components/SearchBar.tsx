@@ -1,21 +1,101 @@
-import { Search } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, MapPin, Home, DollarSign } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const SearchBar = () => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useState({
+    query: "",
+    location: "",
+    propertyType: "",
+    priceRange: "",
+  });
+
+  const handleSearch = () => {
+    const queryParams = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (value) queryParams.append(key, value);
+    });
+    navigate(`/properties?${queryParams.toString()}`);
+  };
+
   return (
-    <div className="relative w-full max-w-2xl mx-auto">
-      <Input
-        type="text"
-        placeholder="Rechercher une propriété..."
-        className="pl-4 pr-12 py-2 w-full rounded-lg"
-      />
-      <Button
-        variant="ghost"
-        className="absolute right-2 top-1/2 -translate-y-1/2"
-      >
-        <Search className="h-5 w-5" />
-      </Button>
+    <div className="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="relative">
+          <Input
+            type="text"
+            placeholder="Que recherchez-vous ?"
+            value={searchParams.query}
+            onChange={(e) => setSearchParams({ ...searchParams, query: e.target.value })}
+            className="pl-10"
+          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        </div>
+
+        <Select
+          value={searchParams.location}
+          onValueChange={(value) => setSearchParams({ ...searchParams, location: value })}
+        >
+          <SelectTrigger className="w-full">
+            <MapPin className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Localisation" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="brazzaville">Brazzaville</SelectItem>
+            <SelectItem value="pointe-noire">Pointe-Noire</SelectItem>
+            <SelectItem value="dolisie">Dolisie</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={searchParams.propertyType}
+          onValueChange={(value) => setSearchParams({ ...searchParams, propertyType: value })}
+        >
+          <SelectTrigger className="w-full">
+            <Home className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Type de bien" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="house">Maison</SelectItem>
+            <SelectItem value="apartment">Appartement</SelectItem>
+            <SelectItem value="land">Terrain</SelectItem>
+            <SelectItem value="commercial">Local commercial</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={searchParams.priceRange}
+          onValueChange={(value) => setSearchParams({ ...searchParams, priceRange: value })}
+        >
+          <SelectTrigger className="w-full">
+            <DollarSign className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Budget" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="0-500000">0 - 500,000 FCFA</SelectItem>
+            <SelectItem value="500000-1000000">500,000 - 1M FCFA</SelectItem>
+            <SelectItem value="1000000-2000000">1M - 2M FCFA</SelectItem>
+            <SelectItem value="2000000+">2M+ FCFA</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="mt-4 flex justify-center">
+        <Button onClick={handleSearch} className="bg-real-primary hover:bg-real-primary/90">
+          <Search className="h-4 w-4 mr-2" />
+          Rechercher
+        </Button>
+      </div>
     </div>
   );
 };

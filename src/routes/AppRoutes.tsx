@@ -8,6 +8,7 @@ import Messages from "@/pages/Messages";
 import Favorites from "@/pages/Favorites";
 import CustomerService from "@/pages/CustomerService";
 import Calculator from "@/pages/Calculator";
+import Contact from "@/pages/Contact";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 const AppRoutes = () => {
@@ -19,6 +20,7 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/properties" element={<Properties />} />
       <Route path="/property/:id" element={<PropertyDetail />} />
+      <Route path="/contact" element={<Contact />} />
       
       {/* Protected routes */}
       <Route
