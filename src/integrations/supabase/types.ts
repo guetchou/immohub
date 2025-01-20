@@ -415,6 +415,59 @@ export type Database = {
         }
         Relationships: []
       }
+      lease_contracts: {
+        Row: {
+          created_at: string | null
+          deposit_amount: number
+          end_date: string
+          id: string
+          monthly_rent: number
+          owner_id: string | null
+          property_id: string | null
+          start_date: string
+          status: string | null
+          tenant_id: string | null
+          terms: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deposit_amount: number
+          end_date: string
+          id?: string
+          monthly_rent: number
+          owner_id?: string | null
+          property_id?: string | null
+          start_date: string
+          status?: string | null
+          tenant_id?: string | null
+          terms?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deposit_amount?: number
+          end_date?: string
+          id?: string
+          monthly_rent?: number
+          owner_id?: string | null
+          property_id?: string | null
+          start_date?: string
+          status?: string | null
+          tenant_id?: string | null
+          terms?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lease_contracts_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       media: {
         Row: {
           content_type: string
@@ -766,6 +819,50 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      rent_payments: {
+        Row: {
+          amount: number
+          contract_id: string | null
+          created_at: string | null
+          id: string
+          payment_date: string
+          payment_method: string | null
+          reference: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          contract_id?: string | null
+          created_at?: string | null
+          id?: string
+          payment_date: string
+          payment_method?: string | null
+          reference?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          contract_id?: string | null
+          created_at?: string | null
+          id?: string
+          payment_date?: string
+          payment_method?: string | null
+          reference?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rent_payments_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "lease_contracts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reviews: {
         Row: {
