@@ -26,18 +26,23 @@ const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<Property | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProperty = async () => {
-      if (!id) {
-        setError("Property ID not found");
-        return;
-      }
-
-      console.log("Fetching property with ID:", id);
-      
       try {
-        const { data, error } = await supabase
+        setIsLoading(true);
+        setError(null);
+
+        if (!id || !/^[0-9a-fA-F-]{36}$/.test(id)) {
+          setError("ID de propriété invalide");
+          setIsLoading(false);
+          return;
+        }
+
+        console.log("Fetching property with ID:", id);
+        
+        const { data, error: supabaseError } = await supabase
           .from('properties')
           .select(`
             *,
@@ -54,14 +59,14 @@ const PropertyDetail = () => {
           .eq('id', id)
           .maybeSingle();
 
-        if (error) {
-          console.error("Error fetching property:", error);
-          setError("Failed to load property details");
+        if (supabaseError) {
+          console.error("Error fetching property:", supabaseError);
+          setError("Impossible de charger les détails de la propriété");
           return;
         }
 
         if (!data) {
-          setError("Property not found");
+          setError("Propriété non trouvée");
           return;
         }
 
@@ -83,7 +88,9 @@ const PropertyDetail = () => {
         });
       } catch (err) {
         console.error("Error in fetchProperty:", err);
-        setError("An unexpected error occurred");
+        setError("Une erreur inattendue s'est produite");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -91,11 +98,22 @@ const PropertyDetail = () => {
   }, [id]);
 
   if (error) {
-    return <div className="container mx-auto px-4 py-8 text-center text-red-600">{error}</div>;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="text-red-600 mb-4">{error}</div>
+          <Button onClick={() => window.history.back()}>Retour</Button>
+        </div>
+      </div>
+    );
   }
 
-  if (!property) {
-    return <div className="container mx-auto px-4 py-8 text-center">Chargement...</div>;
+  if (isLoading || !property) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">Chargement...</div>
+      </div>
+    );
   }
 
   return (
