@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,14 +12,22 @@ const Login = () => {
   const { login } = useAuth();
   const { toast } = useToast();
   
-  // Utiliser notre nouveau hook de redirection
+  // Use our role redirect hook
   useRoleRedirect();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     try {
+      // Create a simple object instead of using FormData
+      const credentials = {
+        email,
+        password
+      };
+      
+      console.log("Login attempt with:", email);
       await login(email, password);
-      console.log("Login successful for:", email);
+      
       toast({
         title: "Connexion réussie",
         description: "Bienvenue sur ImmoHub Congo",
@@ -39,8 +46,8 @@ const Login = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Connexion</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Connexion</h1>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Accédez à votre compte ImmoHub Congo
           </p>
         </div>
@@ -55,6 +62,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="w-full"
             />
           </div>
 
@@ -66,10 +74,11 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="w-full"
             />
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full bg-real-primary hover:bg-real-primary/90">
             Se connecter
           </Button>
         </form>
