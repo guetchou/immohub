@@ -10,8 +10,35 @@ import CustomerService from "@/pages/CustomerService";
 import Calculator from "@/pages/Calculator";
 import Contact from "@/pages/Contact";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Dashboard from "@/pages/Dashboard";
+import TenantDashboard from "@/pages/dashboards/TenantDashboard";
+import LandlordDashboard from "@/pages/dashboards/LandlordDashboard";
+import AgencyDashboard from "@/pages/dashboards/AgencyDashboard";
+import BrokerDashboard from "@/pages/dashboards/BrokerDashboard";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AppRoutes = () => {
+  const { user } = useAuth();
+
+  const getDashboardRoute = () => {
+    if (!user) return <Navigate to="/login" />;
+
+    switch (user.role) {
+      case "TENANT":
+        return <TenantDashboard />;
+      case "LANDLORD":
+        return <LandlordDashboard />;
+      case "AGENCY":
+        return <AgencyDashboard />;
+      case "BROKER":
+        return <BrokerDashboard />;
+      case "ADMIN":
+        return <Dashboard />;
+      default:
+        return <Navigate to="/" />;
+    }
+  };
+
   return (
     <Routes>
       {/* Public routes */}
@@ -52,6 +79,16 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Calculator />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Dashboard routes */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            {getDashboardRoute()}
           </ProtectedRoute>
         }
       />

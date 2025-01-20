@@ -1,39 +1,33 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
 
 serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const { message } = await req.json()
+    const { message } = await req.json();
+    console.log("Received message:", message);
     
-    const response = await fetch(
-      "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
-      {
-        headers: { 
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({ inputs: message }),
-      }
-    );
-
-    const result = await response.json();
-    console.log("AI Response:", result);
+    // For now, return a simple response
+    const response = `Je suis désolé, je suis temporairement indisponible. Un agent va vous contacter rapidement.`;
+    console.log("Sending response:", response);
 
     return new Response(
-      JSON.stringify({ response: result[0].generated_text }),
+      JSON.stringify({ response }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       },
-    )
+    );
   } catch (error) {
     console.error("Error:", error);
     return new Response(
@@ -42,6 +36,6 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
       },
-    )
+    );
   }
-})
+});

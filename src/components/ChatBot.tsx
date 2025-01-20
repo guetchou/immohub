@@ -32,7 +32,10 @@ const ChatBot = () => {
         body: { message: newMessage }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw error;
+      }
 
       const aiResponse = data.response;
       console.log("AI Response:", aiResponse);
@@ -44,7 +47,7 @@ const ChatBot = () => {
         description: "Notre assistant a répondu à votre demande",
       });
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error in chat:", error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de la communication avec l'assistant",
