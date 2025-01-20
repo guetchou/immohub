@@ -23,34 +23,50 @@ interface Property {
 }
 
 const PropertyDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<Property | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProperty = async () => {
-      const { data, error } = await supabase
-        .from('properties')
-        .select(`
-          *,
-          property_types (
-            name
-          ),
-          property_prices (
-            price,
-            currency,
-            price_type,
-            period
-          )
-        `)
-        .eq('id', id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching property:", error);
+      if (!id) {
+        setError("Property ID not found");
         return;
       }
 
-      if (data) {
+      console.log("Fetching property with ID:", id);
+      
+      try {
+        const { data, error } = await supabase
+          .from('properties')
+          .select(`
+            *,
+            property_types (
+              name
+            ),
+            property_prices (
+              price,
+              currency,
+              price_type,
+              period
+            )
+          `)
+          .eq('id', id)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Error fetching property:", error);
+          setError("Failed to load property details");
+          return;
+        }
+
+        if (!data) {
+          setError("Property not found");
+          return;
+        }
+
+        console.log("Fetched property data:", data);
+
         setProperty({
           id: data.id,
           title: data.title,
@@ -65,14 +81,21 @@ const PropertyDetail = () => {
           latitude: data.latitude,
           longitude: data.longitude
         });
+      } catch (err) {
+        console.error("Error in fetchProperty:", err);
+        setError("An unexpected error occurred");
       }
     };
 
     fetchProperty();
   }, [id]);
 
+  if (error) {
+    return <div className="container mx-auto px-4 py-8 text-center text-red-600">{error}</div>;
+  }
+
   if (!property) {
-    return <div>Loading...</div>;
+    return <div className="container mx-auto px-4 py-8 text-center">Chargement...</div>;
   }
 
   return (
