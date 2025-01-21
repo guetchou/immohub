@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,11 +49,6 @@ const ChatBot = () => {
       console.log("AI Response:", aiResponse);
 
       setMessages(prev => [...prev, { text: aiResponse, isUser: false }]);
-      
-      toast({
-        title: "Message reçu",
-        description: "Notre assistant a répondu à votre demande",
-      });
     } catch (error) {
       console.error("Error in chat:", error);
       toast({
@@ -100,7 +96,7 @@ const ChatBot = () => {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-96 h-[600px] flex flex-col animate-fade-in">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-[400px] h-[600px] flex flex-col animate-fade-in">
           <div className="bg-real-primary text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
@@ -121,14 +117,18 @@ const ChatBot = () => {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}
+                className={cn(
+                  "flex animate-fade-in",
+                  msg.isUser ? "justify-end" : "justify-start"
+                )}
               >
                 <div
-                  className={`rounded-lg px-4 py-2 max-w-[80%] ${
+                  className={cn(
+                    "rounded-lg px-4 py-2 max-w-[80%] shadow-sm",
                     msg.isUser
-                      ? 'bg-real-primary text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                  }`}
+                      ? "bg-real-primary text-white"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                  )}
                 >
                   {msg.text}
                 </div>
@@ -141,7 +141,7 @@ const ChatBot = () => {
             )}
           </div>
           
-          <div className="p-4 border-t dark:border-gray-700">
+          <div className="p-4 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-b-lg">
             <div className="flex gap-2">
               <Input
                 value={newMessage}
