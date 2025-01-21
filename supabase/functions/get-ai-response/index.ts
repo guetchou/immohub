@@ -20,7 +20,13 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const { message } = await req.json();
+    const body = await req.json();
+    const { message } = body;
+    
+    if (!message) {
+      throw new Error('Message is required');
+    }
+
     console.log("Received message:", message);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -30,7 +36,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',

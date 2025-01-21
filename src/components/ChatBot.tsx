@@ -29,20 +29,25 @@ const ChatBot = () => {
   const handleSend = async () => {
     if (!newMessage.trim()) return;
     
-    console.log("User sent message:", newMessage);
+    const userMessage = newMessage.trim();
+    console.log("User sent message:", userMessage);
     
-    setMessages(prev => [...prev, { text: newMessage, isUser: true }]);
+    setMessages(prev => [...prev, { text: userMessage, isUser: true }]);
     setNewMessage("");
     setIsLoading(true);
     
     try {
       const { data, error } = await supabase.functions.invoke('get-ai-response', {
-        body: { message: newMessage }
+        body: JSON.stringify({ message: userMessage })
       });
 
       if (error) {
         console.error("Supabase function error:", error);
         throw error;
+      }
+
+      if (!data || !data.response) {
+        throw new Error("Invalid response format from AI");
       }
 
       const aiResponse = data.response;
