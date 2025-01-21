@@ -5,7 +5,7 @@ import AppRoutes from "./routes/AppRoutes";
 import { Toaster } from "./components/ui/toaster";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import FloatingChatButton from "./components/chat/FloatingChatButton";
+import ChatBot from "./components/ChatBot";
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
               <AppRoutes />
             </main>
             <Footer />
-            <FloatingChatButton />
+            <ChatBot />
           </div>
           <Toaster />
         </RoleProvider>

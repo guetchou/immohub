@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MessageSquare, Send, Phone, Mail, Video, MessageCircle } from "lucide-react";
+import { MessageSquare, Send, Phone, Mail, Video, MessageCircle, Facebook, Instagram, Linkedin, MapPin } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
@@ -20,7 +20,8 @@ const ChatBot = () => {
     { text: "1. Recherche de propriétés", isUser: false },
     { text: "2. Questions sur le marché immobilier", isUser: false },
     { text: "3. Planification de visites", isUser: false },
-    { text: "4. Conseils d'investissement", isUser: false }
+    { text: "4. Conseils d'investissement", isUser: false },
+    { text: "5. Estimation de biens", isUser: false }
   ]);
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -32,13 +33,11 @@ const ChatBot = () => {
     const userMessage = newMessage.trim();
     console.log("User sent message:", userMessage);
     
-    // Add user message to chat
     setMessages(prev => [...prev, { text: userMessage, isUser: true }]);
     setNewMessage("");
     setIsLoading(true);
     
     try {
-      // Create a simple object for the request body
       const requestBody = { message: userMessage };
       console.log("Sending request to Edge Function:", requestBody);
 
@@ -78,7 +77,7 @@ const ChatBot = () => {
     }
   };
 
-  const handleContactAgent = (method: string) => {
+  const handleContactOption = (method: string) => {
     switch (method) {
       case 'call':
         toast({
@@ -92,8 +91,17 @@ const ChatBot = () => {
       case 'whatsapp':
         window.open("https://wa.me/242061234567", "_blank");
         break;
-      case 'sms':
-        window.location.href = "sms:+242061234567";
+      case 'facebook':
+        window.open("https://facebook.com/immohub.cg", "_blank");
+        break;
+      case 'instagram':
+        window.open("https://instagram.com/immohub.cg", "_blank");
+        break;
+      case 'linkedin':
+        window.open("https://linkedin.com/company/immohub-cg", "_blank");
+        break;
+      case 'office':
+        window.open("https://maps.google.com/?q=ImmoHub+Congo", "_blank");
         break;
       case 'video':
         toast({
@@ -172,37 +180,73 @@ const ChatBot = () => {
                 <Send className="h-4 w-4" />
               </Button>
             </div>
-            <div className="mt-2 flex justify-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="text-real-primary hover:text-real-primary/90">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Contacter un agent
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => handleContactAgent('call')}>
-                    <Phone className="h-4 w-4 mr-2" />
-                    Appeler
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleContactAgent('video')}>
-                    <Video className="h-4 w-4 mr-2" />
-                    Appel vidéo
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleContactAgent('email')}>
-                    <Mail className="h-4 w-4 mr-2" />
-                    Email
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleContactAgent('whatsapp')}>
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    WhatsApp
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleContactAgent('sms')}>
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    SMS
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                onClick={() => handleContactOption('call')}
+                className="text-real-primary hover:text-real-primary/90"
+              >
+                <Phone className="h-4 w-4 mr-2" />
+                Appeler
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleContactOption('video')}
+                className="text-real-primary hover:text-real-primary/90"
+              >
+                <Video className="h-4 w-4 mr-2" />
+                Visio
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleContactOption('whatsapp')}
+                className="text-real-primary hover:text-real-primary/90"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                WhatsApp
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleContactOption('email')}
+                className="text-real-primary hover:text-real-primary/90"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Email
+              </Button>
+            </div>
+            <div className="mt-2 flex justify-center space-x-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleContactOption('facebook')}
+                className="text-real-primary hover:text-real-primary/90"
+              >
+                <Facebook className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleContactOption('instagram')}
+                className="text-real-primary hover:text-real-primary/90"
+              >
+                <Instagram className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleContactOption('linkedin')}
+                className="text-real-primary hover:text-real-primary/90"
+              >
+                <Linkedin className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleContactOption('office')}
+                className="text-real-primary hover:text-real-primary/90"
+              >
+                <MapPin className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
