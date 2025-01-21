@@ -13,6 +13,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import PropertyMap from "@/components/location/PropertyMap";
 import SocialShare from "@/components/social/SocialShare";
+import MortgageSimulator from "@/components/calculators/MortgageSimulator";
+import PropertySaleCalculator from "@/components/calculators/PropertySaleCalculator";
+import { AppointmentSystem } from "@/components/AppointmentSystem";
+import { PriceSimulator } from "@/components/PriceSimulator";
 
 const Index = () => {
   const [properties, setProperties] = useState([]);
@@ -67,6 +71,30 @@ const Index = () => {
           <HowItWorks />
           
           <Services />
+
+          <div className="container mx-auto px-4 py-8">
+            <h2 className="text-2xl font-bold mb-6 text-real-primary">
+              Nos Outils
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <MortgageSimulator />
+              <PropertySaleCalculator />
+            </div>
+          </div>
+
+          <div className="container mx-auto px-4 py-8">
+            <h2 className="text-2xl font-bold mb-6 text-real-primary">
+              Simulateur de Prix
+            </h2>
+            <PriceSimulator />
+          </div>
+
+          <div className="container mx-auto px-4 py-8">
+            <h2 className="text-2xl font-bold mb-6 text-real-primary">
+              Planifier une Visite
+            </h2>
+            <AppointmentSystem />
+          </div>
           
           <div className="bg-gray-50">
             <Testimonials />
