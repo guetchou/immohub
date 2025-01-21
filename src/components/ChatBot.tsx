@@ -32,14 +32,21 @@ const ChatBot = () => {
     const userMessage = newMessage.trim();
     console.log("User sent message:", userMessage);
     
+    // Add user message to chat
     setMessages(prev => [...prev, { text: userMessage, isUser: true }]);
     setNewMessage("");
     setIsLoading(true);
     
     try {
+      // Create a simple object for the request body
+      const requestBody = { message: userMessage };
+      console.log("Sending request to Edge Function:", requestBody);
+
       const { data, error } = await supabase.functions.invoke('get-ai-response', {
-        body: JSON.stringify({ message: userMessage })
+        body: JSON.stringify(requestBody)
       });
+
+      console.log("Response from Edge Function:", { data, error });
 
       if (error) {
         console.error("Supabase function error:", error);
@@ -47,6 +54,7 @@ const ChatBot = () => {
       }
 
       if (!data || !data.response) {
+        console.error("Invalid response format:", data);
         throw new Error("Invalid response format from AI");
       }
 
