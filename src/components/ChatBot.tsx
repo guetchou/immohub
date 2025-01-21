@@ -100,7 +100,7 @@ const ChatBot = () => {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-80 h-[500px] flex flex-col">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-96 h-[600px] flex flex-col animate-fade-in">
           <div className="bg-real-primary text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
@@ -121,7 +121,7 @@ const ChatBot = () => {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}
               >
                 <div
                   className={`rounded-lg px-4 py-2 max-w-[80%] ${
@@ -196,7 +196,7 @@ const ChatBot = () => {
       ) : (
         <Button
           onClick={() => setIsOpen(true)}
-          className="rounded-full h-14 w-14 shadow-lg bg-real-primary hover:bg-real-primary/90"
+          className="rounded-full h-14 w-14 shadow-lg bg-real-primary hover:bg-real-primary/90 animate-bounce"
         >
           <MessageSquare className="h-6 w-6" />
         </Button>
