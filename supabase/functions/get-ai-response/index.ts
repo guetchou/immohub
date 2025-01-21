@@ -7,10 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -19,11 +16,10 @@ serve(async (req) => {
     const { message } = await req.json();
     console.log("Received message:", message);
 
-    // Call OpenAI API
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -31,7 +27,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Tu es un assistant immobilier professionnel pour ImmoHub Congo. 
+            content: `Tu es un assistant immobilier professionnel pour ImmoHub Congo.
             Tu dois aider les utilisateurs à:
             - Trouver des propriétés
             - Répondre aux questions sur le marché immobilier
@@ -42,6 +38,8 @@ serve(async (req) => {
           },
           { role: 'user', content: message }
         ],
+        temperature: 0.7,
+        max_tokens: 500,
       }),
     });
 
@@ -49,12 +47,11 @@ serve(async (req) => {
       throw new Error(`OpenAI API error: ${await openAIResponse.text()}`);
     }
 
-    const result = await openAIResponse.json();
-    const aiResponse = result.choices[0].message.content;
-    console.log("AI Response:", aiResponse);
+    const data = await openAIResponse.json();
+    console.log("OpenAI response:", data);
 
     return new Response(
-      JSON.stringify({ response: aiResponse }),
+      JSON.stringify({ response: data.choices[0].message.content }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -63,8 +60,10 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      {
+      JSON.stringify({ 
+        error: "Une erreur est survenue lors du traitement de votre demande." 
+      }),
+      { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
       },
