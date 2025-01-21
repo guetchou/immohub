@@ -15,8 +15,8 @@ import PropertyMap from "@/components/location/PropertyMap";
 import SocialShare from "@/components/social/SocialShare";
 import MortgageSimulator from "@/components/calculators/MortgageSimulator";
 import PropertySaleCalculator from "@/components/calculators/PropertySaleCalculator";
-import { AppointmentSystem } from "@/components/AppointmentSystem";
-import { PriceSimulator } from "@/components/PriceSimulator";
+import AppointmentSystem from "@/components/AppointmentSystem";
+import PriceSimulator from "@/components/PriceSimulator";
 
 const Index = () => {
   const [properties, setProperties] = useState([]);
