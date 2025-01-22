@@ -26,24 +26,25 @@ const PropertyCategories = () => {
       
       const { data, error } = await supabase
         .from('property_categories')
-        .select('id, name, description, parent_id')
-        .order('name');
+        .select('id, name, description, parent_id');
       
       if (error) {
         console.error('Error fetching categories:', error);
         return;
       }
-      
-      // Ensure we only store serializable data
-      const serializedCategories = data?.map(category => ({
-        id: category.id,
-        name: category.name,
-        description: category.description,
-        parent_id: category.parent_id
-      })) || [];
-      
-      console.log("Fetched categories:", serializedCategories);
-      setCategories(serializedCategories);
+
+      if (data) {
+        // Ensure we only store serializable data
+        const serializedCategories = data.map(category => ({
+          id: category.id,
+          name: category.name,
+          description: category.description,
+          parent_id: category.parent_id
+        }));
+        
+        console.log("Fetched categories:", serializedCategories);
+        setCategories(serializedCategories);
+      }
     } catch (error) {
       console.error('Error:', error);
     } finally {
