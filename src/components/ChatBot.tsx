@@ -4,13 +4,6 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,11 +31,15 @@ const ChatBot = () => {
     setIsLoading(true);
     
     try {
-      const requestBody = { message: userMessage };
-      console.log("Sending request to Edge Function:", requestBody);
+      // Create a plain object with only serializable data
+      const requestData = {
+        message: userMessage
+      };
+      
+      console.log("Sending request to Edge Function:", requestData);
 
       const { data, error } = await supabase.functions.invoke('get-ai-response', {
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestData)
       });
 
       console.log("Response from Edge Function:", { data, error });
@@ -138,18 +135,14 @@ const ChatBot = () => {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={cn(
-                  "flex animate-fade-in",
-                  msg.isUser ? "justify-end" : "justify-start"
-                )}
+                className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={cn(
-                    "rounded-lg px-4 py-2 max-w-[80%] shadow-sm",
+                  className={`rounded-lg px-4 py-2 max-w-[80%] ${
                     msg.isUser
-                      ? "bg-real-primary text-white"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                  )}
+                      ? 'bg-real-primary text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                  }`}
                 >
                   {msg.text}
                 </div>
