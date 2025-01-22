@@ -24,25 +24,21 @@ const ChatBot = () => {
     if (!newMessage.trim()) return;
     
     const userMessage = newMessage.trim();
-    console.log("User sent message:", userMessage);
-    
     setMessages(prev => [...prev, { text: userMessage, isUser: true }]);
     setNewMessage("");
     setIsLoading(true);
     
     try {
-      // Create a plain object with only serializable data
-      const requestData = {
-        message: userMessage
-      };
+      console.log("Preparing to send message:", userMessage);
       
-      console.log("Sending request to Edge Function:", requestData);
-
       const { data, error } = await supabase.functions.invoke('get-ai-response', {
-        body: JSON.stringify(requestData)
+        body: JSON.stringify({
+          message: userMessage,
+          timestamp: new Date().toISOString()
+        })
       });
 
-      console.log("Response from Edge Function:", { data, error });
+      console.log("Response received:", { data, error });
 
       if (error) {
         console.error("Supabase function error:", error);
@@ -55,7 +51,7 @@ const ChatBot = () => {
       }
 
       const aiResponse = data.response;
-      console.log("AI Response:", aiResponse);
+      console.log("Processing AI response:", aiResponse);
 
       setMessages(prev => [...prev, { text: aiResponse, isUser: false }]);
     } catch (error) {
@@ -114,7 +110,7 @@ const ChatBot = () => {
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-[400px] h-[600px] flex flex-col animate-fade-in">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-[400px] h-[600px] flex flex-col">
           <div className="bg-real-primary text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
