@@ -8,11 +8,14 @@ interface Category {
   name: string;
   description: string | null;
   parent_id: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const PropertyCategories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchCategories();
@@ -21,9 +24,11 @@ const PropertyCategories = () => {
   const fetchCategories = async () => {
     try {
       console.log("Fetching property categories...");
+      setIsLoading(true);
+      
       const { data, error } = await supabase
         .from('property_categories')
-        .select('*')
+        .select('id, name, description, parent_id')
         .order('name');
       
       if (error) {
@@ -31,10 +36,20 @@ const PropertyCategories = () => {
         return;
       }
       
-      console.log("Fetched categories:", data);
-      setCategories(data || []);
+      // Ensure we only store serializable data
+      const serializedCategories = data?.map(category => ({
+        id: category.id,
+        name: category.name,
+        description: category.description,
+        parent_id: category.parent_id
+      })) || [];
+      
+      console.log("Fetched categories:", serializedCategories);
+      setCategories(serializedCategories);
     } catch (error) {
       console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,6 +60,14 @@ const PropertyCategories = () => {
   const getSubCategories = (parentId: string) => {
     return categories.filter(cat => cat.parent_id === parentId);
   };
+
+  if (isLoading) {
+    return (
+      <div className="py-8 text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-real-primary mx-auto"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-8">
@@ -57,7 +80,9 @@ const PropertyCategories = () => {
             <Button
               variant={selectedCategory === mainCat.id ? "default" : "outline"}
               className="w-full justify-start"
-              onClick={() => setSelectedCategory(mainCat.id)}
+              onClick={() => setSelectedCategory(
+                selectedCategory === mainCat.id ? null : mainCat.id
+              )}
             >
               <Folder className="mr-2 h-4 w-4" />
               {mainCat.name}
