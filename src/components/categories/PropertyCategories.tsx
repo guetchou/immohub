@@ -1,0 +1,86 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Folder } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+interface Category {
+  id: string;
+  name: string;
+  description: string | null;
+  parent_id: string | null;
+}
+
+const PropertyCategories = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      console.log("Fetching property categories...");
+      const { data, error } = await supabase
+        .from('property_categories')
+        .select('*')
+        .order('name');
+      
+      if (error) {
+        console.error('Error fetching categories:', error);
+        return;
+      }
+      
+      console.log("Fetched categories:", data);
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const getMainCategories = () => {
+    return categories.filter(cat => !cat.parent_id);
+  };
+
+  const getSubCategories = (parentId: string) => {
+    return categories.filter(cat => cat.parent_id === parentId);
+  };
+
+  return (
+    <div className="py-8">
+      <h2 className="text-2xl font-bold text-real-primary mb-6 text-center">
+        Catégories de Biens
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {getMainCategories().map((mainCat) => (
+          <div key={mainCat.id} className="space-y-4">
+            <Button
+              variant={selectedCategory === mainCat.id ? "default" : "outline"}
+              className="w-full justify-start"
+              onClick={() => setSelectedCategory(mainCat.id)}
+            >
+              <Folder className="mr-2 h-4 w-4" />
+              {mainCat.name}
+            </Button>
+            {selectedCategory === mainCat.id && (
+              <div className="pl-4 space-y-2">
+                {getSubCategories(mainCat.id).map((subCat) => (
+                  <Button
+                    key={subCat.id}
+                    variant="ghost"
+                    className="w-full justify-start text-sm"
+                    onClick={() => setSelectedCategory(subCat.id)}
+                  >
+                    {subCat.name}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default PropertyCategories;

@@ -18,6 +18,7 @@ import PropertySaleCalculator from "@/components/calculators/PropertySaleCalcula
 import AppointmentSystem from "@/components/AppointmentSystem";
 import PriceSimulator from "@/components/PriceSimulator";
 import ChatBot from "@/components/ChatBot";
+import PropertyCategories from "@/components/categories/PropertyCategories";
 
 const Index = () => {
   const [properties, setProperties] = useState([]);
@@ -54,6 +55,10 @@ const Index = () => {
         </div>
         
         <div className="space-y-16">
+          <section className="container mx-auto px-4">
+            <PropertyCategories />
+          </section>
+
           <section className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-real-primary mb-8 text-center">
               Propriétés en Vedette

@@ -644,6 +644,7 @@ export type Database = {
           address: string
           bathrooms: number | null
           bedrooms: number | null
+          category_id: string | null
           city: string
           country: string | null
           created_at: string | null
@@ -664,6 +665,7 @@ export type Database = {
           address: string
           bathrooms?: number | null
           bedrooms?: number | null
+          category_id?: string | null
           city: string
           country?: string | null
           created_at?: string | null
@@ -684,6 +686,7 @@ export type Database = {
           address?: string
           bathrooms?: number | null
           bedrooms?: number | null
+          category_id?: string | null
           city?: string
           country?: string | null
           created_at?: string | null
@@ -702,6 +705,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "properties_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "property_categories"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "properties_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
@@ -713,6 +723,41 @@ export type Database = {
             columns: ["type_id"]
             isOneToOne: false
             referencedRelation: "property_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "property_categories"
             referencedColumns: ["id"]
           },
         ]
