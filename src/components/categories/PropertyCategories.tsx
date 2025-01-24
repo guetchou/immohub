@@ -26,8 +26,7 @@ const PropertyCategories = () => {
       
       const { data, error } = await supabase
         .from('property_categories')
-        .select('id, name, description, parent_id')
-        .returns<Category[]>();
+        .select('id, name, description, parent_id');
       
       if (error) {
         console.error('Error fetching categories:', error);
@@ -35,12 +34,12 @@ const PropertyCategories = () => {
       }
 
       if (data) {
-        // Create a new array with only serializable properties
+        // Create a new array with only serializable properties and explicit type conversion
         const serializedCategories = data.map(category => ({
-          id: String(category.id),
-          name: String(category.name),
+          id: String(category.id || ''),
+          name: String(category.name || ''),
           description: category.description,
-          parent_id: category.parent_id
+          parent_id: category.parent_id ? String(category.parent_id) : null
         }));
         
         console.log("Fetched categories:", serializedCategories);
