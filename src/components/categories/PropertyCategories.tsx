@@ -42,7 +42,7 @@ const PropertyCategories = () => {
           parent_id: category.parent_id ? String(category.parent_id) : null
         }));
         
-        console.log("Fetched categories:", serializedCategories);
+        console.log("Fetched categories:", JSON.stringify(serializedCategories));
         setCategories(serializedCategories);
       }
     } catch (error) {
