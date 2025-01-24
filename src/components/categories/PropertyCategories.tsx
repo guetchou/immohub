@@ -42,8 +42,12 @@ const PropertyCategories = () => {
           parent_id: category.parent_id ? String(category.parent_id) : null
         }));
         
-        console.log("Fetched categories:", JSON.stringify(serializedCategories));
-        setCategories(serializedCategories);
+        // Use JSON.stringify to ensure the data is fully serializable
+        const serializedData = JSON.stringify(serializedCategories);
+        console.log("Fetched categories:", serializedData);
+        
+        // Parse the stringified data back to ensure we're working with clean objects
+        setCategories(JSON.parse(serializedData));
       }
     } catch (error) {
       console.error('Error:', error);
