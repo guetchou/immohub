@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import PropertyCard from "./PropertyCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Loader } from "lucide-react";
 
 const PropertyList = () => {
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -14,6 +16,9 @@ const PropertyList = () => {
 
   const fetchProperties = async () => {
     try {
+      setLoading(true);
+      setError(null);
+
       const { data, error } = await supabase
         .from('properties')
         .select(`
@@ -29,15 +34,25 @@ const PropertyList = () => {
         .eq('status', 'available')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching properties:", error);
+        setError("Impossible de charger les propriétés");
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les propriétés",
+          variant: "destructive",
+        });
+        return;
+      }
 
       console.log("Fetched properties:", data);
       setProperties(data || []);
     } catch (error) {
-      console.error("Error fetching properties:", error);
+      console.error("Error in fetchProperties:", error);
+      setError("Une erreur inattendue s'est produite");
       toast({
         title: "Erreur",
-        description: "Impossible de charger les propriétés",
+        description: "Une erreur inattendue s'est produite",
         variant: "destructive",
       });
     } finally {
@@ -46,7 +61,27 @@ const PropertyList = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center p-8">Chargement...</div>;
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Loader className="h-8 w-8 animate-spin text-real-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-8 text-red-600">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  if (properties.length === 0) {
+    return (
+      <div className="text-center p-8 text-gray-600">
+        Aucune propriété disponible pour le moment
+      </div>
+    );
   }
 
   return (

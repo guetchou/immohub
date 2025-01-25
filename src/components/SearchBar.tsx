@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, MapPin, Home, DollarSign } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import {
 
 const SearchBar = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchParams, setSearchParams] = useState({
     query: "",
     location: "",
@@ -20,7 +22,19 @@ const SearchBar = () => {
     priceRange: "",
   });
 
+  console.log("Search params updated:", searchParams);
+
   const handleSearch = () => {
+    if (!searchParams.query && !searchParams.location && !searchParams.propertyType && !searchParams.priceRange) {
+      toast({
+        title: "Attention",
+        description: "Veuillez remplir au moins un critère de recherche",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log("Performing search with params:", searchParams);
     const queryParams = new URLSearchParams();
     Object.entries(searchParams).forEach(([key, value]) => {
       if (value) queryParams.append(key, value);
@@ -46,7 +60,7 @@ const SearchBar = () => {
           value={searchParams.location}
           onValueChange={(value) => setSearchParams({ ...searchParams, location: value })}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger>
             <MapPin className="h-4 w-4 mr-2" />
             <SelectValue placeholder="Localisation" />
           </SelectTrigger>
@@ -61,7 +75,7 @@ const SearchBar = () => {
           value={searchParams.propertyType}
           onValueChange={(value) => setSearchParams({ ...searchParams, propertyType: value })}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger>
             <Home className="h-4 w-4 mr-2" />
             <SelectValue placeholder="Type de bien" />
           </SelectTrigger>
@@ -77,7 +91,7 @@ const SearchBar = () => {
           value={searchParams.priceRange}
           onValueChange={(value) => setSearchParams({ ...searchParams, priceRange: value })}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger>
             <DollarSign className="h-4 w-4 mr-2" />
             <SelectValue placeholder="Budget" />
           </SelectTrigger>
