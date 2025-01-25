@@ -4,8 +4,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader } from "lucide-react";
 
+interface Property {
+  id: string;
+  title: string;
+  description?: string;
+  property_types?: { name: string };
+  property_prices?: Array<{
+    price: number;
+    currency: string;
+    price_type: string;
+    period?: string;
+  }>;
+  city: string;
+  address: string;
+  surface_area?: number;
+  image_url?: string;
+}
+
 const PropertyList = () => {
-  const [properties, setProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -18,18 +35,25 @@ const PropertyList = () => {
     try {
       setLoading(true);
       setError(null);
+      console.log("Fetching properties...");
 
       const { data, error } = await supabase
         .from('properties')
         .select(`
-          *,
+          id,
+          title,
+          description,
           property_types(name),
           property_prices(
             price,
             currency,
             price_type,
             period
-          )
+          ),
+          city,
+          address,
+          surface_area,
+          image_url
         `)
         .eq('status', 'available')
         .order('created_at', { ascending: false });
@@ -45,8 +69,28 @@ const PropertyList = () => {
         return;
       }
 
-      console.log("Fetched properties:", data);
-      setProperties(data || []);
+      // Ensure all data is serializable by converting to plain objects
+      const serializedProperties = (data || []).map(property => ({
+        id: String(property.id || ''),
+        title: String(property.title || ''),
+        description: property.description ? String(property.description) : undefined,
+        property_types: property.property_types ? {
+          name: String(property.property_types.name || '')
+        } : undefined,
+        property_prices: property.property_prices ? property.property_prices.map(price => ({
+          price: Number(price.price || 0),
+          currency: String(price.currency || 'XAF'),
+          price_type: String(price.price_type || ''),
+          period: price.period ? String(price.period) : undefined
+        })) : [],
+        city: String(property.city || ''),
+        address: String(property.address || ''),
+        surface_area: property.surface_area ? Number(property.surface_area) : undefined,
+        image_url: property.image_url ? String(property.image_url) : undefined
+      }));
+
+      console.log("Serialized properties:", JSON.stringify(serializedProperties));
+      setProperties(serializedProperties);
     } catch (error) {
       console.error("Error in fetchProperties:", error);
       setError("Une erreur inattendue s'est produite");
