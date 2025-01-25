@@ -34,7 +34,7 @@ const PropertyCategories = () => {
       }
 
       if (data) {
-        // Create a new array with only serializable properties and explicit type conversion
+        // Create a new array with only serializable properties
         const serializedCategories = data.map(category => ({
           id: String(category.id || ''),
           name: String(category.name || ''),
@@ -42,27 +42,26 @@ const PropertyCategories = () => {
           parent_id: category.parent_id ? String(category.parent_id) : null
         }));
         
-        // Use JSON.stringify to ensure the data is fully serializable
-        const serializedData = JSON.stringify(serializedCategories);
-        console.log("Fetched categories:", serializedData);
-        
-        // Parse the stringified data back to ensure we're working with clean objects
-        setCategories(JSON.parse(serializedData));
+        // Verify data is serializable before setting state
+        try {
+          const serializedData = JSON.stringify(serializedCategories);
+          console.log("Successfully serialized categories:", serializedData);
+          setCategories(JSON.parse(serializedData));
+        } catch (serializationError) {
+          console.error('Serialization error:', serializationError);
+          setCategories([]);
+        }
       }
     } catch (error) {
       console.error('Error:', error);
+      setCategories([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getMainCategories = () => {
-    return categories.filter(cat => !cat.parent_id);
-  };
-
-  const getSubCategories = (parentId: string) => {
-    return categories.filter(cat => cat.parent_id === parentId);
-  };
+  const getMainCategories = () => categories.filter(cat => !cat.parent_id);
+  const getSubCategories = (parentId: string) => categories.filter(cat => cat.parent_id === parentId);
 
   if (isLoading) {
     return (

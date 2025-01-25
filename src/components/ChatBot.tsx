@@ -29,7 +29,7 @@ const ChatBot = () => {
     setIsLoading(true);
     
     try {
-      console.log("Preparing to send message:", userMessage);
+      console.log("Sending message to AI assistant:", userMessage);
       
       const { data, error } = await supabase.functions.invoke('get-ai-response', {
         body: JSON.stringify({
@@ -38,16 +38,16 @@ const ChatBot = () => {
         })
       });
 
-      console.log("Response received:", { data, error });
+      console.log("Response received from AI:", { data, error });
 
       if (error) {
-        console.error("Supabase function error:", error);
+        console.error("Error from AI service:", error);
         throw error;
       }
 
       if (!data || !data.response) {
-        console.error("Invalid response format:", data);
-        throw new Error("Invalid response format from AI");
+        console.error("Invalid AI response format:", data);
+        throw new Error("Format de réponse invalide");
       }
 
       const aiResponse = data.response;
@@ -55,7 +55,7 @@ const ChatBot = () => {
 
       setMessages(prev => [...prev, { text: aiResponse, isUser: false }]);
     } catch (error) {
-      console.error("Error in chat:", error);
+      console.error("Chat error:", error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de la communication avec l'assistant",
