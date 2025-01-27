@@ -11,31 +11,44 @@ import { Badge } from "@/components/ui/badge";
 const featuredProperties = [
   {
     id: 1,
-    title: "Villa de luxe avec piscine",
-    location: "Brazzaville - Plateau",
-    price: "450,000,000 FCFA",
+    title: "Villa Présidentielle avec Vue Panoramique",
+    location: "Brazzaville - Plateau des 15 ans",
+    price: "850,000,000 FCFA",
     type: "Vente",
     image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop",
-    features: ["5 chambres", "Piscine", "Jardin"],
+    features: ["6 chambres", "Piscine à débordement", "Jardin tropical", "Salle de sport", "Cave à vin"],
+    description: "Magnifique villa de prestige avec vue imprenable sur le fleuve Congo. Architecture contemporaine, matériaux nobles, domotique intégrée."
   },
   {
     id: 2,
-    title: "Appartement moderne",
+    title: "Appartement de Standing - Le Millénium",
     location: "Pointe-Noire - Centre-ville",
-    price: "250,000 FCFA/mois",
+    price: "450,000 FCFA/mois",
     type: "Location",
     image: "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800&h=600&fit=crop",
-    features: ["3 chambres", "Meublé", "Parking"],
+    features: ["3 chambres", "Entièrement meublé", "Parking sécurisé", "Ascenseur", "Concierge 24/7"],
+    description: "Appartement haut de gamme dans une résidence sécurisée avec services premium et vue sur l'océan."
   },
   {
     id: 3,
-    title: "Bureau commercial",
+    title: "Centre d'Affaires Moderne - Tour Mayombe",
     location: "Brazzaville - Centre-ville",
-    price: "350,000 FCFA/mois",
+    price: "550,000 FCFA/mois",
     type: "Location",
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
-    features: ["100m²", "Climatisé", "Sécurité 24/7"],
+    features: ["200m²", "Climatisation centrale", "Fibre optique", "Salle de conférence", "Parking privé"],
+    description: "Espace professionnel premium dans le quartier des affaires, idéal pour siège social ou bureau de représentation."
   },
+  {
+    id: 4,
+    title: "Résidence Les Flamboyants",
+    location: "Brazzaville - Bacongo",
+    price: "380,000,000 FCFA",
+    type: "Vente",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop",
+    features: ["4 chambres", "Terrasse panoramique", "Jardin", "Smart home", "Quartier prisé"],
+    description: "Villa moderne dans un quartier recherché, alliance parfaite entre tradition et modernité."
+  }
 ];
 
 const FeaturedProperties = () => {

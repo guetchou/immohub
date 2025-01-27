@@ -7,25 +7,33 @@ import {
 
 const faqs = [
   {
-    question: "Comment puis-je publier une annonce ?",
-    answer:
-      "Pour publier une annonce, créez un compte propriétaire, remplissez les informations de votre bien et ajoutez des photos de qualité. Notre équipe validera votre annonce sous 24h.",
+    question: "Comment puis-je publier une annonce immobilière ?",
+    answer: "Pour publier une annonce, créez un compte propriétaire et suivez ces étapes : 1) Remplissez les informations détaillées du bien, 2) Ajoutez des photos de qualité professionnelle, 3) Précisez les conditions de vente/location. Notre équipe validera votre annonce sous 24h pour garantir sa qualité."
   },
   {
-    question: "Quels sont les frais de service ?",
-    answer:
-      "Nos frais de service varient selon le type de bien et la durée de l'engagement. Contactez-nous pour obtenir un devis personnalisé.",
+    question: "Quels sont les frais de service d'ImmoHub ?",
+    answer: "Nos frais varient selon le type de bien et la durée d'engagement. Pour une vente : commission de 3% du prix de vente. Pour une location : 50% du premier loyer mensuel. Des forfaits premium avec services additionnels sont disponibles pour les professionnels."
   },
   {
-    question: "Comment se déroule une visite ?",
-    answer:
-      "Vous pouvez programmer une visite directement depuis l'annonce. Choisissez entre une visite virtuelle ou physique, et sélectionnez un créneau qui vous convient.",
+    question: "Comment se déroule une visite de bien ?",
+    answer: "Vous pouvez programmer une visite en ligne ou par téléphone. Nous proposons des visites physiques et virtuelles. Pour les visites physiques, un agent vous accompagne et répond à vos questions. Pour les visites virtuelles, profitez d'une expérience immersive en 3D depuis chez vous."
   },
   {
-    question: "Quels sont les documents nécessaires pour louer ?",
-    answer:
-      "Les documents requis incluent une pièce d'identité, les 3 derniers bulletins de salaire, un justificatif de domicile et une attestation d'emploi.",
+    question: "Quels documents sont nécessaires pour louer ?",
+    answer: "Les documents requis incluent : pièce d'identité, 3 derniers bulletins de salaire, attestation de travail récente, justificatif de domicile, relevés bancaires des 3 derniers mois. Pour les professions libérales : les 2 derniers bilans comptables."
   },
+  {
+    question: "Comment est garantie la sécurité des transactions ?",
+    answer: "Nous sécurisons chaque transaction via notre protocole de vérification en 3 étapes : 1) Vérification d'identité des parties, 2) Authentification des documents, 3) Paiement sécurisé via notre plateforme partenaire. Un notaire partenaire peut être recommandé."
+  },
+  {
+    question: "Proposez-vous une assurance habitation ?",
+    answer: "Oui, nous collaborons avec les meilleures compagnies d'assurance pour offrir des couvertures adaptées : multirisque habitation, protection juridique, garantie loyers impayés. Nos conseillers vous aident à choisir la formule idéale."
+  },
+  {
+    question: "Quel est le délai moyen pour vendre un bien ?",
+    answer: "Le délai moyen est de 3 mois, variable selon le type de bien et sa localisation. Nos statistiques montrent que les biens avec photos professionnelles et prix du marché se vendent 40% plus rapidement. Notre équipe vous conseille pour optimiser votre annonce."
+  }
 ];
 
 const FAQ = () => {

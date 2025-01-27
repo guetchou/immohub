@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 const news = [
   {
     id: 1,
-    title: "Nouveau quartier résidentiel à Brazzaville",
-    excerpt: "Découvrez les opportunités d'investissement dans le nouveau quartier résidentiel de la capitale.",
+    title: "Nouveau quartier résidentiel écologique à Brazzaville",
+    excerpt: "Découvrez 'Les Jardins de Bacongo', premier éco-quartier du Congo avec certification environnementale. 200 logements durables disponibles dès 2024.",
     date: "2024-02-15",
     image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625",
     category: "Développement",
@@ -15,8 +15,8 @@ const news = [
   },
   {
     id: 2,
-    title: "Guide de l'investissement immobilier",
-    excerpt: "Tout ce que vous devez savoir pour investir dans l'immobilier au Congo.",
+    title: "Guide complet de l'investissement immobilier au Congo",
+    excerpt: "Analyse détaillée du marché, zones à fort potentiel, rendements locatifs et plus encore. Téléchargez notre rapport exclusif 2024.",
     date: "2024-02-10",
     image: "https://images.unsplash.com/photo-1496307653780-42ee777d4833",
     category: "Guide",
@@ -24,17 +24,17 @@ const news = [
   },
   {
     id: 3,
-    title: "Tendances du marché immobilier",
-    excerpt: "Analyse des tendances du marché immobilier pour le premier trimestre 2024.",
+    title: "Révolution digitale dans l'immobilier congolais",
+    excerpt: "Visites virtuelles, signatures électroniques, paiements mobiles : comment la technologie transforme le secteur immobilier au Congo.",
     date: "2024-02-05",
     image: "https://images.unsplash.com/photo-1433832597046-4f10e10ac764",
-    category: "Analyse",
+    category: "Innovation",
     readTime: "6 min"
   },
   {
     id: 4,
-    title: "Nouvelles réglementations immobilières",
-    excerpt: "Les changements législatifs importants qui impactent le secteur immobilier.",
+    title: "Nouvelles mesures pour l'accès à la propriété",
+    excerpt: "Le gouvernement annonce des facilités de crédit et des allègements fiscaux pour favoriser l'accession à la propriété des jeunes ménages.",
     date: "2024-02-01",
     image: "https://images.unsplash.com/photo-1492321936769-b49830bc1d1e",
     category: "Législation",

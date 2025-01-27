@@ -5,44 +5,50 @@ const partners = [
   {
     id: 1,
     name: "Banque Congolaise de l'Habitat BCH",
-    logo: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&auto=format&fit=crop&q=60",
-    description: "Partenaire financier principal pour vos projets immobiliers",
-    link: "https://bch.cg"
+    logo: "/partners/bch-logo.png",
+    description: "Premier partenaire financier immobilier au Congo. Taux préférentiels exclusifs pour les clients ImmoHub. Financement jusqu'à 80% sur 25 ans.",
+    link: "https://bch.cg",
+    type: "Financement"
   },
   {
     id: 2,
     name: "BGFI Bank",
-    logo: "https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?w=800&auto=format&fit=crop&q=60",
-    description: "Solutions de financement adaptées à vos besoins",
-    link: "https://bgfi.com"
+    logo: "/partners/bgfi-logo.png",
+    description: "Solutions de financement sur mesure pour particuliers et professionnels. Accompagnement personnalisé par des experts en crédit immobilier.",
+    link: "https://bgfi.com",
+    type: "Financement"
   },
   {
     id: 3,
-    name: "Ecobank",
-    logo: "https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=800&auto=format&fit=crop&q=60",
-    description: "Accompagnement personnalisé pour votre investissement",
-    link: "https://ecobank.com"
+    name: "Assurances NSIA",
+    logo: "/partners/nsia-logo.png",
+    description: "Leader de l'assurance immobilière au Congo. Offres exclusives multirisque habitation et garantie loyers impayés pour les clients ImmoHub.",
+    link: "https://nsia-assurances.com",
+    type: "Assurance"
   },
   {
     id: 4,
-    name: "MTN Congo",
-    logo: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&auto=format&fit=crop&q=60",
-    description: "Solutions de paiement mobile pour vos transactions",
-    link: "https://mtn.cg"
+    name: "MTN Mobile Money",
+    logo: "/partners/mtn-logo.png",
+    description: "Paiements sécurisés pour loyers et cautions. Transferts instantanés et suivi en temps réel de vos transactions immobilières.",
+    link: "https://mtn.cg",
+    type: "Paiement"
   },
   {
     id: 5,
-    name: "Airtel Congo",
-    logo: "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=800&auto=format&fit=crop&q=60",
-    description: "Facilitez vos paiements avec Airtel Money",
-    link: "https://airtel.cg"
+    name: "Notaires Associés du Congo",
+    logo: "/partners/notaires-logo.png",
+    description: "Réseau de notaires certifiés pour sécuriser vos transactions. Expertise juridique et accompagnement personnalisé tout au long du processus.",
+    link: "https://notaires.cg",
+    type: "Juridique"
   },
   {
     id: 6,
-    name: "Assurances NSIA",
-    logo: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&auto=format&fit=crop&q=60",
-    description: "Protection et assurance de vos biens immobiliers",
-    link: "https://nsia-assurances.com"
+    name: "Congo Expertise Immobilière",
+    logo: "/partners/expertise-logo.png",
+    description: "Cabinet d'expertise pour évaluations et diagnostics immobiliers. Rapports détaillés et certifiés pour ventes et locations.",
+    link: "https://cei.cg",
+    type: "Expertise"
   }
 ];
 
