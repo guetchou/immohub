@@ -6,60 +6,43 @@
   :root {
     --background: 250 33% 98%;
     --foreground: 240 10% 3.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-
     --primary: 262.1 83.3% 57.8%;
     --primary-foreground: 210 20% 98%;
-
     --secondary: 220 14.3% 95.9%;
     --secondary-foreground: 220.9 39.3% 11%;
-
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
-
     --accent: 262.1 83.3% 57.8%;
     --accent-foreground: 240 5.9% 10%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
-
     --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 262.1 83.3% 57.8%;
-
     --radius: 0.75rem;
   }
 
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
-
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-
     --primary: 262.1 83.3% 57.8%;
     --primary-foreground: 210 20% 98%;
-
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
-
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
@@ -97,4 +80,54 @@
 /* Modern input styles */
 .input-modern {
   @apply rounded-lg border-gray-200 bg-white/80 backdrop-blur-sm transition-all duration-300 focus:border-real-primary focus:ring-real-primary dark:border-gray-700 dark:bg-gray-800/80;
+}
+
+/* Futuristic elements */
+.glassmorphism {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 dark:bg-gray-900/30;
+}
+
+.neon-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-real-primary to-real-accent;
+}
+
+.hover-glow {
+  @apply transition-all duration-300 hover:shadow-[0_0_15px_rgba(139,92,246,0.5)];
+}
+
+.animated-border {
+  @apply relative overflow-hidden;
+}
+
+.animated-border::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-real-primary via-real-accent to-real-primary;
+  background-size: 200% 100%;
+  animation: border-animation 2s linear infinite;
+}
+
+@keyframes border-animation {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+/* Particle animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.floating {
+  animation: float 6s ease-in-out infinite;
 }

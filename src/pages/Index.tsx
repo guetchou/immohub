@@ -19,9 +19,13 @@ import AppointmentSystem from "@/components/AppointmentSystem";
 import PriceSimulator from "@/components/PriceSimulator";
 import ChatBot from "@/components/ChatBot";
 import PropertyCategories from "@/components/categories/PropertyCategories";
+import FuturisticBackground from "@/components/ui/futuristic-background";
+import RecommendedProperties from "@/components/RecommendedProperties";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [properties, setProperties] = useState([]);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -46,8 +50,10 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <FuturisticBackground />
+      
+      <main className="relative">
         <HeroBanner />
         
         <div className="container mx-auto px-4 py-12">
@@ -58,6 +64,12 @@ const Index = () => {
           <section className="container mx-auto px-4">
             <PropertyCategories />
           </section>
+
+          {isAuthenticated && (
+            <section className="container mx-auto px-4">
+              <RecommendedProperties />
+            </section>
+          )}
 
           <section className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-real-primary mb-8 text-center">
