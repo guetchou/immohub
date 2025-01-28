@@ -17,6 +17,7 @@ const PropertyMap = ({ properties = [] }: PropertyMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const { toast } = useToast();
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -49,22 +50,31 @@ const PropertyMap = ({ properties = [] }: PropertyMapProps) => {
         console.log('Initializing Mapbox map');
         mapboxgl.accessToken = data.key;
         
-        map.current = new mapboxgl.Map({
-          container: mapContainer.current,
-          style: 'mapbox://styles/mapbox/streets-v11',
-          center: [15.2663, -4.4419], // Brazzaville coordinates
-          zoom: 12
-        });
+        // Only create a new map if one doesn't exist
+        if (!map.current) {
+          map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [15.2663, -4.4419], // Brazzaville coordinates
+            zoom: 12
+          });
 
-        // Add navigation controls
-        map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+          // Add navigation controls
+          map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        }
+
+        // Clear existing markers
+        markersRef.current.forEach(marker => marker.remove());
+        markersRef.current = [];
 
         // Add markers for properties
         properties.forEach(property => {
-          new mapboxgl.Marker()
+          const marker = new mapboxgl.Marker()
             .setLngLat([property.longitude, property.latitude])
             .setPopup(new mapboxgl.Popup().setHTML(`<h3>${property.title}</h3>`))
             .addTo(map.current!);
+          
+          markersRef.current.push(marker);
         });
 
       } catch (error) {
@@ -79,8 +89,17 @@ const PropertyMap = ({ properties = [] }: PropertyMapProps) => {
 
     initializeMap();
 
+    // Cleanup function
     return () => {
-      map.current?.remove();
+      // Remove markers first
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
+      
+      // Then remove the map if it exists
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
   }, [properties, toast]);
 
