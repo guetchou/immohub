@@ -23,6 +23,8 @@ import RecommendedProperties from "@/components/RecommendedProperties";
 import { useAuth } from "@/contexts/AuthContext";
 import MarketStats from "@/components/MarketStats";
 import VideoTestimonials from "@/components/VideoTestimonials";
+import MarketInsights from "@/components/market/MarketInsights";
+import SmartRecommendations from "@/components/recommendations/SmartRecommendations";
 
 const Index = () => {
   const [properties, setProperties] = useState([]);
@@ -64,7 +66,19 @@ const Index = () => {
         <div className="space-y-16">
           <PropertyCategories />
 
-          {isAuthenticated && <RecommendedProperties />}
+          {isAuthenticated && (
+            <>
+              <SmartRecommendations />
+              <RecommendedProperties />
+            </>
+          )}
+
+          <section className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              Aperçu du Marché
+            </h2>
+            <MarketInsights />
+          </section>
 
           <FeaturedProperties />
           
