@@ -7,48 +7,56 @@ import {
 
 const faqs = [
   {
-    question: "Comment puis-je publier une annonce immobilière ?",
-    answer: "Pour publier une annonce, créez un compte propriétaire et suivez ces étapes : 1) Remplissez les informations détaillées du bien, 2) Ajoutez des photos de qualité professionnelle, 3) Précisez les conditions de vente/location. Notre équipe validera votre annonce sous 24h pour garantir sa qualité."
+    question: "Comment fonctionne le système de recommandation personnalisée ?",
+    answer: "Notre algorithme analyse vos préférences, historique de recherche et critères spécifiques pour vous proposer les biens les plus pertinents. Plus vous interagissez avec la plateforme, plus les recommandations s'affinent."
   },
   {
-    question: "Quels sont les frais de service d'ImmoHub ?",
-    answer: "Nos frais varient selon le type de bien et la durée d'engagement. Pour une vente : commission de 3% du prix de vente. Pour une location : 50% du premier loyer mensuel. Des forfaits premium avec services additionnels sont disponibles pour les professionnels."
+    question: "Quelles sont les garanties de sécurité pour les transactions ?",
+    answer: "Nous utilisons un protocole de vérification en 3 étapes : authentification forte des parties, validation des documents par nos experts, et paiement sécurisé via notre plateforme partenaire. Un notaire partenaire peut être recommandé."
   },
   {
-    question: "Comment se déroule une visite de bien ?",
-    answer: "Vous pouvez programmer une visite en ligne ou par téléphone. Nous proposons des visites physiques et virtuelles. Pour les visites physiques, un agent vous accompagne et répond à vos questions. Pour les visites virtuelles, profitez d'une expérience immersive en 3D depuis chez vous."
+    question: "Comment est calculé le prix optimal d'un bien ?",
+    answer: "Notre algorithme d'estimation prend en compte plusieurs facteurs : les prix du marché local, l'historique des transactions, les caractéristiques du bien, la demande actuelle et les tendances du secteur pour proposer un prix juste et compétitif."
   },
   {
-    question: "Quels documents sont nécessaires pour louer ?",
-    answer: "Les documents requis incluent : pièce d'identité, 3 derniers bulletins de salaire, attestation de travail récente, justificatif de domicile, relevés bancaires des 3 derniers mois. Pour les professions libérales : les 2 derniers bilans comptables."
+    question: "Quels sont les avantages du programme de fidélité ImmoHub+ ?",
+    answer: "Les membres ImmoHub+ bénéficient d'avantages exclusifs : accès prioritaire aux nouvelles annonces, visites virtuelles illimitées, conseils personnalisés d'experts, et remises sur les frais de service. Le programme est gratuit pour les clients réguliers."
   },
   {
-    question: "Comment est garantie la sécurité des transactions ?",
-    answer: "Nous sécurisons chaque transaction via notre protocole de vérification en 3 étapes : 1) Vérification d'identité des parties, 2) Authentification des documents, 3) Paiement sécurisé via notre plateforme partenaire. Un notaire partenaire peut être recommandé."
+    question: "Comment se déroule une visite virtuelle 3D ?",
+    answer: "Nos visites virtuelles utilisent la technologie de pointe Matterport pour une expérience immersive. Naviguez dans chaque pièce, prenez des mesures en temps réel, et visualisez différents aménagements possibles. Disponible 24/7 depuis votre appareil."
   },
   {
-    question: "Proposez-vous une assurance habitation ?",
-    answer: "Oui, nous collaborons avec les meilleures compagnies d'assurance pour offrir des couvertures adaptées : multirisque habitation, protection juridique, garantie loyers impayés. Nos conseillers vous aident à choisir la formule idéale."
+    question: "Quels sont les critères de sélection des agents partenaires ?",
+    answer: "Nos agents sont rigoureusement sélectionnés selon plusieurs critères : expérience minimum de 5 ans, certification professionnelle, excellentes références clients, et engagement qualité ImmoHub. Formation continue obligatoire."
   },
   {
-    question: "Quel est le délai moyen pour vendre un bien ?",
-    answer: "Le délai moyen est de 3 mois, variable selon le type de bien et sa localisation. Nos statistiques montrent que les biens avec photos professionnelles et prix du marché se vendent 40% plus rapidement. Notre équipe vous conseille pour optimiser votre annonce."
+    question: "Comment fonctionne la garantie satisfaction ImmoHub ?",
+    answer: "Notre garantie couvre les 3 premiers mois après la transaction. Si le bien ne correspond pas aux critères annoncés, nous prenons en charge les modifications nécessaires ou proposons une solution alternative. Conditions détaillées dans nos CGV."
   }
 ];
 
 const FAQ = () => {
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-gradient-to-br from-gray-50 to-white">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center text-real-primary mb-8">
           Questions Fréquentes
         </h2>
         <div className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible>
+          <Accordion type="single" collapsible className="space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger>{faq.question}</AccordionTrigger>
-                <AccordionContent>{faq.answer}</AccordionContent>
+              <AccordionItem 
+                key={index} 
+                value={`item-${index}`}
+                className="bg-white/80 backdrop-blur-sm rounded-lg border border-gray-200 hover:border-real-primary/50 transition-all duration-300"
+              >
+                <AccordionTrigger className="px-4 py-2 text-left hover:text-real-primary">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4 text-gray-600">
+                  {faq.answer}
+                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
