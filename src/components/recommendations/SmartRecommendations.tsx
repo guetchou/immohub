@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { calculatePropertyRecommendations } from "@/utils/propertyRecommendation";
+import { getPropertyRecommendations } from "@/utils/propertyRecommendation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { House, Star } from "lucide-react";
@@ -22,7 +22,7 @@ const SmartRecommendations = () => {
 
       try {
         console.log("Loading recommendations for user:", user.id);
-        const data = await calculatePropertyRecommendations(user.id, {
+        const data = await getPropertyRecommendations(user.id, {
           location: "Brazzaville",
           minPrice: 100000000,
           maxPrice: 500000000,
