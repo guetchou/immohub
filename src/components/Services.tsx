@@ -1,4 +1,4 @@
-import { Shield, Clock, UserCheck, HeartHandshake, Search, Key, Home, Tool } from "lucide-react";
+import { Shield, Clock, UserCheck, HeartHandshake, Search, Key, Home, Wrench } from "lucide-react";
 import { motion } from "framer-motion";
 
 const services = [
@@ -55,7 +55,7 @@ const services = [
     id: 8,
     title: "Maintenance",
     description: "Service de réparation 24/7. Réseau d'artisans qualifiés. Suivi des interventions en temps réel.",
-    icon: Tool,
+    icon: Wrench,
     color: "bg-teal-500"
   }
 ];
