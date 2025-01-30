@@ -8,8 +8,14 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Ensure gptengineer.js is loaded first -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <!-- Load GPT Engineer script first and ensure it's initialized -->
+    <script 
+      src="https://cdn.gpteng.co/gptengineer.js" 
+      type="module"
+      async="false"
+      defer="false"
+    ></script>
+    <!-- Wait for GPT Engineer to load before loading the main application -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
