@@ -16,4 +16,8 @@ export interface User {
   email: string;
   role: UserRole;
   createdAt: Date;
+  full_name?: string;
+  phone?: string;
+  company_name?: string;
+  website?: string;
 }

@@ -13,7 +13,7 @@ const UserProfile = () => {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    full_name: user?.full_name || "",
+    full_name: user?.full_name || user?.name || "",
     phone: user?.phone || "",
     company_name: user?.company_name || "",
     website: user?.website || "",
