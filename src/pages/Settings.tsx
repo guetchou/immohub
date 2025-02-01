@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { Bell, Moon, Sun, Globe, Lock, Bell } from "lucide-react";
+import { Bell, Moon, Sun, Globe, Lock } from "lucide-react";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();

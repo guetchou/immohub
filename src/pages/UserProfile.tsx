@@ -13,10 +13,10 @@ const UserProfile = () => {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    full_name: user?.user_metadata?.full_name || "",
-    phone: user?.user_metadata?.phone || "",
-    company_name: user?.user_metadata?.company_name || "",
-    website: user?.user_metadata?.website || "",
+    full_name: user?.full_name || "",
+    phone: user?.phone || "",
+    company_name: user?.company_name || "",
+    website: user?.website || "",
   });
 
   const handleUpdateProfile = async () => {

@@ -16,6 +16,10 @@ import Settings from "@/pages/Settings";
 import Statistics from "@/pages/Statistics";
 import Admin from "@/pages/Admin";
 import { useAuth } from "@/contexts/AuthContext";
+import TenantDashboard from "@/pages/dashboards/TenantDashboard";
+import LandlordDashboard from "@/pages/dashboards/LandlordDashboard";
+import AgencyDashboard from "@/pages/dashboards/AgencyDashboard";
+import BrokerDashboard from "@/pages/dashboards/BrokerDashboard";
 
 const AppRoutes = () => {
   const { user } = useAuth();
