@@ -11,10 +11,10 @@ import Calculator from "@/pages/Calculator";
 import Contact from "@/pages/Contact";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
-import TenantDashboard from "@/pages/dashboards/TenantDashboard";
-import LandlordDashboard from "@/pages/dashboards/LandlordDashboard";
-import AgencyDashboard from "@/pages/dashboards/AgencyDashboard";
-import BrokerDashboard from "@/pages/dashboards/BrokerDashboard";
+import UserProfile from "@/pages/UserProfile";
+import Settings from "@/pages/Settings";
+import Statistics from "@/pages/Statistics";
+import Admin from "@/pages/Admin";
 import { useAuth } from "@/contexts/AuthContext";
 
 const AppRoutes = () => {
@@ -51,6 +51,42 @@ const AppRoutes = () => {
       
       {/* Protected routes */}
       <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/statistics"
+        element={
+          <ProtectedRoute roles={["ADMIN", "AGENCY"]}>
+            <Statistics />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute roles={["ADMIN"]}>
+            <Admin />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
         path="/messages"
         element={
           <ProtectedRoute>
@@ -58,6 +94,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/favorites"
         element={
@@ -66,6 +103,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/customer-service"
         element={
@@ -74,6 +112,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/calculator"
         element={

@@ -163,14 +163,22 @@ const Header = () => {
                     <Link to="/contact" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
                       Contact
                     </Link>
-                    <Link to="/calculator" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
-                      Calculateur
-                    </Link>
-                    <Link to="/customer-service" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
-                      Service Client
-                    </Link>
                     {isAuthenticated ? (
                       <>
+                        <Link to="/profile" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
+                          Profil
+                        </Link>
+                        <Link to="/settings" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
+                          Paramètres
+                        </Link>
+                        <Link to="/statistics" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
+                          Statistiques
+                        </Link>
+                        {user?.role === "ADMIN" && (
+                          <Link to="/admin" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
+                            Administration
+                          </Link>
+                        )}
                         <Link to="/favorites" className="text-gray-700 dark:text-gray-300 hover:text-real-primary dark:hover:text-real-accent transition-colors">
                           Favoris
                         </Link>
@@ -206,8 +214,8 @@ const Header = () => {
               {isAuthenticated ? (
                 <>
                   <Button variant="outline" asChild className="btn-modern">
-                    <Link to="/dashboard">
-                      Tableau de bord
+                    <Link to="/profile">
+                      Mon profil
                     </Link>
                   </Button>
                   <Button variant="default" onClick={handleLogout} className="bg-real-primary hover:bg-real-primary/90 btn-modern">
