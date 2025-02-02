@@ -4,19 +4,27 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
-const UserMenu = () => {
+interface UserMenuProps {
+  handleLogout?: () => Promise<void>;
+}
+
+const UserMenu = ({ handleLogout }: UserMenuProps) => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogout = async () => {
+  const onLogout = async () => {
     try {
-      await logout();
-      navigate('/');
-      toast({
-        title: "Déconnexion réussie",
-        duration: 2000,
-      });
+      if (handleLogout) {
+        await handleLogout();
+      } else {
+        await logout();
+        navigate('/');
+        toast({
+          title: "Déconnexion réussie",
+          duration: 2000,
+        });
+      }
     } catch (error) {
       console.error('Error logging out:', error);
       toast({
@@ -35,7 +43,7 @@ const UserMenu = () => {
               Mon profil
             </Link>
           </Button>
-          <Button variant="default" onClick={handleLogout} className="bg-real-primary hover:bg-real-primary/90 btn-modern">
+          <Button variant="default" onClick={onLogout} className="bg-real-primary hover:bg-real-primary/90 btn-modern">
             Déconnexion
           </Button>
         </>
