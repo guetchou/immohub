@@ -26,6 +26,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Simuler un délai d'authentification
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      // Generate a proper UUID for testing
+      const mockUUID = "123e4567-e89b-12d3-a456-426614174000";
+      
       // Simuler un utilisateur connecté avec un rôle
       const role = email.includes('admin') ? 'ADMIN' as UserRole :
                    email.includes('tenant') ? 'TENANT' as UserRole :
@@ -35,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                    'USER' as UserRole;
 
       setUser({
-        id: "1",
+        id: mockUUID,
         name: "John Doe",
         email,
         role,
