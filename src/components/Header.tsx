@@ -132,10 +132,14 @@ const Header = () => {
     <header className="flex items-center justify-between p-4 bg-white shadow">
       <HeaderLogo />
       <div className="flex items-center space-x-4">
-        <NotificationIcons unreadMessages={unreadMessages} favoritesCount={favoritesCount} />
+        <NotificationIcons 
+          unreadMessages={unreadMessages} 
+          favoritesCount={favoritesCount} 
+          isAuthenticated={isAuthenticated}
+        />
         <ThemeToggle />
         {isAuthenticated ? (
-          <UserMenu onLogout={handleLogout} />
+          <UserMenu />
         ) : (
           <Link to="/login">
             <Button>Se connecter</Button>
