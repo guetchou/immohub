@@ -1,5 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, MessageSquare, Sun, Moon, Calculator, Phone, Heart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -8,17 +8,14 @@ import {
 } from "@/components/ui/sheet";
 import MainNav from "./navigation/MainNav";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "next-themes";
-import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "./ui/use-toast";
+import HeaderLogo from "./header/HeaderLogo";
+import ThemeToggle from "./header/ThemeToggle";
+import UserMenu from "./header/UserMenu";
+import NotificationIcons from "./header/NotificationIcons";
 
 const Header = () => {
-  const { user, isAuthenticated, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
-  const navigate = useNavigate();
-  const { toast } = useToast();
+  const { user, isAuthenticated } = useAuth();
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [favoritesCount, setFavoritesCount] = useState(0);
 
@@ -62,88 +59,22 @@ const Header = () => {
     setFavoritesCount(data?.length || 0);
   };
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-      toast({
-        title: "Déconnexion réussie",
-        duration: 2000,
-      });
-    } catch (error) {
-      console.error('Error logging out:', error);
-      toast({
-        title: "Erreur lors de la déconnexion",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-    toast({
-      title: `Mode ${theme === "dark" ? "clair" : "sombre"} activé`,
-      duration: 2000,
-    });
-  };
-
   return (
     <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-real-primary to-real-accent bg-clip-text text-transparent">
-            ImmoHub Congo
-          </Link>
+          <HeaderLogo />
           
           <MainNav />
           
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="text-gray-700 dark:text-gray-300"
-            >
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
+            <ThemeToggle />
 
-            {isAuthenticated && (
-              <>
-                <Link to="/favorites">
-                  <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300 relative">
-                    <Heart className="h-5 w-5" />
-                    {favoritesCount > 0 && (
-                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-real-primary">
-                        {favoritesCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </Link>
-
-                <Link to="/messages">
-                  <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300 relative">
-                    <MessageSquare className="h-5 w-5" />
-                    {unreadMessages > 0 && (
-                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-real-primary">
-                        {unreadMessages}
-                      </Badge>
-                    )}
-                  </Button>
-                </Link>
-              </>
-            )}
-
-            <Link to="/calculator">
-              <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300">
-                <Calculator className="h-5 w-5" />
-              </Button>
-            </Link>
-
-            <Link to="/customer-service">
-              <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-300">
-                <Phone className="h-5 w-5" />
-              </Button>
-            </Link>
+            <NotificationIcons 
+              unreadMessages={unreadMessages}
+              favoritesCount={favoritesCount}
+              isAuthenticated={isAuthenticated}
+            />
 
             <div className="md:hidden">
               <Sheet>
@@ -210,33 +141,7 @@ const Header = () => {
               </Sheet>
             </div>
             
-            <div className="hidden md:flex items-center gap-4">
-              {isAuthenticated ? (
-                <>
-                  <Button variant="outline" asChild className="btn-modern">
-                    <Link to="/profile">
-                      Mon profil
-                    </Link>
-                  </Button>
-                  <Button variant="default" onClick={handleLogout} className="bg-real-primary hover:bg-real-primary/90 btn-modern">
-                    Déconnexion
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="outline" asChild className="btn-modern">
-                    <Link to="/register">
-                      Inscription
-                    </Link>
-                  </Button>
-                  <Button variant="default" asChild className="bg-real-primary hover:bg-real-primary/90 btn-modern">
-                    <Link to="/login">
-                      Connexion
-                    </Link>
-                  </Button>
-                </>
-              )}
-            </div>
+            <UserMenu />
           </div>
         </div>
       </div>
