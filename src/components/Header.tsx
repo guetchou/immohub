@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,11 +14,14 @@ import HeaderLogo from "./header/HeaderLogo";
 import ThemeToggle from "./header/ThemeToggle";
 import UserMenu from "./header/UserMenu";
 import NotificationIcons from "./header/NotificationIcons";
+import { useToast } from "@/hooks/use-toast";
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [favoritesCount, setFavoritesCount] = useState(0);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -63,8 +66,18 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      navigate('/');
+      toast({
+        title: "Déconnexion réussie",
+        duration: 2000,
+      });
     } catch (error) {
       console.error('Error during logout:', error);
+      toast({
+        title: "Erreur lors de la déconnexion",
+        variant: "destructive",
+        duration: 2000,
+      });
     }
   };
 
