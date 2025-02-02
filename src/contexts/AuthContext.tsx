@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { User, UserRole } from "@/types/user";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   user: User | null;
@@ -36,6 +37,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                    email.includes('agency') ? 'AGENCY' as UserRole :
                    email.includes('broker') ? 'BROKER' as UserRole :
                    'USER' as UserRole;
+
+      // Create or update the user's profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: mockUUID,
+          role: role.toLowerCase(),
+          full_name: "John Doe",
+          status: 'active',
+        }, {
+          onConflict: 'id'
+        });
+
+      if (profileError) {
+        console.error("Error creating/updating profile:", profileError);
+        throw profileError;
+      }
 
       setUser({
         id: mockUUID,
