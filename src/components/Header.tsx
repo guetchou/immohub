@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +16,7 @@ import UserMenu from "./header/UserMenu";
 import NotificationIcons from "./header/NotificationIcons";
 
 const Header = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [favoritesCount, setFavoritesCount] = useState(0);
 
@@ -57,6 +58,14 @@ const Header = () => {
     }
     
     setFavoritesCount(data?.length || 0);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (
