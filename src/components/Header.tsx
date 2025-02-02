@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
 import HeaderLogo from "./header/HeaderLogo";
 import ThemeToggle from "./header/ThemeToggle";
@@ -129,7 +121,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex items-center justify-between p-4 bg-white shadow">
+    <header className="sticky top-0 z-50 flex items-center justify-between p-4 bg-white shadow dark:bg-gray-800">
       <HeaderLogo />
       <div className="flex items-center space-x-4">
         <NotificationIcons 
@@ -139,7 +131,7 @@ const Header = () => {
         />
         <ThemeToggle />
         {isAuthenticated ? (
-          <UserMenu />
+          <UserMenu handleLogout={handleLogout} />
         ) : (
           <Link to="/login">
             <Button>Se connecter</Button>
