@@ -9,7 +9,17 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Home, Building, Phone, Heart, MessageSquare, Calculator, Key } from "lucide-react";
+import { 
+  Home, 
+  Building2, 
+  Wallet, 
+  Users, 
+  FileText, 
+  Calculator, 
+  MessageSquare, 
+  Settings,
+  Bell
+} from "lucide-react";
 
 const MainNav = () => {
   const location = useLocation();
@@ -35,32 +45,32 @@ const MainNav = () => {
 
         <NavigationMenuItem>
           <NavigationMenuTrigger>
-            <Building className="h-4 w-4 mr-2" />
-            Propriétés
+            <Building2 className="h-4 w-4 mr-2" />
+            Gestion Locative
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <div className="grid gap-3 p-6 w-[400px]">
               <Link to="/properties" className="group grid grid-cols-4 items-center gap-4">
                 <div className="col-span-3">
-                  <h3 className="text-sm font-medium">Toutes les propriétés</h3>
+                  <h3 className="text-sm font-medium">Propriétés</h3>
                   <p className="text-sm text-muted-foreground">
-                    Parcourir toutes nos propriétés disponibles
+                    Gérer toutes les propriétés
                   </p>
                 </div>
               </Link>
-              <Link to="/properties?type=house" className="group grid grid-cols-4 items-center gap-4">
+              <Link to="/tenants" className="group grid grid-cols-4 items-center gap-4">
                 <div className="col-span-3">
-                  <h3 className="text-sm font-medium">Maisons</h3>
+                  <h3 className="text-sm font-medium">Locataires</h3>
                   <p className="text-sm text-muted-foreground">
-                    Voir toutes les maisons disponibles
+                    Gestion des locataires
                   </p>
                 </div>
               </Link>
-              <Link to="/properties?type=apartment" className="group grid grid-cols-4 items-center gap-4">
+              <Link to="/contracts" className="group grid grid-cols-4 items-center gap-4">
                 <div className="col-span-3">
-                  <h3 className="text-sm font-medium">Appartements</h3>
+                  <h3 className="text-sm font-medium">Contrats</h3>
                   <p className="text-sm text-muted-foreground">
-                    Explorer nos appartements
+                    Baux et documents
                   </p>
                 </div>
               </Link>
@@ -70,32 +80,32 @@ const MainNav = () => {
 
         <NavigationMenuItem>
           <NavigationMenuTrigger>
-            <Key className="h-4 w-4 mr-2" />
-            Gestion locative
+            <Wallet className="h-4 w-4 mr-2" />
+            Paiements
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <div className="grid gap-3 p-6 w-[400px]">
-              <Link to="/rent/tenant" className="group grid grid-cols-4 items-center gap-4">
+              <Link to="/payments/rent" className="group grid grid-cols-4 items-center gap-4">
                 <div className="col-span-3">
-                  <h3 className="text-sm font-medium">Espace locataire</h3>
+                  <h3 className="text-sm font-medium">Loyers</h3>
                   <p className="text-sm text-muted-foreground">
-                    Gérer vos locations et paiements
+                    Gestion des paiements de loyer
                   </p>
                 </div>
               </Link>
-              <Link to="/rent/owner" className="group grid grid-cols-4 items-center gap-4">
+              <Link to="/payments/history" className="group grid grid-cols-4 items-center gap-4">
                 <div className="col-span-3">
-                  <h3 className="text-sm font-medium">Espace propriétaire</h3>
+                  <h3 className="text-sm font-medium">Historique</h3>
                   <p className="text-sm text-muted-foreground">
-                    Gérer vos biens et locataires
+                    Historique des transactions
                   </p>
                 </div>
               </Link>
-              <Link to="/rent/calculator" className="group grid grid-cols-4 items-center gap-4">
+              <Link to="/payments/settings" className="group grid grid-cols-4 items-center gap-4">
                 <div className="col-span-3">
-                  <h3 className="text-sm font-medium">Calculateur de loyer</h3>
+                  <h3 className="text-sm font-medium">Paramètres</h3>
                   <p className="text-sm text-muted-foreground">
-                    Estimer les loyers et charges
+                    Configuration des paiements
                   </p>
                 </div>
               </Link>
@@ -104,16 +114,43 @@ const MainNav = () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link to="/contact">
+          <NavigationMenuTrigger>
+            <FileText className="h-4 w-4 mr-2" />
+            Documents
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <div className="grid gap-3 p-6 w-[400px]">
+              <Link to="/documents/contracts" className="group grid grid-cols-4 items-center gap-4">
+                <div className="col-span-3">
+                  <h3 className="text-sm font-medium">Contrats</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Gestion des baux
+                  </p>
+                </div>
+              </Link>
+              <Link to="/documents/receipts" className="group grid grid-cols-4 items-center gap-4">
+                <div className="col-span-3">
+                  <h3 className="text-sm font-medium">Quittances</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Quittances de loyer
+                  </p>
+                </div>
+              </Link>
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Link to="/messages">
             <Button
-              variant={isActive("/contact") ? "default" : "ghost"}
+              variant={isActive("/messages") ? "default" : "ghost"}
               className={cn(
                 "flex items-center gap-2",
-                isActive("/contact") && "bg-real-primary text-white"
+                isActive("/messages") && "bg-real-primary text-white"
               )}
             >
-              <Phone className="h-4 w-4" />
-              <span>Contact</span>
+              <MessageSquare className="h-4 w-4" />
+              <span>Messages</span>
             </Button>
           </Link>
         </NavigationMenuItem>

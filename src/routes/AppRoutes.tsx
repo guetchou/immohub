@@ -20,6 +20,7 @@ import TenantDashboard from "@/pages/dashboards/TenantDashboard";
 import LandlordDashboard from "@/pages/dashboards/LandlordDashboard";
 import AgencyDashboard from "@/pages/dashboards/AgencyDashboard";
 import BrokerDashboard from "@/pages/dashboards/BrokerDashboard";
+import PropertyManagementDashboard from "@/components/dashboards/PropertyManagementDashboard";
 
 const AppRoutes = () => {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ const AppRoutes = () => {
       case "LANDLORD":
         return <LandlordDashboard />;
       case "AGENCY":
-        return <AgencyDashboard />;
+        return <PropertyManagementDashboard />;
       case "BROKER":
         return <BrokerDashboard />;
       case "ADMIN":
@@ -122,6 +123,43 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Calculator />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Property Management Routes */}
+      <Route
+        path="/properties/new"
+        element={
+          <ProtectedRoute roles={["ADMIN", "AGENCY", "LANDLORD"]}>
+            <PropertyForm />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/contracts/new"
+        element={
+          <ProtectedRoute roles={["ADMIN", "AGENCY", "LANDLORD"]}>
+            <LeaseContract />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/payments/collect"
+        element={
+          <ProtectedRoute roles={["ADMIN", "AGENCY", "LANDLORD"]}>
+            <RentCollection />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute roles={["ADMIN", "AGENCY", "LANDLORD"]}>
+            <Reports />
           </ProtectedRoute>
         }
       />
