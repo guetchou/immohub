@@ -21,6 +21,10 @@ import LandlordDashboard from "@/pages/dashboards/LandlordDashboard";
 import AgencyDashboard from "@/pages/dashboards/AgencyDashboard";
 import BrokerDashboard from "@/pages/dashboards/BrokerDashboard";
 import PropertyManagementDashboard from "@/components/dashboards/PropertyManagementDashboard";
+import PropertyForm from "@/components/PropertyForm";
+import LeaseContract from "@/components/rent/LeaseContract";
+import RentCollection from "@/components/rent/RentCollection";
+import Reports from "@/components/reports/Reports";
 
 const AppRoutes = () => {
   const { user } = useAuth();
