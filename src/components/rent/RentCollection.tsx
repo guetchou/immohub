@@ -4,28 +4,52 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { Wallet } from "lucide-react";
+import { Wallet, Calendar } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const RentCollection = () => {
   const [amount, setAmount] = useState("");
   const [reference, setReference] = useState("");
+  const [paymentDate, setPaymentDate] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     try {
-      // TODO: Implement actual payment processing
+      const { data, error } = await supabase
+        .from('rent_payments')
+        .insert([
+          {
+            amount: Number(amount),
+            reference,
+            payment_date: paymentDate,
+            status: 'completed'
+          }
+        ]);
+
+      if (error) throw error;
+
       toast({
         title: "Paiement enregistré",
-        description: `Le paiement de ${amount} FCFA a été enregistré avec succès.`,
+        description: `Le paiement de ${Number(amount).toLocaleString()} FCFA a été enregistré avec succès.`,
       });
+
+      // Reset form
+      setAmount("");
+      setReference("");
+      setPaymentDate("");
     } catch (error) {
+      console.error("Error processing payment:", error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors du traitement du paiement.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,6 +76,17 @@ const RentCollection = () => {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="paymentDate">Date du paiement</Label>
+            <Input
+              id="paymentDate"
+              type="date"
+              value={paymentDate}
+              onChange={(e) => setPaymentDate(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="reference">Référence du paiement</Label>
             <Input
               id="reference"
@@ -62,8 +97,8 @@ const RentCollection = () => {
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            Enregistrer le paiement
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Traitement en cours..." : "Enregistrer le paiement"}
           </Button>
         </form>
       </CardContent>
