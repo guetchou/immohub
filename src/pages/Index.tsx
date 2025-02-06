@@ -25,6 +25,7 @@ import MarketStats from "@/components/MarketStats";
 import VideoTestimonials from "@/components/VideoTestimonials";
 import MarketInsights from "@/components/market/MarketInsights";
 import SmartRecommendations from "@/components/recommendations/SmartRecommendations";
+import { motion } from "framer-motion";
 
 const Index = () => {
   const [properties, setProperties] = useState([]);
@@ -53,7 +54,12 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
+    >
       <FuturisticBackground />
       
       <main className="relative">
@@ -67,16 +73,25 @@ const Index = () => {
           <PropertyCategories />
 
           {isAuthenticated && (
-            <>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               <SmartRecommendations />
               <RecommendedProperties />
-            </>
+            </motion.div>
           )}
 
           <section className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-8">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl font-bold text-center mb-8"
+            >
               Aperçu du Marché
-            </h2>
+            </motion.h2>
             <MarketInsights />
           </section>
 
@@ -84,7 +99,13 @@ const Index = () => {
           
           <MarketStats />
           
-          <PropertyMap properties={properties} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <PropertyMap properties={properties} />
+          </motion.div>
           
           <WhyChooseUs />
           
@@ -98,49 +119,69 @@ const Index = () => {
           
           <Partners />
           
-          <div className="bg-white py-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white py-16"
+          >
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold text-real-primary mb-8 text-center">
                 Nos Outils
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="card-modern p-6">
+                <div className="card-modern p-6 hover:shadow-xl transition-all duration-300">
                   <h3 className="text-xl font-semibold mb-4">Simulateur de Prêt</h3>
                   <MortgageSimulator />
                 </div>
-                <div className="card-modern p-6">
+                <div className="card-modern p-6 hover:shadow-xl transition-all duration-300">
                   <h3 className="text-xl font-semibold mb-4">Calculateur de Vente</h3>
                   <PropertySaleCalculator />
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 py-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-gradient-to-br from-gray-900 to-gray-800 py-16"
+          >
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold text-white mb-8 text-center">
                 Estimation de Prix
               </h2>
-              <div className="card-modern p-6">
+              <div className="card-modern p-6 backdrop-blur-sm bg-white/10">
                 <PriceSimulator />
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="container mx-auto px-4 py-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="container mx-auto px-4 py-16"
+          >
             <h2 className="text-3xl font-bold text-real-primary mb-8 text-center">
               Planifier une Visite
             </h2>
             <div className="card-modern p-6">
               <AppointmentSystem />
             </div>
-          </div>
+          </motion.div>
           
           <NewsSection />
           
           <FAQ />
           
-          <div className="bg-white py-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white py-16"
+          >
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold text-real-primary mb-8 text-center">
                 Partager ImmoHub
@@ -150,12 +191,12 @@ const Index = () => {
                 url={window.location.href} 
               />
             </div>
-          </div>
+          </motion.div>
         </div>
       </main>
 
       <ChatBot />
-    </div>
+    </motion.div>
   );
 };
 
