@@ -907,10 +907,13 @@ export type Database = {
           contract_id: string | null
           created_at: string | null
           id: string
+          note: string | null
           payment_date: string
           payment_method: string | null
+          receipt_url: string | null
           reference: string | null
           status: string | null
+          tenant_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -918,10 +921,13 @@ export type Database = {
           contract_id?: string | null
           created_at?: string | null
           id?: string
+          note?: string | null
           payment_date: string
           payment_method?: string | null
+          receipt_url?: string | null
           reference?: string | null
           status?: string | null
+          tenant_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -929,10 +935,13 @@ export type Database = {
           contract_id?: string | null
           created_at?: string | null
           id?: string
+          note?: string | null
           payment_date?: string
           payment_method?: string | null
+          receipt_url?: string | null
           reference?: string | null
           status?: string | null
+          tenant_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
