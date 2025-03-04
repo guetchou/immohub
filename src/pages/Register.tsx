@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { UserRole } from "@/types/user";
 import { useAuth } from "@/contexts/AuthContext";
 import { NavBar } from "@/components/navigation/NavBar";
 import { useRoleRedirect } from "@/hooks/useRoleRedirect";
+import { supabase } from "@/integrations/supabase/client";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +22,7 @@ const Register = () => {
     role: "USER" as UserRole,
   });
   
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { login } = useAuth();
   
@@ -74,19 +77,66 @@ const Register = () => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
-      await login(formData.email, formData.password);
-      toast({
-        title: "Inscription réussie",
-        description: "Bienvenue sur ImmoHub Congo",
+      // Register with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name,
+            role: formData.role.toLowerCase(),
+          }
+        }
       });
-    } catch (error) {
+
+      if (error) throw error;
+
+      if (data.user) {
+        // Create or update profile with role
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: data.user.id,
+            full_name: formData.name,
+            role: formData.role.toLowerCase(),
+            status: 'active',
+          });
+
+        if (profileError) {
+          console.error("Profile creation error:", profileError);
+          toast({
+            title: "Erreur de profil",
+            description: "Compte créé mais erreur lors de la création du profil",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Inscription réussie",
+            description: "Bienvenue sur ImmoHub Congo",
+          });
+
+          // Automatically log in the user
+          await login(formData.email, formData.password);
+        }
+      } else {
+        // Email confirmation might be required
+        toast({
+          title: "Vérification par email requise",
+          description: "Veuillez vérifier votre email pour confirmer votre compte",
+        });
+      }
+    } catch (error: any) {
       console.error("Registration error:", error);
       toast({
         title: "Erreur d'inscription",
-        description: "Une erreur est survenue lors de l'inscription",
+        description: error.message || "Une erreur est survenue lors de l'inscription",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -122,6 +172,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full"
+                disabled={isLoading}
               />
             </div>
 
@@ -136,6 +187,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full"
+                disabled={isLoading}
               />
             </div>
 
@@ -145,6 +197,7 @@ const Register = () => {
                 defaultValue={formData.role}
                 onValueChange={(value) => setFormData({ ...formData, role: value as UserRole })}
                 className="grid grid-cols-2 gap-4"
+                disabled={isLoading}
               >
                 {roles.map((role) => (
                   <div key={role.value} className="flex items-center space-x-2">
@@ -165,6 +218,7 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full"
+                disabled={isLoading}
               />
             </div>
 
@@ -178,11 +232,12 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 className="w-full"
+                disabled={isLoading}
               />
             </div>
 
-            <Button type="submit" className="w-full">
-              S'inscrire
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Inscription en cours..." : "S'inscrire"}
             </Button>
           </form>
 
