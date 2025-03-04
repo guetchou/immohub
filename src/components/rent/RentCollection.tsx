@@ -36,7 +36,7 @@ const RentCollection = () => {
     setPaymentDate(formattedDate);
     
     // Charger la liste des locataires pour les propriétaires
-    if (user?.role === 'LANDLORD' || user?.role === 'landlord' || user?.role === 'ADMIN' || user?.role === 'admin') {
+    if (user?.role === 'LANDLORD' || user?.role === 'ADMIN') {
       fetchTenants();
     }
   }, [user]);
@@ -45,8 +45,8 @@ const RentCollection = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, full_name, email')
-        .in('role', ['TENANT', 'tenant']);
+        .select('id, full_name')
+        .in('role', ['TENANT']);
       
       if (error) throw error;
       
@@ -54,7 +54,7 @@ const RentCollection = () => {
         setTenants(data.map(tenant => ({
           id: tenant.id,
           name: tenant.full_name || 'Sans nom',
-          email: tenant.email || ''
+          email: '' // Nous n'utilisons pas l'email dans cette interface
         })));
       }
     } catch (error) {
@@ -78,7 +78,7 @@ const RentCollection = () => {
       }
 
       // Déterminer l'ID du locataire (soit sélectionné par le propriétaire, soit l'utilisateur actuel si c'est un locataire)
-      const tenantId = user?.role === 'TENANT' || user?.role === 'tenant' 
+      const tenantId = user?.role === 'TENANT' 
         ? user.id 
         : selectedTenant;
 
@@ -130,7 +130,7 @@ const RentCollection = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Wallet className="h-5 w-5" />
-            {user?.role === 'LANDLORD' || user?.role === 'landlord' || user?.role === 'ADMIN' || user?.role === 'admin'
+            {user?.role === 'LANDLORD' || user?.role === 'ADMIN'
               ? "Enregistrement des Paiements de Loyer" 
               : "Paiement de Loyer"}
           </CardTitle>
@@ -149,7 +149,7 @@ const RentCollection = () => {
               />
             </div>
 
-            {(user?.role === 'LANDLORD' || user?.role === 'landlord' || user?.role === 'ADMIN' || user?.role === 'admin') && (
+            {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
               <div className="space-y-2">
                 <Label htmlFor="tenant">Locataire *</Label>
                 <Select
@@ -162,7 +162,7 @@ const RentCollection = () => {
                   <SelectContent>
                     {tenants.map((tenant) => (
                       <SelectItem key={tenant.id} value={tenant.id}>
-                        {tenant.name} {tenant.email ? `(${tenant.email})` : ''}
+                        {tenant.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

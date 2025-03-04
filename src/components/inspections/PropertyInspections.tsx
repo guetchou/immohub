@@ -1,0 +1,53 @@
+
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Clipboard, Plus } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import InspectionForm from "./InspectionForm";
+import InspectionsList from "./InspectionsList";
+
+const PropertyInspections = () => {
+  const [activeTab, setActiveTab] = useState("list");
+  const { user } = useAuth();
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
+  return (
+    <div className="container mx-auto py-6 space-y-8">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clipboard className="h-5 w-5" />
+            Inspections des Propriétés
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
+            <TabsList className="mb-6">
+              <TabsTrigger value="list">Liste des Inspections</TabsTrigger>
+              {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
+                <TabsTrigger value="create">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nouvelle Inspection
+                </TabsTrigger>
+              )}
+            </TabsList>
+            
+            <TabsContent value="list">
+              <InspectionsList />
+            </TabsContent>
+            
+            <TabsContent value="create">
+              <InspectionForm onSuccess={() => setActiveTab("list")} />
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default PropertyInspections;

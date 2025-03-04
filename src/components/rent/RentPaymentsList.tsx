@@ -158,7 +158,7 @@ const RentPaymentsList = () => {
                   <TableHead>Date</TableHead>
                   <TableHead>Montant</TableHead>
                   <TableHead>Référence</TableHead>
-                  {(user?.role === 'LANDLORD' || user?.role === 'ADMIN' || user?.role === 'landlord' || user?.role === 'admin') && (
+                  {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
                     <TableHead>Locataire</TableHead>
                   )}
                   <TableHead>Méthode</TableHead>
@@ -175,7 +175,7 @@ const RentPaymentsList = () => {
                     <TableCell className="text-muted-foreground">
                       {payment.reference}
                     </TableCell>
-                    {(user?.role === 'LANDLORD' || user?.role === 'ADMIN' || user?.role === 'landlord' || user?.role === 'admin') && (
+                    {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
                       <TableCell>{payment.tenant_name}</TableCell>
                     )}
                     <TableCell>{getPaymentMethodLabel(payment.payment_method)}</TableCell>
