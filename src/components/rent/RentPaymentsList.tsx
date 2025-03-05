@@ -70,22 +70,43 @@ const RentPaymentsList = () => {
       // Base query
       let query = supabase
         .from('rent_payments')
-        .select(`
-          *,
-          profiles(full_name)
-        `)
-        .order('payment_date', { ascending: false });
+        .select('*');
 
       // Si l'utilisateur est un locataire, on filtre par son ID
       if (user?.role === 'TENANT') {
         query = query.eq('tenant_id', user.id);
       }
 
-      const { data, error } = await query;
+      const { data, error } = await query.order('payment_date', { ascending: false });
 
       if (error) throw error;
 
       if (data) {
+        // Fetch tenant names separately to avoid the "relation" error
+        const tenantsQuery = user?.role === 'TENANT' ? 
+          [] : 
+          await Promise.all(
+            data.map(async (payment) => {
+              if (!payment.tenant_id) return null;
+              
+              const { data: profileData } = await supabase
+                .from('profiles')
+                .select('full_name')
+                .eq('id', payment.tenant_id)
+                .single();
+                
+              return {
+                paymentId: payment.id,
+                tenantName: profileData?.full_name || 'Non spécifié'
+              };
+            })
+          );
+
+        const tenantsMap = new Map();
+        tenantsQuery.forEach(item => {
+          if (item) tenantsMap.set(item.paymentId, item.tenantName);
+        });
+        
         const formattedPayments = data.map(item => ({
           id: item.id,
           amount: item.amount,
@@ -95,7 +116,7 @@ const RentPaymentsList = () => {
           payment_method: item.payment_method || "cash",
           note: item.note,
           tenant_id: item.tenant_id,
-          tenant_name: item.profiles?.full_name || "Non spécifié"
+          tenant_name: tenantsMap.get(item.id) || "Non spécifié"
         }));
         
         setPayments(formattedPayments);

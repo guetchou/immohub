@@ -1,187 +1,246 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+
+import { lazy, Suspense } from "react";
+import { Routes, Route } from "react-router-dom";
 import Index from "@/pages/Index";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import Properties from "@/pages/Properties";
-import PropertyDetail from "@/pages/PropertyDetail";
-import Messages from "@/pages/Messages";
-import Favorites from "@/pages/Favorites";
-import CustomerService from "@/pages/CustomerService";
-import Calculator from "@/pages/Calculator";
-import Contact from "@/pages/Contact";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Dashboard from "@/pages/Dashboard";
-import UserProfile from "@/pages/UserProfile";
-import Settings from "@/pages/Settings";
-import Statistics from "@/pages/Statistics";
-import Admin from "@/pages/Admin";
-import { useAuth } from "@/contexts/AuthContext";
-import TenantDashboard from "@/pages/dashboards/TenantDashboard";
-import LandlordDashboard from "@/pages/dashboards/LandlordDashboard";
-import AgencyDashboard from "@/pages/dashboards/AgencyDashboard";
-import BrokerDashboard from "@/pages/dashboards/BrokerDashboard";
-import PropertyManagementDashboard from "@/components/dashboards/PropertyManagementDashboard";
-import PropertyForm from "@/components/PropertyForm";
-import LeaseContract from "@/components/rent/LeaseContract";
-import RentCollection from "@/components/rent/RentCollection";
-import Reports from "@/components/reports/Reports";
+import { UserRole } from "@/types/user";
+import { Loader2 } from "lucide-react";
+
+// Lazy loaded pages for better performance
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Login = lazy(() => import("@/pages/Login"));
+const Register = lazy(() => import("@/pages/Register"));
+const Properties = lazy(() => import("@/pages/Properties"));
+const PropertyDetail = lazy(() => import("@/pages/PropertyDetail"));
+const UserProfile = lazy(() => import("@/pages/UserProfile"));
+const Contact = lazy(() => import("@/pages/Contact"));
+const CustomerService = lazy(() => import("@/pages/CustomerService"));
+const Favorites = lazy(() => import("@/pages/Favorites"));
+const Messages = lazy(() => import("@/pages/Messages"));
+const Statistics = lazy(() => import("@/pages/Statistics"));
+const Admin = lazy(() => import("@/pages/Admin"));
+const Terms = lazy(() => import("@/pages/Terms"));
+const Privacy = lazy(() => import("@/pages/Privacy"));
+const Calculator = lazy(() => import("@/pages/Calculator"));
+const Settings = lazy(() => import("@/pages/Settings"));
+
+// Role-specific dashboards
+const AgencyDashboard = lazy(() => import("@/pages/dashboards/AgencyDashboard"));
+const BrokerDashboard = lazy(() => import("@/pages/dashboards/BrokerDashboard"));
+const CanvasserDashboard = lazy(() => import("@/pages/dashboards/CanvasserDashboard"));
+const InsuranceDashboard = lazy(() => import("@/pages/dashboards/InsuranceDashboard"));
+const LandOwnerDashboard = lazy(() => import("@/pages/dashboards/LandOwnerDashboard"));
+const LandlordDashboard = lazy(() => import("@/pages/dashboards/LandlordDashboard"));
+const NotaryDashboard = lazy(() => import("@/pages/dashboards/NotaryDashboard"));
+const TenantDashboard = lazy(() => import("@/pages/dashboards/TenantDashboard"));
+
+// Loading fallback
+const LoadingFallback = () => (
+  <div className="flex justify-center items-center min-h-screen">
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  </div>
+);
 
 const AppRoutes = () => {
-  const { user } = useAuth();
-
-  const getDashboardRoute = () => {
-    if (!user) return <Navigate to="/login" />;
-
-    switch (user.role) {
-      case "TENANT":
-        return <TenantDashboard />;
-      case "LANDLORD":
-        return <LandlordDashboard />;
-      case "AGENCY":
-        return <PropertyManagementDashboard />;
-      case "BROKER":
-        return <BrokerDashboard />;
-      case "ADMIN":
-        return <Dashboard />;
-      default:
-        return <Navigate to="/" />;
-    }
-  };
-
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<Index />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/properties" element={<Properties />} />
-      <Route path="/property/:id" element={<PropertyDetail />} />
-      <Route path="/contact" element={<Contact />} />
-      
-      {/* Protected routes */}
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <UserProfile />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/statistics"
-        element={
-          <ProtectedRoute roles={["ADMIN", "AGENCY"]}>
-            <Statistics />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute roles={["ADMIN"]}>
-            <Admin />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/messages"
-        element={
-          <ProtectedRoute>
-            <Messages />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/favorites"
-        element={
-          <ProtectedRoute>
-            <Favorites />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/customer-service"
-        element={
-          <ProtectedRoute>
-            <CustomerService />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/calculator"
-        element={
-          <ProtectedRoute>
-            <Calculator />
-          </ProtectedRoute>
-        }
-      />
-      
-      {/* Property Management Routes */}
-      <Route
-        path="/properties/new"
-        element={
-          <ProtectedRoute roles={["ADMIN", "AGENCY", "LANDLORD"]}>
-            <PropertyForm />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/contracts/new"
-        element={
-          <ProtectedRoute roles={["ADMIN", "AGENCY", "LANDLORD"]}>
-            <LeaseContract />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/payments/collect"
-        element={
-          <ProtectedRoute roles={["ADMIN", "AGENCY", "LANDLORD"]}>
-            <RentCollection />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/reports"
-        element={
-          <ProtectedRoute roles={["ADMIN", "AGENCY", "LANDLORD"]}>
-            <Reports />
-          </ProtectedRoute>
-        }
-      />
-      
-      {/* Dashboard routes */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            {getDashboardRoute()}
-          </ProtectedRoute>
-        }
-      />
-      
-      {/* Fallback route */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Suspense fallback={<LoadingFallback />}>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/properties" element={<Properties />} />
+        <Route path="/properties/:id" element={<PropertyDetail />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/calculator" element={<Calculator />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute>
+              <Favorites />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customer-service"
+          element={
+            <ProtectedRoute>
+              <CustomerService />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/statistics"
+          element={
+            <ProtectedRoute>
+              <Statistics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Role-Specific Routes */}
+        <Route
+          path="/landlord-dashboard"
+          element={
+            <ProtectedRoute roles={["LANDLORD"]}>
+              <LandlordDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tenant-dashboard"
+          element={
+            <ProtectedRoute roles={["TENANT"]}>
+              <TenantDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agency-dashboard"
+          element={
+            <ProtectedRoute roles={["AGENCY"]}>
+              <AgencyDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/broker-dashboard"
+          element={
+            <ProtectedRoute roles={["BROKER"]}>
+              <BrokerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/canvasser-dashboard"
+          element={
+            <ProtectedRoute roles={["CANVASSER"]}>
+              <CanvasserDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/insurance-dashboard"
+          element={
+            <ProtectedRoute roles={["INSURANCE"]}>
+              <InsuranceDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/land-owner-dashboard"
+          element={
+            <ProtectedRoute roles={["LAND_OWNER"]}>
+              <LandOwnerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notary-dashboard"
+          element={
+            <ProtectedRoute roles={["NOTARY"]}>
+              <NotaryDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={["ADMIN"]}>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Property Management Routes */}
+        <Route
+          path="/rent-management"
+          element={
+            <ProtectedRoute roles={["TENANT", "LANDLORD", "ADMIN"]}>
+              <RentManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leases"
+          element={
+            <ProtectedRoute roles={["TENANT", "LANDLORD", "ADMIN"]}>
+              <LeasesManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/maintenance"
+          element={
+            <ProtectedRoute roles={["TENANT", "LANDLORD", "ADMIN"]}>
+              <MaintenancePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Suspense>
   );
+};
+
+// Simple placeholder pages that redirect to specific tabs in the Dashboard
+const RentManagementPage = () => {
+  return <Dashboard initialTab="payments" />;
+};
+
+const LeasesManagementPage = () => {
+  return <Dashboard initialTab="leases" />;
+};
+
+const MaintenancePage = () => {
+  return <Dashboard initialTab="maintenance" />;
+};
+
+const NotificationsPage = () => {
+  return <Dashboard initialTab="notifications" />;
 };
 
 export default AppRoutes;

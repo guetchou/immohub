@@ -1,97 +1,116 @@
-import { RoleManager } from "@/components/role/RoleManager";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Link } from "react-router-dom";
-import { Building, Home, MessageSquare, Settings, User } from "lucide-react";
+import { motion } from "framer-motion";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Home, PieChart, Bell, FileText, AlertTriangle, MessageSquare } from "lucide-react";
+import UserDashboardOverview from "@/components/dashboards/UserDashboardOverview";
+import PropertyAnalytics from "@/components/dashboards/PropertyAnalytics";
+import NotificationCenter from "@/components/notifications/NotificationCenter";
+import RentCollection from "@/components/rent/RentCollection";
+import LeasesList from "@/components/leases/LeasesList";
+import { useLocation } from "react-router-dom";
 
-const Dashboard = () => {
+interface DashboardProps {
+  initialTab?: string;
+}
+
+const Dashboard = ({ initialTab = "overview" }: DashboardProps) => {
   const { user } = useAuth();
-
-  const menuItems = [
-    {
-      title: "Mes propriétés",
-      icon: Building,
-      link: "/properties",
-      description: "Gérer vos biens immobiliers",
-    },
-    {
-      title: "Messages",
-      icon: MessageSquare,
-      link: "/messages",
-      description: "Voir vos conversations",
-    },
-    {
-      title: "Profil",
-      icon: User,
-      link: "/profile",
-      description: "Modifier vos informations",
-    },
-    {
-      title: "Paramètres",
-      icon: Settings,
-      link: "/settings",
-      description: "Gérer vos préférences",
-    },
-  ];
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
+  const location = useLocation();
+  
+  // Update active tab based on path if navigating to a specific route
+  useEffect(() => {
+    if (location.pathname === "/rent-management") {
+      setActiveTab("payments");
+    } else if (location.pathname === "/leases") {
+      setActiveTab("leases");
+    } else if (location.pathname === "/maintenance") {
+      setActiveTab("maintenance");
+    } else if (location.pathname === "/notifications") {
+      setActiveTab("notifications");
+    }
+  }, [location]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Tableau de bord</h1>
-        <Button asChild>
-          <Link to="/properties/new">
-            <Home className="mr-2 h-4 w-4" />
-            Ajouter un bien
-          </Link>
-        </Button>
-      </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="container mx-auto px-4 py-8"
+    >
+      <motion.h1
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="text-4xl font-bold mb-8 text-center sm:text-left"
+      >
+        Tableau de Bord
+      </motion.h1>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {menuItems.map((item, index) => (
-          <Card key={index} className="p-4 hover:shadow-lg transition-shadow">
-            <Link to={item.link} className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <item.icon className="h-5 w-5 text-gray-500" />
-                <h3 className="font-semibold">{item.title}</h3>
-              </div>
-              <p className="text-sm text-gray-600">{item.description}</p>
-            </Link>
-          </Card>
-        ))}
-      </div>
+      <Tabs 
+        value={activeTab} 
+        onValueChange={setActiveTab}
+        className="w-full"
+      >
+        <div className="flex justify-center sm:justify-start mb-6">
+          <TabsList className="grid grid-cols-3 sm:grid-cols-6 gap-1">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              <span className="hidden sm:inline">Accueil</span>
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <PieChart className="h-4 w-4" />
+              <span className="hidden sm:inline">Analytiques</span>
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              <span className="hidden sm:inline">Notifications</span>
+            </TabsTrigger>
+            <TabsTrigger value="leases" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Contrats</span>
+            </TabsTrigger>
+            <TabsTrigger value="payments" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Paiements</span>
+            </TabsTrigger>
+            <TabsTrigger value="maintenance" className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              <span className="hidden sm:inline">Maintenance</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-      <div className="space-y-6">
-        <RoleManager />
-        
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Activité récente</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-2 border-b">
-              <div>
-                <p className="font-medium">Nouvelle visite programmée</p>
-                <p className="text-sm text-gray-600">Pour la propriété: Villa Moderne</p>
-              </div>
-              <span className="text-sm text-gray-500">Il y a 2 heures</span>
-            </div>
-            <div className="flex items-center justify-between py-2 border-b">
-              <div>
-                <p className="font-medium">Message reçu</p>
-                <p className="text-sm text-gray-600">De: Jean Dupont</p>
-              </div>
-              <span className="text-sm text-gray-500">Il y a 1 jour</span>
-            </div>
-            <div className="flex items-center justify-between py-2">
-              <div>
-                <p className="font-medium">Contrat signé</p>
-                <p className="text-sm text-gray-600">Location: Appartement Centre-ville</p>
-              </div>
-              <span className="text-sm text-gray-500">Il y a 3 jours</span>
-            </div>
+        <TabsContent value="overview" className="mt-6">
+          <UserDashboardOverview />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="mt-6">
+          <PropertyAnalytics />
+        </TabsContent>
+
+        <TabsContent value="notifications" className="mt-6">
+          <NotificationCenter />
+        </TabsContent>
+
+        <TabsContent value="leases" className="mt-6">
+          <LeasesList />
+        </TabsContent>
+
+        <TabsContent value="payments" className="mt-6">
+          <RentCollection />
+        </TabsContent>
+
+        <TabsContent value="maintenance" className="mt-6">
+          <div className="text-center p-8">
+            <h2 className="text-2xl font-semibold mb-4">Maintenance</h2>
+            <p className="text-gray-500">Module de maintenance bientôt disponible</p>
           </div>
-        </Card>
-      </div>
-    </div>
+        </TabsContent>
+      </Tabs>
+    </motion.div>
   );
 };
 
