@@ -7,10 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wallet, Calendar, Receipt, Loader2 } from "lucide-react";
+import { Wallet, Calendar, Receipt, Loader2, PiggyBank } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import RentPaymentsList from "./RentPaymentsList";
+import RentStats from "./RentStats";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const RentCollection = () => {
   const [amount, setAmount] = useState("");
@@ -126,115 +128,140 @@ const RentCollection = () => {
 
   return (
     <div className="space-y-8">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Wallet className="h-5 w-5" />
-            {user?.role === 'LANDLORD' || user?.role === 'ADMIN'
-              ? "Enregistrement des Paiements de Loyer" 
-              : "Paiement de Loyer"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="amount">Montant (FCFA) *</Label>
-              <Input
-                id="amount"
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                required
-                placeholder="Entrez le montant"
-              />
-            </div>
+      <div className="flex flex-col md:flex-row gap-8">
+        <Card className="flex-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <PiggyBank className="h-5 w-5" />
+              Tableau de Bord Financier
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RentStats />
+          </CardContent>
+        </Card>
+      </div>
 
-            {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
-              <div className="space-y-2">
-                <Label htmlFor="tenant">Locataire *</Label>
-                <Select
-                  value={selectedTenant}
-                  onValueChange={setSelectedTenant}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un locataire" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tenants.map((tenant) => (
-                      <SelectItem key={tenant.id} value={tenant.id}>
-                        {tenant.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+      <Tabs defaultValue="payment-form" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="payment-form">Enregistrer un Paiement</TabsTrigger>
+          <TabsTrigger value="payment-history">Historique des Paiements</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="payment-form" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="h-5 w-5" />
+                {user?.role === 'LANDLORD' || user?.role === 'ADMIN'
+                  ? "Enregistrement des Paiements de Loyer" 
+                  : "Paiement de Loyer"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="amount">Montant (FCFA) *</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    required
+                    placeholder="Entrez le montant"
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="paymentDate">Date du paiement *</Label>
-              <Input
-                id="paymentDate"
-                type="date"
-                value={paymentDate}
-                onChange={(e) => setPaymentDate(e.target.value)}
-                required
-              />
-            </div>
+                {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
+                  <div className="space-y-2">
+                    <Label htmlFor="tenant">Locataire *</Label>
+                    <Select
+                      value={selectedTenant}
+                      onValueChange={setSelectedTenant}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un locataire" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {tenants.map((tenant) => (
+                          <SelectItem key={tenant.id} value={tenant.id}>
+                            {tenant.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
-            <div className="space-y-2">
-              <Label htmlFor="paymentMethod">Méthode de paiement</Label>
-              <Select 
-                value={paymentMethod}
-                onValueChange={setPaymentMethod}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez une méthode" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cash">Espèces</SelectItem>
-                  <SelectItem value="mobile_money">Mobile Money</SelectItem>
-                  <SelectItem value="bank_transfer">Virement bancaire</SelectItem>
-                  <SelectItem value="check">Chèque</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="paymentDate">Date du paiement *</Label>
+                  <Input
+                    id="paymentDate"
+                    type="date"
+                    value={paymentDate}
+                    onChange={(e) => setPaymentDate(e.target.value)}
+                    required
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="reference">Référence du paiement</Label>
-              <Input
-                id="reference"
-                value={reference}
-                onChange={(e) => setReference(e.target.value)}
-                placeholder="Ex: LOYER-2024-03"
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="paymentMethod">Méthode de paiement</Label>
+                  <Select 
+                    value={paymentMethod}
+                    onValueChange={setPaymentMethod}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionnez une méthode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cash">Espèces</SelectItem>
+                      <SelectItem value="mobile_money">Mobile Money</SelectItem>
+                      <SelectItem value="bank_transfer">Virement bancaire</SelectItem>
+                      <SelectItem value="check">Chèque</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="note">Note</Label>
-              <Textarea
-                id="note"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Informations supplémentaires sur ce paiement"
-                rows={3}
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reference">Référence du paiement</Label>
+                  <Input
+                    id="reference"
+                    value={reference}
+                    onChange={(e) => setReference(e.target.value)}
+                    placeholder="Ex: LOYER-2024-03"
+                  />
+                </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Traitement en cours...
-                </>
-              ) : (
-                "Enregistrer le paiement"
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+                <div className="space-y-2">
+                  <Label htmlFor="note">Note</Label>
+                  <Textarea
+                    id="note"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="Informations supplémentaires sur ce paiement"
+                    rows={3}
+                  />
+                </div>
 
-      <RentPaymentsList />
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Traitement en cours...
+                    </>
+                  ) : (
+                    "Enregistrer le paiement"
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="payment-history" className="space-y-4 mt-4">
+          <RentPaymentsList />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

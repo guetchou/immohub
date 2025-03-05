@@ -1,3 +1,4 @@
+
 import HeroBanner from "@/components/HeroBanner";
 import FeaturedProperties from "@/components/FeaturedProperties";
 import Partners from "@/components/Partners";
@@ -26,10 +27,15 @@ import VideoTestimonials from "@/components/VideoTestimonials";
 import MarketInsights from "@/components/market/MarketInsights";
 import SmartRecommendations from "@/components/recommendations/SmartRecommendations";
 import { motion } from "framer-motion";
+import RentCollection from "@/components/rent/RentCollection";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Home, Key, ArrowRight, UserPlus, FileCheck, Bell } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [properties, setProperties] = useState([]);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -53,6 +59,10 @@ const Index = () => {
     fetchProperties();
   }, []);
 
+  // Détermine si l'utilisateur est un locataire ou un propriétaire
+  const isTenant = user?.role === 'TENANT';
+  const isLandlord = user?.role === 'LANDLORD' || user?.role === 'ADMIN';
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -68,6 +78,106 @@ const Index = () => {
         <div className="container mx-auto px-4 py-12">
           <ImageCarousel />
         </div>
+        
+        {isAuthenticated && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="container mx-auto px-4 py-8"
+          >
+            <h2 className="text-3xl font-bold text-center mb-8">
+              Bienvenue {user?.name ? user.name : "sur votre espace"}
+            </h2>
+            
+            {/* Panneau d'accès rapide */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              {(isTenant || isLandlord) && (
+                <Card className="hover:shadow-lg transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <Home className="h-5 w-5 text-primary" />
+                      Gestion de Loyer
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      {isTenant ? "Payez votre loyer et suivez vos paiements" : "Gérez les paiements de vos locataires"}
+                    </p>
+                    <Button asChild>
+                      <Link to="/rent-management">
+                        Accéder <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
+              {(isTenant || isLandlord) && (
+                <Card className="hover:shadow-lg transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <FileCheck className="h-5 w-5 text-primary" />
+                      Contrats de Location
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      {isTenant ? "Consultez vos contrats de location" : "Gérez les contrats de vos locataires"}
+                    </p>
+                    <Button asChild>
+                      <Link to="/leases">
+                        Accéder <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
+              {isLandlord && (
+                <Card className="hover:shadow-lg transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <UserPlus className="h-5 w-5 text-primary" />
+                      Gestion des Locataires
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      Ajoutez et gérez les profils de vos locataires
+                    </p>
+                    <Button asChild>
+                      <Link to="/tenants">
+                        Accéder <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
+              {isTenant && (
+                <Card className="hover:shadow-lg transition-all">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <Bell className="h-5 w-5 text-primary" />
+                      Demandes de Maintenance
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4">
+                      Signalez des problèmes et suivez les interventions
+                    </p>
+                    <Button asChild>
+                      <Link to="/maintenance">
+                        Accéder <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </motion.section>
+        )}
         
         <div className="space-y-16">
           <PropertyCategories />

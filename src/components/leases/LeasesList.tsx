@@ -1,21 +1,22 @@
 
 import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, FileText, Eye, Edit, AlertCircle, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { FileText, Search, FileDown, AlertCircle, Loader2, Eye, Edit, Filter, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import LeaseDetails from "./LeaseDetails";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
 
-interface Lease {
+type LeaseContract = {
   id: string;
   property_id: string;
-  property_title?: string;
+  property_name?: string;
   tenant_id: string;
   tenant_name?: string;
   start_date: string;
@@ -23,14 +24,14 @@ interface Lease {
   monthly_rent: number;
   deposit_amount: number;
   status: string;
-}
+};
 
 const LeasesList = () => {
-  const [leases, setLeases] = useState<Lease[]>([]);
+  const [leases, setLeases] = useState<LeaseContract[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredLeases, setFilteredLeases] = useState<Lease[]>([]);
-  const [selectedLease, setSelectedLease] = useState<string | null>(null);
+  const [filteredLeases, setFilteredLeases] = useState<LeaseContract[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const { user } = useAuth();
 
   useEffect(() => {
@@ -38,40 +39,48 @@ const LeasesList = () => {
   }, [user]);
 
   useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFilteredLeases(leases);
-    } else {
+    filterLeases();
+  }, [searchTerm, statusFilter, leases]);
+
+  const filterLeases = () => {
+    let filtered = [...leases];
+    
+    // Filter by search term
+    if (searchTerm.trim() !== "") {
       const lowercasedSearch = searchTerm.toLowerCase();
-      const filtered = leases.filter(
+      filtered = filtered.filter(
         lease =>
-          lease.property_title?.toLowerCase().includes(lowercasedSearch) ||
-          lease.tenant_name?.toLowerCase().includes(lowercasedSearch) ||
-          lease.status.toLowerCase().includes(lowercasedSearch)
+          lease.property_name?.toLowerCase().includes(lowercasedSearch) ||
+          lease.tenant_name?.toLowerCase().includes(lowercasedSearch)
       );
-      setFilteredLeases(filtered);
     }
-  }, [searchTerm, leases]);
+    
+    // Filter by status
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(lease => lease.status === statusFilter);
+    }
+    
+    setFilteredLeases(filtered);
+  };
 
   const fetchLeases = async () => {
     setLoading(true);
     try {
+      // Base query
       let query = supabase
         .from('lease_contracts')
         .select(`
           *,
-          properties:property_id (title),
-          profiles:tenant_id (full_name)
-        `);
-      
-      // Filter by role
+          properties(title),
+          profiles(full_name)
+        `)
+        .order('start_date', { ascending: false });
+
+      // Si l'utilisateur est un locataire, on filtre par son ID
       if (user?.role === 'TENANT') {
         query = query.eq('tenant_id', user.id);
-      } else if (user?.role === 'LANDLORD') {
-        query = query.eq('owner_id', user.id);
       }
-      
-      query = query.order('start_date', { ascending: false });
-      
+
       const { data, error } = await query;
 
       if (error) throw error;
@@ -80,9 +89,9 @@ const LeasesList = () => {
         const formattedLeases = data.map(item => ({
           id: item.id,
           property_id: item.property_id,
-          property_title: item.properties?.title || "Propriété inconnue",
+          property_name: item.properties?.title || "Propriété non spécifiée",
           tenant_id: item.tenant_id,
-          tenant_name: item.profiles?.full_name || "Locataire inconnu",
+          tenant_name: item.profiles?.full_name || "Locataire non spécifié",
           start_date: item.start_date,
           end_date: item.end_date,
           monthly_rent: item.monthly_rent,
@@ -95,6 +104,11 @@ const LeasesList = () => {
       }
     } catch (error) {
       console.error("Erreur lors du chargement des contrats:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les contrats de location.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -104,12 +118,12 @@ const LeasesList = () => {
     switch (status) {
       case 'active':
         return <Badge className="bg-green-500">Actif</Badge>;
+      case 'pending':
+        return <Badge className="bg-yellow-500">En attente</Badge>;
       case 'expired':
         return <Badge className="bg-red-500">Expiré</Badge>;
       case 'draft':
-        return <Badge className="bg-yellow-500">Brouillon</Badge>;
-      case 'terminated':
-        return <Badge className="bg-gray-500">Résilié</Badge>;
+        return <Badge className="bg-gray-500">Brouillon</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -123,41 +137,54 @@ const LeasesList = () => {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return `${amount.toLocaleString()} FCFA`;
-  };
-
-  const handleViewLease = (leaseId: string) => {
-    setSelectedLease(leaseId);
-  };
-
-  const handleCloseDetails = () => {
-    setSelectedLease(null);
-  };
-
-  if (selectedLease) {
-    return <LeaseDetails leaseId={selectedLease} onClose={handleCloseDetails} />;
-  }
-
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center">
-            <FileText className="h-5 w-5 mr-2" />
-            <h3 className="text-lg font-medium">Contrats de Bail</h3>
-          </div>
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Rechercher..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Liste des Contrats de Location
+          </CardTitle>
+          <div className="flex flex-col sm:flex-row items-stretch gap-2 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Rechercher..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            
+            <Select
+              value={statusFilter}
+              onValueChange={setStatusFilter}
+            >
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue placeholder="Statut" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les statuts</SelectItem>
+                <SelectItem value="active">Actif</SelectItem>
+                <SelectItem value="pending">En attente</SelectItem>
+                <SelectItem value="expired">Expiré</SelectItem>
+                <SelectItem value="draft">Brouillon</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Button variant="outline" size="icon" onClick={() => fetchLeases()} title="Rafraîchir">
+              <RefreshCw className="h-4 w-4" />
+              <span className="sr-only">Rafraîchir</span>
+            </Button>
+            
+            <Button variant="outline" size="icon" title="Exporter">
+              <FileDown className="h-4 w-4" />
+              <span className="sr-only">Exporter</span>
+            </Button>
           </div>
         </div>
-
+      </CardHeader>
+      <CardContent>
         {loading ? (
           <div className="flex justify-center items-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -168,32 +195,38 @@ const LeasesList = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Propriété</TableHead>
-                  <TableHead>Locataire</TableHead>
-                  <TableHead>Période</TableHead>
+                  {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
+                    <TableHead>Locataire</TableHead>
+                  )}
+                  <TableHead>Début</TableHead>
+                  <TableHead>Fin</TableHead>
                   <TableHead>Loyer mensuel</TableHead>
                   <TableHead>Statut</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredLeases.map((lease) => (
                   <TableRow key={lease.id}>
-                    <TableCell className="font-medium">{lease.property_title}</TableCell>
-                    <TableCell>{lease.tenant_name}</TableCell>
-                    <TableCell>
-                      {formatDate(lease.start_date)} - {formatDate(lease.end_date)}
-                    </TableCell>
-                    <TableCell>{formatCurrency(lease.monthly_rent)}</TableCell>
+                    <TableCell className="font-medium">{lease.property_name}</TableCell>
+                    {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
+                      <TableCell>{lease.tenant_name}</TableCell>
+                    )}
+                    <TableCell>{formatDate(lease.start_date)}</TableCell>
+                    <TableCell>{formatDate(lease.end_date)}</TableCell>
+                    <TableCell>{Number(lease.monthly_rent).toLocaleString()} FCFA</TableCell>
                     <TableCell>{getStatusBadge(lease.status)}</TableCell>
-                    <TableCell className="text-right">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => handleViewLease(lease.id)}
-                      >
-                        <Eye className="h-4 w-4" />
-                        <span className="sr-only">Voir</span>
-                      </Button>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="ghost" size="icon" title="Voir les détails">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {(user?.role === 'LANDLORD' || user?.role === 'ADMIN') && (
+                          <Button variant="ghost" size="icon" title="Modifier">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -205,9 +238,7 @@ const LeasesList = () => {
             <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium">Aucun contrat trouvé</h3>
             <p className="text-muted-foreground mt-1">
-              {searchTerm
-                ? "Aucun résultat pour cette recherche."
-                : "Aucun contrat de bail n'a été enregistré."}
+              {searchTerm || statusFilter !== "all" ? "Aucun résultat pour cette recherche." : "Commencez par créer un contrat de location."}
             </p>
           </div>
         )}

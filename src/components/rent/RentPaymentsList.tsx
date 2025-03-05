@@ -5,11 +5,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Receipt, Search, FileDown, AlertCircle, Loader2 } from "lucide-react";
+import { Receipt, Search, FileDown, AlertCircle, Loader2, Filter, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
 
 type RentPayment = {
   id: string;
@@ -28,6 +30,7 @@ const RentPaymentsList = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPayments, setFilteredPayments] = useState<RentPayment[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const { user } = useAuth();
 
   useEffect(() => {
@@ -35,31 +38,48 @@ const RentPaymentsList = () => {
   }, [user]);
 
   useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFilteredPayments(payments);
-    } else {
+    filterPayments();
+  }, [searchTerm, statusFilter, payments]);
+
+  const filterPayments = () => {
+    let filtered = [...payments];
+    
+    // Filter by search term
+    if (searchTerm.trim() !== "") {
       const lowercasedSearch = searchTerm.toLowerCase();
-      const filtered = payments.filter(
+      filtered = filtered.filter(
         payment =>
           payment.reference?.toLowerCase().includes(lowercasedSearch) ||
           payment.tenant_name?.toLowerCase().includes(lowercasedSearch) ||
           payment.payment_method?.toLowerCase().includes(lowercasedSearch) ||
           payment.note?.toLowerCase().includes(lowercasedSearch)
       );
-      setFilteredPayments(filtered);
     }
-  }, [searchTerm, payments]);
+    
+    // Filter by status
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(payment => payment.status === statusFilter);
+    }
+    
+    setFilteredPayments(filtered);
+  };
 
   const fetchPayments = async () => {
     setLoading(true);
     try {
+      // Base query
       let query = supabase
         .from('rent_payments')
         .select(`
           *,
-          profiles:tenant_id (full_name)
+          profiles(full_name)
         `)
         .order('payment_date', { ascending: false });
+
+      // Si l'utilisateur est un locataire, on filtre par son ID
+      if (user?.role === 'TENANT') {
+        query = query.eq('tenant_id', user.id);
+      }
 
       const { data, error } = await query;
 
@@ -83,6 +103,11 @@ const RentPaymentsList = () => {
       }
     } catch (error) {
       console.error("Erreur lors du chargement des paiements:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les paiements.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -127,7 +152,7 @@ const RentPaymentsList = () => {
             <Receipt className="h-5 w-5" />
             Historique des Paiements
           </CardTitle>
-          <div className="flex items-center w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch gap-2 w-full sm:w-auto">
             <div className="relative w-full sm:w-64">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -137,8 +162,28 @@ const RentPaymentsList = () => {
                 className="pl-8"
               />
             </div>
-            {/* Bouton pour télécharger les données - Fonctionnalité future */}
-            <Button variant="outline" size="icon" className="ml-2">
+            
+            <Select
+              value={statusFilter}
+              onValueChange={setStatusFilter}
+            >
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue placeholder="Statut" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les statuts</SelectItem>
+                <SelectItem value="completed">Payé</SelectItem>
+                <SelectItem value="pending">En attente</SelectItem>
+                <SelectItem value="failed">Échoué</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Button variant="outline" size="icon" onClick={() => fetchPayments()} title="Rafraîchir">
+              <RefreshCw className="h-4 w-4" />
+              <span className="sr-only">Rafraîchir</span>
+            </Button>
+            
+            <Button variant="outline" size="icon" title="Exporter">
               <FileDown className="h-4 w-4" />
               <span className="sr-only">Exporter</span>
             </Button>
@@ -190,7 +235,7 @@ const RentPaymentsList = () => {
             <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium">Aucun paiement trouvé</h3>
             <p className="text-muted-foreground mt-1">
-              {searchTerm ? "Aucun résultat pour cette recherche." : "Commencez par enregistrer un paiement."}
+              {searchTerm || statusFilter !== "all" ? "Aucun résultat pour cette recherche." : "Commencez par enregistrer un paiement."}
             </p>
           </div>
         )}
