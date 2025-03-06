@@ -9,6 +9,7 @@ import PropertyAnalytics from "@/components/dashboards/PropertyAnalytics";
 import NotificationCenter from "@/components/notifications/NotificationCenter";
 import RentCollection from "@/components/rent/RentCollection";
 import LeasesList from "@/components/leases/LeasesList";
+import MaintenancePage from "@/components/maintenance/MaintenancePage";
 import { useLocation } from "react-router-dom";
 
 interface DashboardProps {
@@ -104,10 +105,7 @@ const Dashboard = ({ initialTab = "overview" }: DashboardProps) => {
         </TabsContent>
 
         <TabsContent value="maintenance" className="mt-6">
-          <div className="text-center p-8">
-            <h2 className="text-2xl font-semibold mb-4">Maintenance</h2>
-            <p className="text-gray-500">Module de maintenance bientôt disponible</p>
-          </div>
+          <MaintenancePage />
         </TabsContent>
       </Tabs>
     </motion.div>

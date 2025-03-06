@@ -23,6 +23,7 @@ const Terms = lazy(() => import("@/pages/Terms"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
 const Calculator = lazy(() => import("@/pages/Calculator"));
 const Settings = lazy(() => import("@/pages/Settings"));
+const MaintenancePage = lazy(() => import("@/components/maintenance/MaintenancePage"));
 
 // Role-specific dashboards
 const AgencyDashboard = lazy(() => import("@/pages/dashboards/AgencyDashboard"));
@@ -209,7 +210,7 @@ const AppRoutes = () => {
           path="/maintenance"
           element={
             <ProtectedRoute roles={["TENANT", "LANDLORD", "ADMIN"]}>
-              <MaintenancePage />
+              <MaintenanceManagementPage />
             </ProtectedRoute>
           }
         />
@@ -235,7 +236,7 @@ const LeasesManagementPage = () => {
   return <Dashboard initialTab="leases" />;
 };
 
-const MaintenancePage = () => {
+const MaintenanceManagementPage = () => {
   return <Dashboard initialTab="maintenance" />;
 };
 
