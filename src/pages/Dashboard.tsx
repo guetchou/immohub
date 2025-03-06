@@ -3,7 +3,17 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Home, PieChart, Bell, FileText, AlertTriangle, MessageSquare } from "lucide-react";
+import { 
+  Home, 
+  PieChart, 
+  Bell, 
+  FileText, 
+  AlertTriangle, 
+  MessageSquare,
+  Settings,
+  Calendar,
+  Users
+} from "lucide-react";
 import UserDashboardOverview from "@/components/dashboards/UserDashboardOverview";
 import PropertyAnalytics from "@/components/dashboards/PropertyAnalytics";
 import NotificationCenter from "@/components/notifications/NotificationCenter";
@@ -34,6 +44,28 @@ const Dashboard = ({ initialTab = "overview" }: DashboardProps) => {
     }
   }, [location]);
 
+  // Container animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        duration: 0.5,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  // Item animation variants
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { duration: 0.5 }
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -55,8 +87,8 @@ const Dashboard = ({ initialTab = "overview" }: DashboardProps) => {
         onValueChange={setActiveTab}
         className="w-full"
       >
-        <div className="flex justify-center sm:justify-start mb-6">
-          <TabsList className="grid grid-cols-3 sm:grid-cols-6 gap-1">
+        <div className="flex justify-center sm:justify-start mb-6 overflow-x-auto pb-2">
+          <TabsList className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-9 gap-1">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Home className="h-4 w-4" />
               <span className="hidden sm:inline">Accueil</span>
@@ -80,6 +112,18 @@ const Dashboard = ({ initialTab = "overview" }: DashboardProps) => {
             <TabsTrigger value="maintenance" className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
               <span className="hidden sm:inline">Maintenance</span>
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span className="hidden sm:inline">Calendrier</span>
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Utilisateurs</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Paramètres</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -106,6 +150,33 @@ const Dashboard = ({ initialTab = "overview" }: DashboardProps) => {
 
         <TabsContent value="maintenance" className="mt-6">
           <MaintenancePage />
+        </TabsContent>
+        
+        <TabsContent value="calendar" className="mt-6">
+          <div className="text-center py-16">
+            <h3 className="text-xl font-semibold mb-4">Module Calendrier</h3>
+            <p className="text-muted-foreground">
+              Ce module sera bientôt disponible.
+            </p>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="users" className="mt-6">
+          <div className="text-center py-16">
+            <h3 className="text-xl font-semibold mb-4">Gestion des Utilisateurs</h3>
+            <p className="text-muted-foreground">
+              Ce module sera bientôt disponible.
+            </p>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="settings" className="mt-6">
+          <div className="text-center py-16">
+            <h3 className="text-xl font-semibold mb-4">Paramètres du Tableau de Bord</h3>
+            <p className="text-muted-foreground">
+              Ce module sera bientôt disponible.
+            </p>
+          </div>
         </TabsContent>
       </Tabs>
     </motion.div>
