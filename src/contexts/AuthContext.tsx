@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { User, UserRole } from "@/types/user";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { authAPI } from "@/services/api";
 
 interface AuthContextType {
   user: User | null;
@@ -21,192 +21,89 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   console.log("AuthProvider rendered with user:", user);
 
-  // Check for existing session on load
+  // Charger l'utilisateur depuis le stockage local au démarrage
   useEffect(() => {
-    const checkSession = async () => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user) {
-          // Get profile data
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          
-          if (profileError) {
-            console.error("Error fetching profile:", profileError);
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error("Erreur lors de la lecture du profil utilisateur:", error);
+        localStorage.removeItem('user');
+      }
+    }
+
+    // Vérifier le token et obtenir les données utilisateur du serveur
+    const checkAuthState = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+          const { data } = await authAPI.getCurrentUser();
+          if (data.user) {
+            const userData = {
+              id: data.user.id,
+              name: data.user.fullName,
+              email: data.user.email,
+              role: data.user.role.toUpperCase() as UserRole,
+              createdAt: new Date(data.user.createdAt),
+              full_name: data.user.fullName,
+              phone: data.user.phone,
+              company_name: data.user.company_name,
+              website: data.user.website,
+            };
+            setUser(userData);
+            localStorage.setItem('user', JSON.stringify(userData));
           }
-          
-          // Map the user role from profile
-          const role = determineUserRole(profileData?.role);
-          
-          setUser({
-            id: session.user.id,
-            name: profileData?.full_name || session.user.email?.split('@')[0] || 'User',
-            email: session.user.email || '',
-            role: role,
-            createdAt: new Date(session.user.created_at || Date.now()),
-            full_name: profileData?.full_name,
-            phone: profileData?.phone,
-            company_name: profileData?.company_name,
-            website: profileData?.website,
-          });
         }
       } catch (error) {
-        console.error("Session check error:", error);
+        console.error("Erreur lors de la vérification de l'état de l'authentification:", error);
+        // Si erreur, déconnecter l'utilisateur
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
     };
-    
-    checkSession();
-    
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session);
-      
-      if (session?.user) {
-        // Get profile data
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (profileError) {
-          console.error("Error fetching profile:", profileError);
-        }
-        
-        // Map the user role
-        const role = determineUserRole(profileData?.role);
-        
-        setUser({
-          id: session.user.id,
-          name: profileData?.full_name || session.user.email?.split('@')[0] || 'User',
-          email: session.user.email || '',
-          role: role,
-          createdAt: new Date(session.user.created_at || Date.now()),
-          full_name: profileData?.full_name,
-          phone: profileData?.phone,
-          company_name: profileData?.company_name,
-          website: profileData?.website,
-        });
-      } else {
-        setUser(null);
-      }
-    });
-    
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
 
-  // Helper function to map database role to UserRole type
-  const determineUserRole = (dbRole: string | null): UserRole => {
-    if (!dbRole) return 'USER';
-    
-    // Convert role string to uppercase for matching with UserRole type
-    const upperRole = dbRole.toUpperCase();
-    
-    // Check if the uppercase role matches a valid UserRole value
-    if (upperRole === 'ADMIN' || 
-        upperRole === 'USER' || 
-        upperRole === 'TENANT' || 
-        upperRole === 'LANDLORD' ||
-        upperRole === 'AGENCY' || 
-        upperRole === 'BROKER' || 
-        upperRole === 'CANVASSER' || 
-        upperRole === 'LAND_OWNER' || 
-        upperRole === 'INSURANCE' || 
-        upperRole === 'NOTARY') {
-      return upperRole as UserRole;
-    }
-    
-    return 'USER'; // Default role
-  };
+    checkAuthState();
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      console.log("Login attempt:", email);
+      console.log("Tentative de connexion:", email);
       
-      // Authenticate with Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data } = await authAPI.login(email, password);
       
-      if (error) throw error;
+      // Stocker le token
+      localStorage.setItem('authToken', data.token);
       
-      if (!data.user) {
-        throw new Error("No user returned from authentication");
-      }
-      
-      // Get or create profile
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user.id)
-        .single();
-      
-      if (profileError && profileError.code !== 'PGRST116') {
-        console.error("Error fetching profile:", profileError);
-      }
-      
-      // Determine the role
-      let role: UserRole = 'USER';
-      
-      if (profileData) {
-        role = determineUserRole(profileData.role);
-      } else {
-        // Create a new profile if it doesn't exist
-        const defaultRole = email.includes('admin') ? 'ADMIN' : 
-                           email.includes('tenant') ? 'TENANT' : 
-                           email.includes('landlord') ? 'LANDLORD' : 
-                           email.includes('agency') ? 'AGENCY' : 
-                           email.includes('broker') ? 'BROKER' : 'USER';
-        
-        // Use the determined role string
-        const roleString = defaultRole.toLowerCase();
-        
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: data.user.id,
-            role: roleString,
-            full_name: "John Doe",
-            status: 'active',
-          });
-        
-        if (insertError) {
-          console.error("Error creating profile:", insertError);
-        }
-        
-        role = defaultRole as UserRole;
-      }
-      
-      setUser({
+      // Créer l'objet utilisateur
+      const userData: User = {
         id: data.user.id,
-        name: profileData?.full_name || data.user.email?.split('@')[0] || 'User',
-        email: data.user.email || '',
-        role,
-        createdAt: new Date(data.user.created_at || Date.now()),
-        full_name: profileData?.full_name,
-        phone: profileData?.phone,
-        company_name: profileData?.company_name,
-        website: profileData?.website,
-      });
+        name: data.user.fullName,
+        email: data.user.email,
+        role: data.user.role.toUpperCase() as UserRole,
+        createdAt: new Date(),
+        full_name: data.user.fullName,
+        phone: data.user.phone,
+        company_name: data.user.company_name,
+        website: data.user.website,
+      };
+      
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
 
       toast({
         title: "Connexion réussie",
-        description: `Bienvenue ${data.user.email}`,
+        description: `Bienvenue ${data.user.fullName}`,
       });
     } catch (error: any) {
-      console.error("Login error:", error);
+      console.error("Erreur de connexion:", error);
       toast({
         title: "Erreur de connexion",
-        description: error.message || "Une erreur est survenue lors de la connexion",
+        description: error.response?.data?.message || "Une erreur est survenue lors de la connexion",
         variant: "destructive",
       });
       throw error;
@@ -215,16 +112,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
+      authAPI.logout();
       setUser(null);
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
       });
     } catch (error: any) {
-      console.error("Logout error:", error);
+      console.error("Erreur de déconnexion:", error);
       toast({
         title: "Erreur de déconnexion",
         description: error.message || "Une erreur est survenue lors de la déconnexion",

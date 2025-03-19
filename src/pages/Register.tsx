@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,7 @@ import { UserRole } from "@/types/user";
 import { useAuth } from "@/contexts/AuthContext";
 import { NavBar } from "@/components/navigation/NavBar";
 import { useRoleRedirect } from "@/hooks/useRoleRedirect";
-import { supabase } from "@/integrations/supabase/client";
+import { authAPI } from "@/services/api";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +25,7 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { login } = useAuth();
+  const navigate = useNavigate();
   
   // Utiliser notre nouveau hook de redirection
   useRoleRedirect();
@@ -80,59 +81,29 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      // Register with Supabase
-      const { data, error } = await supabase.auth.signUp({
+      // S'inscrire avec le backend
+      const { data } = await authAPI.register({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            full_name: formData.name,
-            role: formData.role.toLowerCase(),
-          }
-        }
+        fullName: formData.name,
+        role: formData.role
       });
 
-      if (error) throw error;
-
       if (data.user) {
-        // Create or update profile with role
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: data.user.id,
-            full_name: formData.name,
-            role: formData.role.toLowerCase(),
-            status: 'active',
-          });
-
-        if (profileError) {
-          console.error("Profile creation error:", profileError);
-          toast({
-            title: "Erreur de profil",
-            description: "Compte créé mais erreur lors de la création du profil",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Inscription réussie",
-            description: "Bienvenue sur ImmoHub Congo",
-          });
-
-          // Automatically log in the user
-          await login(formData.email, formData.password);
-        }
-      } else {
-        // Email confirmation might be required
         toast({
-          title: "Vérification par email requise",
-          description: "Veuillez vérifier votre email pour confirmer votre compte",
+          title: "Inscription réussie",
+          description: "Bienvenue sur ImmoHub Congo",
         });
+
+        // Connecter automatiquement l'utilisateur
+        await login(formData.email, formData.password);
+        navigate('/');
       }
     } catch (error: any) {
       console.error("Registration error:", error);
       toast({
         title: "Erreur d'inscription",
-        description: error.message || "Une erreur est survenue lors de l'inscription",
+        description: error.response?.data?.message || "Une erreur est survenue lors de l'inscription",
         variant: "destructive",
       });
     } finally {

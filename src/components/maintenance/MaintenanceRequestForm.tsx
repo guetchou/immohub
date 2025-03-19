@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { maintenanceAPI, propertiesAPI } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface MaintenanceRequestFormProps {
@@ -25,7 +25,7 @@ const MaintenanceRequestForm = ({ onSuccess, requestId }: MaintenanceRequestForm
   
   // Form data
   const [formData, setFormData] = useState({
-    propertyId: "",
+    property_id: "",
     title: "",
     description: "",
     priority: "medium",
@@ -41,29 +41,45 @@ const MaintenanceRequestForm = ({ onSuccess, requestId }: MaintenanceRequestForm
   }, [requestId]);
 
   const fetchRequestDetails = async () => {
-    // This would be implemented if we had the maintenance_requests table
-    // For now, we'll just set the form loading to false
-    setFormLoading(false);
+    if (!requestId) {
+      setFormLoading(false);
+      return;
+    }
+
+    try {
+      const { data } = await maintenanceAPI.getById(requestId);
+      if (data.request) {
+        setFormData({
+          property_id: data.request.property_id,
+          title: data.request.title,
+          description: data.request.description,
+          priority: data.request.priority,
+          location: data.request.location
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement des détails de la demande:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les détails de la demande",
+        variant: "destructive",
+      });
+    } finally {
+      setFormLoading(false);
+    }
   };
 
   const fetchProperties = async () => {
     try {
-      let query = supabase.from('properties').select('id, title, address');
-      
-      // Filter by role
-      if (user?.role === 'TENANT') {
-        // For tenants, we would normally fetch only properties they're renting
-        // For now, let's just assume they can see all properties
-      } else if (user?.role === 'LANDLORD') {
-        query = query.eq('owner_id', user.id);
-      }
-      
-      const { data, error } = await query;
-      
-      if (error) throw error;
-      setProperties(data || []);
+      const { data } = await propertiesAPI.getAll();
+      setProperties(data.properties || []);
     } catch (error) {
       console.error("Erreur lors du chargement des propriétés:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger la liste des propriétés",
+        variant: "destructive",
+      });
     }
   };
 
@@ -81,20 +97,26 @@ const MaintenanceRequestForm = ({ onSuccess, requestId }: MaintenanceRequestForm
     setLoading(true);
     
     try {
-      // For now just simulate the submission
-      setTimeout(() => {
+      if (requestId) {
+        await maintenanceAPI.update(requestId, formData);
+        toast({
+          title: "Demande mise à jour",
+          description: "Votre demande de maintenance a été mise à jour avec succès.",
+        });
+      } else {
+        await maintenanceAPI.create(formData);
         toast({
           title: "Demande enregistrée",
           description: "Votre demande de maintenance a été enregistrée avec succès.",
         });
-        
-        onSuccess();
-      }, 1000);
+      }
+      
+      onSuccess();
     } catch (error: any) {
       console.error("Erreur lors de l'enregistrement de la demande:", error);
       toast({
         title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'enregistrement de la demande.",
+        description: error.response?.data?.message || "Une erreur est survenue lors de l'enregistrement de la demande.",
         variant: "destructive",
       });
     } finally {
@@ -115,11 +137,11 @@ const MaintenanceRequestForm = ({ onSuccess, requestId }: MaintenanceRequestForm
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="propertyId">Propriété concernée *</Label>
+            <Label htmlFor="property_id">Propriété concernée *</Label>
             <Select
-              name="propertyId"
-              value={formData.propertyId}
-              onValueChange={(value) => handleSelectChange("propertyId", value)}
+              name="property_id"
+              value={formData.property_id}
+              onValueChange={(value) => handleSelectChange("property_id", value)}
               required
             >
               <SelectTrigger>

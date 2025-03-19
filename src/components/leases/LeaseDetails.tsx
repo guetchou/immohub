@@ -1,11 +1,11 @@
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { FileText, Printer, Download, Loader2 } from "lucide-react";
+import { leasesAPI } from "@/services/api";
 
 export interface LeaseDetailsProps {
   leaseId: string;
@@ -15,8 +15,6 @@ export interface LeaseDetailsProps {
 const LeaseDetails = ({ leaseId, onClose }: LeaseDetailsProps) => {
   const [lease, setLease] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [property, setProperty] = useState<any>(null);
-  const [tenant, setTenant] = useState<any>(null);
 
   useEffect(() => {
     fetchLeaseDetails();
@@ -25,37 +23,8 @@ const LeaseDetails = ({ leaseId, onClose }: LeaseDetailsProps) => {
   const fetchLeaseDetails = async () => {
     setLoading(true);
     try {
-      // Fetch lease contract
-      const { data: leaseData, error: leaseError } = await supabase
-        .from('lease_contracts')
-        .select('*')
-        .eq('id', leaseId)
-        .single();
-
-      if (leaseError) throw leaseError;
-      setLease(leaseData);
-
-      // Fetch property details
-      if (leaseData.property_id) {
-        const { data: propertyData } = await supabase
-          .from('properties')
-          .select('*')
-          .eq('id', leaseData.property_id)
-          .single();
-        
-        setProperty(propertyData);
-      }
-
-      // Fetch tenant details
-      if (leaseData.tenant_id) {
-        const { data: tenantData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', leaseData.tenant_id)
-          .single();
-        
-        setTenant(tenantData);
-      }
+      const { data } = await leasesAPI.getById(leaseId);
+      setLease(data.lease);
     } catch (error) {
       console.error("Erreur lors du chargement des détails du contrat:", error);
     } finally {
@@ -106,7 +75,7 @@ const LeaseDetails = ({ leaseId, onClose }: LeaseDetailsProps) => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">
-          Contrat #{lease.id.substring(0, 8)}
+          Contrat #{lease.id.toString().substring(0, 8)}
         </h3>
         <div className="flex gap-2">
           <Button size="sm" variant="outline">
@@ -146,19 +115,19 @@ const LeaseDetails = ({ leaseId, onClose }: LeaseDetailsProps) => {
         </div>
         
         <div className="space-y-4">
-          {property && (
+          {lease.property_title && (
             <div>
               <h4 className="text-sm font-medium text-gray-500">Propriété</h4>
-              <p className="mt-1 font-medium">{property.title}</p>
-              <p className="text-sm text-gray-500">{property.address}, {property.city}</p>
+              <p className="mt-1 font-medium">{lease.property_title}</p>
+              <p className="text-sm text-gray-500">{lease.property_address}, {lease.property_city}</p>
             </div>
           )}
           
-          {tenant && (
+          {lease.tenant_name && (
             <div>
               <h4 className="text-sm font-medium text-gray-500">Locataire</h4>
-              <p className="mt-1">{tenant.full_name}</p>
-              <p className="text-sm text-gray-500">{tenant.phone}</p>
+              <p className="mt-1">{lease.tenant_name}</p>
+              <p className="text-sm text-gray-500">{lease.tenant_phone}</p>
             </div>
           )}
         </div>

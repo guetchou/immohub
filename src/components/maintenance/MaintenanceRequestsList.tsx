@@ -1,48 +1,44 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Wrench, Search, AlertCircle, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-
-// Données factices pour la démo
-const mockRequests = [
-  {
-    id: "1",
-    title: "Problème de chauffage",
-    property: "Appartement au centre-ville",
-    submittedDate: "2023-10-15",
-    status: "pending",
-    priority: "high"
-  },
-  {
-    id: "2",
-    title: "Fuite d'eau dans la salle de bain",
-    property: "Villa de luxe avec piscine",
-    submittedDate: "2023-11-22",
-    status: "in_progress",
-    priority: "medium"
-  },
-  {
-    id: "3",
-    title: "Serrure cassée sur la porte d'entrée",
-    property: "Studio près de l'université",
-    submittedDate: "2023-12-10",
-    status: "resolved",
-    priority: "high"
-  }
-];
+import { maintenanceAPI } from "@/services/api";
 
 const MaintenanceRequestsList = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [requests] = useState(mockRequests);
+  const [requests, setRequests] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("");
+
+  useEffect(() => {
+    fetchRequests();
+  }, [statusFilter, priorityFilter]);
+
+  const fetchRequests = async () => {
+    setLoading(true);
+    try {
+      const { data } = await maintenanceAPI.getAll({
+        status: statusFilter,
+        priority: priorityFilter
+      });
+      setRequests(data.requests || []);
+    } catch (error) {
+      console.error("Erreur lors du chargement des demandes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredRequests = requests.filter(request => 
     request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    request.property.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    request.property_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     request.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
     request.priority.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -86,8 +82,8 @@ const MaintenanceRequestsList = () => {
   };
 
   const viewDetails = (id: string) => {
-    console.log("View details for request", id);
-    // Fonction à implémenter quand la base de données sera prête
+    // Cette fonction sera implémentée pour afficher les détails d'une demande
+    console.log("Afficher les détails de la demande", id);
   };
 
   return (
@@ -98,18 +94,48 @@ const MaintenanceRequestsList = () => {
             <Wrench className="h-5 w-5 mr-2" />
             <h3 className="text-lg font-medium">Demandes de Maintenance</h3>
           </div>
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Rechercher..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Rechercher..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-36">
+                <SelectValue placeholder="Statut" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Tous</SelectItem>
+                <SelectItem value="pending">En attente</SelectItem>
+                <SelectItem value="in_progress">En cours</SelectItem>
+                <SelectItem value="resolved">Résolu</SelectItem>
+                <SelectItem value="cancelled">Annulé</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+              <SelectTrigger className="w-full sm:w-36">
+                <SelectValue placeholder="Priorité" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Toutes</SelectItem>
+                <SelectItem value="low">Basse</SelectItem>
+                <SelectItem value="medium">Moyenne</SelectItem>
+                <SelectItem value="high">Haute</SelectItem>
+                <SelectItem value="emergency">Urgence</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        {filteredRequests.length > 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : filteredRequests.length > 0 ? (
           <div className="divide-y">
             {filteredRequests.map((request) => (
               <div key={request.id} className="py-4 flex flex-col sm:flex-row justify-between">
@@ -120,8 +146,8 @@ const MaintenanceRequestsList = () => {
                   </div>
                   
                   <div className="text-sm text-muted-foreground">
-                    <p>{request.property}</p>
-                    <p>Soumis le {formatDate(request.submittedDate)}</p>
+                    <p>{request.property_title || 'Propriété non spécifiée'}</p>
+                    <p>Soumis le {formatDate(request.submitted_date)}</p>
                   </div>
                 </div>
                 
@@ -151,7 +177,7 @@ const MaintenanceRequestsList = () => {
             <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium">Aucune demande trouvée</h3>
             <p className="text-muted-foreground mt-1">
-              {searchTerm
+              {searchTerm || statusFilter || priorityFilter
                 ? "Aucun résultat pour cette recherche."
                 : "Aucune demande de maintenance n'a été enregistrée."}
             </p>

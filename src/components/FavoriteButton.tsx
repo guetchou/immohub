@@ -1,9 +1,10 @@
+
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import api from "@/services/api";
 
 const FavoriteButton = ({ propertyId }: { propertyId: string }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -18,19 +19,8 @@ const FavoriteButton = ({ propertyId }: { propertyId: string }) => {
 
   const checkIfFavorite = async () => {
     try {
-      const { data, error } = await supabase
-        .from("favorites")
-        .select("*")
-        .eq("user_id", user?.id)
-        .eq("property_id", propertyId)
-        .single();
-
-      if (error && error.code !== "PGRST116") {
-        console.error("Error checking favorite:", error);
-        return;
-      }
-
-      setIsFavorite(!!data);
+      const { data } = await api.get(`/favorites/check/${propertyId}`);
+      setIsFavorite(data.isFavorite);
     } catch (error) {
       console.error("Error checking favorite:", error);
     }
@@ -48,19 +38,9 @@ const FavoriteButton = ({ propertyId }: { propertyId: string }) => {
 
     try {
       if (isFavorite) {
-        const { error } = await supabase
-          .from("favorites")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("property_id", propertyId);
-
-        if (error) throw error;
+        await api.delete(`/favorites/${propertyId}`);
       } else {
-        const { error } = await supabase
-          .from("favorites")
-          .insert([{ user_id: user.id, property_id: propertyId }]);
-
-        if (error) throw error;
+        await api.post('/favorites', { property_id: propertyId });
       }
 
       setIsFavorite(!isFavorite);
