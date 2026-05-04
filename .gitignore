@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Vite timestamps
+vite.config.ts.timestamp-*.mjs
+
 # SQLite databases
 *.sqlite
 *.sqlite-wal
