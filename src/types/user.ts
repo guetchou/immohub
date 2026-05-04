@@ -1,14 +1,20 @@
-export type UserRole = 
+export type UserRole =
   | "USER"
-  | "TENANT" // locataire
-  | "LANDLORD" // propriétaire
-  | "AGENCY" // agence immobilière
-  | "BROKER" // démarcheur/courtier
-  | "CANVASSER" // démarcheur
-  | "LAND_OWNER" // propriétaire terrain
-  | "INSURANCE" // assurance
-  | "NOTARY" // notaire
-  | "ADMIN";
+  | "TENANT"
+  | "LANDLORD"
+  | "AGENCY"
+  | "BROKER"
+  | "CANVASSER"
+  | "LAND_OWNER"
+  | "INSURANCE"
+  | "NOTARY"
+  | "ADMIN"
+  | "FURNISHED_OPERATOR"
+  | "MINISTRY_ADMIN"
+  | "MINISTRY_VIEWER"
+  | "MINISTRY_INSPECTOR"
+  | "COMPLIANCE_AGENT"
+  | "TAX_ANALYST";
 
 export interface User {
   id: string;

@@ -10,7 +10,7 @@ import WhyChooseUs from "@/components/WhyChooseUs";
 import ImageCarousel from "@/components/ImageCarousel";
 import FAQ from "@/components/FAQ";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { propertiesAPI } from "@/services/api";
 import PropertyMap from "@/components/location/PropertyMap";
 import SocialShare from "@/components/social/SocialShare";
 import MortgageSimulator from "@/components/calculators/MortgageSimulator";
@@ -39,23 +39,13 @@ const Index = () => {
 
   useEffect(() => {
     const fetchProperties = async () => {
-      console.log("Fetching properties for map...");
-      const { data, error } = await supabase
-        .from('properties')
-        .select('id, title, latitude, longitude')
-        .not('latitude', 'is', null)
-        .not('longitude', 'is', null)
-        .limit(10);
-      
-      if (error) {
-        console.error('Error fetching properties:', error);
-        return;
+      try {
+        const { data } = await propertiesAPI.getAll();
+        setProperties(data?.slice(0, 10) || []);
+      } catch {
+        setProperties([]);
       }
-      
-      console.log("Fetched properties:", data);
-      setProperties(data);
     };
-
     fetchProperties();
   }, []);
 

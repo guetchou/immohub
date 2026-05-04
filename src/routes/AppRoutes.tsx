@@ -27,6 +27,7 @@ const MaintenancePage = lazy(() => import("@/components/maintenance/MaintenanceP
 
 // Role-specific dashboards
 const AgencyDashboard = lazy(() => import("@/pages/dashboards/AgencyDashboard"));
+
 const BrokerDashboard = lazy(() => import("@/pages/dashboards/BrokerDashboard"));
 const CanvasserDashboard = lazy(() => import("@/pages/dashboards/CanvasserDashboard"));
 const InsuranceDashboard = lazy(() => import("@/pages/dashboards/InsuranceDashboard"));
@@ -34,6 +35,23 @@ const LandOwnerDashboard = lazy(() => import("@/pages/dashboards/LandOwnerDashbo
 const LandlordDashboard = lazy(() => import("@/pages/dashboards/LandlordDashboard"));
 const NotaryDashboard = lazy(() => import("@/pages/dashboards/NotaryDashboard"));
 const TenantDashboard = lazy(() => import("@/pages/dashboards/TenantDashboard"));
+
+// Ministry pages
+const MinistryDashboard = lazy(() => import("@/pages/ministry/MinistryDashboard"));
+const MinistryRegistry = lazy(() => import("@/pages/ministry/MinistryRegistry"));
+const MinistryMap = lazy(() => import("@/pages/ministry/MinistryMap"));
+const MinistryInspections = lazy(() => import("@/pages/ministry/MinistryInspections"));
+const MinistryClassification = lazy(() => import("@/pages/ministry/MinistryClassification"));
+const MinistryStatistics = lazy(() => import("@/pages/ministry/MinistryStatistics"));
+const MinistryTaxRisk = lazy(() => import("@/pages/ministry/MinistryTaxRisk"));
+const MinistryReports = lazy(() => import("@/pages/ministry/MinistryReports"));
+const MinistryAlerts = lazy(() => import("@/pages/ministry/MinistryAlerts"));
+const MinistryCases = lazy(() => import("@/pages/ministry/MinistryCases"));
+
+// Furnished pages
+const FurnishedListings = lazy(() => import("@/pages/furnished/FurnishedListings"));
+const FurnishedDetail = lazy(() => import("@/pages/furnished/FurnishedDetail"));
+const FurnishedDashboard = lazy(() => import("@/pages/dashboards/FurnishedDashboard"));
 
 // Loading fallback
 const LoadingFallback = () => (
@@ -219,6 +237,102 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Furnished / Meublés - public listing */}
+        <Route path="/furnished" element={<FurnishedListings />} />
+        <Route path="/furnished/:id" element={<FurnishedDetail />} />
+
+        {/* Furnished Dashboard - opérateur */}
+        <Route
+          path="/furnished-dashboard"
+          element={
+            <ProtectedRoute roles={["FURNISHED_OPERATOR", "ADMIN"]}>
+              <FurnishedDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ministry routes - protégées */}
+        <Route
+          path="/ministry-dashboard"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_VIEWER", "MINISTRY_INSPECTOR", "COMPLIANCE_AGENT", "TAX_ANALYST"]}>
+              <MinistryDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/registry"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_VIEWER", "MINISTRY_INSPECTOR", "COMPLIANCE_AGENT", "TAX_ANALYST"]}>
+              <MinistryRegistry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/map"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_VIEWER", "MINISTRY_INSPECTOR", "COMPLIANCE_AGENT", "TAX_ANALYST"]}>
+              <MinistryMap />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/inspections"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_INSPECTOR"]}>
+              <MinistryInspections />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/classification"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_VIEWER", "COMPLIANCE_AGENT"]}>
+              <MinistryClassification />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/statistics"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_VIEWER", "TAX_ANALYST"]}>
+              <MinistryStatistics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/tax-risk"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "TAX_ANALYST"]}>
+              <MinistryTaxRisk />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/reports"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "TAX_ANALYST"]}>
+              <MinistryReports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/alerts"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_VIEWER", "MINISTRY_INSPECTOR", "COMPLIANCE_AGENT", "TAX_ANALYST"]}>
+              <MinistryAlerts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/cases"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_INSPECTOR", "COMPLIANCE_AGENT"]}>
+              <MinistryCases />
             </ProtectedRoute>
           }
         />
