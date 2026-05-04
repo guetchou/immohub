@@ -1,5 +1,6 @@
 import { Facebook, Instagram, Twitter, MessageSquare, Mail, Phone, MapPin } from "lucide-react";
-import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
@@ -9,30 +10,32 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-real-light">ImmoHub Congo</h3>
             <p className="text-sm text-gray-300">
-              Votre partenaire immobilier de confiance au Congo
+              Immobilier, appartements meublés et conformité au Congo-Brazzaville.
             </p>
           </div>
           
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-real-light">Liens Rapides</h4>
-            <ul className="space-y-3">
+            <h4 className="text-lg font-semibold text-real-light">Liens rapides</h4>
+            <ul className="space-y-3 text-sm">
               <li>
-                <a href="/properties" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Propriétés
-                </a>
+                <Link to="/properties" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
+                  <MapPin className="w-4 h-4" /> Propriétés
+                </Link>
               </li>
               <li>
-                <a href="/contact" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  Contact
-                </a>
+                <Link to="/furnished" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
+                  <MapPin className="w-4 h-4" /> Appartements meublés
+                </Link>
               </li>
               <li>
-                <a href="/about" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4" />
-                  À propos
-                </a>
+                <Link to="/market-observatory" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4" /> Observatoire du marché
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-gray-300 hover:text-real-accent transition-colors duration-200 flex items-center gap-2">
+                  <Mail className="w-4 h-4" /> Contact
+                </Link>
               </li>
             </ul>
           </div>
@@ -42,15 +45,15 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2 text-gray-300">
                 <MapPin className="w-4 h-4 text-real-accent" />
-                Brazzaville, Congo
+                Brazzaville, Congo-Brazzaville
               </li>
               <li className="flex items-center gap-2 text-gray-300">
                 <Phone className="w-4 h-4 text-real-accent" />
-                +242 06 123 4567
+                Contact administratif à configurer
               </li>
               <li className="flex items-center gap-2 text-gray-300">
                 <Mail className="w-4 h-4 text-real-accent" />
-                contact@immohub.cg
+                Contact administratif à configurer
               </li>
             </ul>
           </div>

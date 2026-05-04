@@ -14,15 +14,15 @@ const Contact = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <Phone className="w-5 h-5 text-real-primary" />
-                <span>+242 06 123 45 67</span>
+                <span>Contact administratif à configurer</span>
               </div>
               <div className="flex items-center gap-4">
                 <MessageSquare className="w-5 h-5 text-real-primary" />
-                <span>contact@immobilier.cg</span>
+                <span>Contact administratif à configurer</span>
               </div>
               <div className="flex items-center gap-4">
                 <MapPin className="w-5 h-5 text-real-primary" />
-                <span>123 Avenue de la Paix, Brazzaville</span>
+                <span>Brazzaville, Congo-Brazzaville</span>
               </div>
             </div>
           </div>

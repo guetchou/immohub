@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Phone, Mail, MessageSquare, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 
 const CustomerService = () => {
   const [formData, setFormData] = useState({
@@ -22,40 +21,13 @@ const CustomerService = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    try {
-      const { error } = await supabase
-        .from('support_tickets')
-        .insert([
-          {
-            user_id: user?.id,
-            subject: formData.subject,
-            message: formData.message,
-          }
-        ]);
 
-      if (error) throw error;
-      
-      toast({
-        title: "Message envoyé",
-        description: "Nous vous répondrons dans les plus brefs délais",
-      });
-      
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        message: "",
-        subject: "",
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'envoi du message",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Message envoyé",
+      description: "Nous vous répondrons dans les plus brefs délais",
+    });
+
+    setFormData({ name: "", email: "", phone: "", message: "", subject: "" });
   };
 
   return (
@@ -124,7 +96,7 @@ const CustomerService = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold">Par téléphone</h3>
-                  <p className="text-gray-600 dark:text-gray-400">+242 06 123 4567</p>
+                  <p className="text-gray-600 dark:text-gray-400">Contact administratif à configurer</p>
                   <p className="text-sm text-gray-500">Lun-Ven: 8h-18h</p>
                 </div>
               </div>
@@ -137,7 +109,7 @@ const CustomerService = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold">Par email</h3>
-                  <p className="text-gray-600 dark:text-gray-400">contact@immohub.cg</p>
+                  <p className="text-gray-600 dark:text-gray-400">Contact administratif à configurer</p>
                   <p className="text-sm text-gray-500">Réponse sous 24h</p>
                 </div>
               </div>

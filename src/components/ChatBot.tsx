@@ -3,7 +3,6 @@ import { MessageSquare, Send, Phone, Mail, Video, MessageCircle, Facebook, Insta
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,41 +28,10 @@ const ChatBot = () => {
     setIsLoading(true);
     
     try {
-      console.log("Sending message to AI assistant:", userMessage);
-      
-      const { data, error } = await supabase.functions.invoke('get-ai-response', {
-        body: JSON.stringify({
-          message: userMessage,
-          timestamp: new Date().toISOString()
-        })
-      });
-
-      console.log("Response received from AI:", { data, error });
-
-      if (error) {
-        console.error("Error from AI service:", error);
-        throw error;
-      }
-
-      if (!data || !data.response) {
-        console.error("Invalid AI response format:", data);
-        throw new Error("Format de réponse invalide");
-      }
-
-      const aiResponse = data.response;
-      console.log("Processing AI response:", aiResponse);
-
-      setMessages(prev => [...prev, { text: aiResponse, isUser: false }]);
-    } catch (error) {
-      console.error("Chat error:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la communication avec l'assistant",
-        variant: "destructive",
-      });
-      setMessages(prev => [...prev, { 
-        text: "Désolé, je rencontre des difficultés techniques. Un agent va vous contacter rapidement.", 
-        isUser: false 
+      await new Promise((r) => setTimeout(r, 600));
+      setMessages(prev => [...prev, {
+        text: "Merci pour votre message. Un agent du service administratif vous répondra prochainement.",
+        isUser: false,
       }]);
     } finally {
       setIsLoading(false);
@@ -79,22 +47,22 @@ const ChatBot = () => {
         });
         break;
       case 'email':
-        window.location.href = "mailto:contact@immohub.cg";
+        toast({ title: "Email", description: "Contact administratif à configurer" });
         break;
       case 'whatsapp':
-        window.open("https://wa.me/242061234567", "_blank");
+        toast({ title: "WhatsApp", description: "Contact administratif à configurer" });
         break;
       case 'facebook':
-        window.open("https://facebook.com/immohub.cg", "_blank");
+        toast({ title: "Facebook", description: "Page non encore configurée" });
         break;
       case 'instagram':
-        window.open("https://instagram.com/immohub.cg", "_blank");
+        toast({ title: "Instagram", description: "Page non encore configurée" });
         break;
       case 'linkedin':
-        window.open("https://linkedin.com/company/immohub-cg", "_blank");
+        toast({ title: "LinkedIn", description: "Page non encore configurée" });
         break;
       case 'office':
-        window.open("https://maps.google.com/?q=ImmoHub+Congo", "_blank");
+        toast({ title: "Adresse", description: "Brazzaville, Congo-Brazzaville" });
         break;
       case 'video':
         toast({

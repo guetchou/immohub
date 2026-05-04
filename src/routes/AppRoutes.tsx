@@ -48,6 +48,9 @@ const MinistryReports = lazy(() => import("@/pages/ministry/MinistryReports"));
 const MinistryAlerts = lazy(() => import("@/pages/ministry/MinistryAlerts"));
 const MinistryCases = lazy(() => import("@/pages/ministry/MinistryCases"));
 
+// Market Observatory
+const MarketObservatory = lazy(() => import("@/pages/MarketObservatory"));
+
 // Furnished pages
 const FurnishedListings = lazy(() => import("@/pages/furnished/FurnishedListings"));
 const FurnishedDetail = lazy(() => import("@/pages/furnished/FurnishedDetail"));
@@ -71,6 +74,7 @@ const AppRoutes = () => {
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetail />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/market-observatory" element={<MarketObservatory />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/calculator" element={<Calculator />} />

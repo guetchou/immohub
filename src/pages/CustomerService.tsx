@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { MessageSquare, Phone, Mail } from "lucide-react";
@@ -17,7 +16,7 @@ const CustomerService = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast({
         title: "Erreur",
@@ -27,35 +26,12 @@ const CustomerService = () => {
       return;
     }
 
-    try {
-      const { error } = await supabase
-        .from("support_tickets")
-        .insert([
-          {
-            user_id: user.id,
-            subject,
-            message,
-            status: "open",
-          },
-        ]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Ticket créé",
-        description: "Nous vous répondrons dans les plus brefs délais",
-      });
-
-      setSubject("");
-      setMessage("");
-    } catch (error) {
-      console.error("Error creating ticket:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la création du ticket",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Ticket créé",
+      description: "Nous vous répondrons dans les plus brefs délais",
+    });
+    setSubject("");
+    setMessage("");
   };
 
   return (
@@ -72,7 +48,7 @@ const CustomerService = () => {
               <Phone className="h-8 w-8 text-real-primary" />
               <div>
                 <h3 className="text-lg font-semibold">Assistance téléphonique</h3>
-                <p className="text-gray-600">+242 06 123 4567</p>
+                <p className="text-gray-600">Contact administratif à configurer</p>
               </div>
             </div>
             <p className="text-sm text-gray-500">

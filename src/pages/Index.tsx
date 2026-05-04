@@ -287,7 +287,7 @@ const Index = () => {
                 Partager ImmoHub
               </h2>
               <SocialShare 
-                title="Découvrez ImmoHub - Votre partenaire immobilier au Congo" 
+                title="ImmoHub Congo — Portail national des meublés touristiques"
                 url={window.location.href} 
               />
             </div>
