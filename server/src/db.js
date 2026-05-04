@@ -162,4 +162,32 @@ function initSchema() {
 
 initSchema();
 
+// Safe column migrations for existing databases
+const columnMigrations = [
+  "ALTER TABLE furnished_properties ADD COLUMN nimt_number TEXT",
+];
+for (const m of columnMigrations) {
+  try { db.exec(m); } catch {}
+}
+
+// New tables for finance module
+db.exec(`
+  CREATE TABLE IF NOT EXISTS finance_transmissions (
+    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    property_id TEXT,
+    property_name TEXT,
+    operator_name TEXT,
+    nimt_number TEXT,
+    year INTEGER,
+    total_nights INTEGER DEFAULT 0,
+    total_revenue REAL DEFAULT 0,
+    tax_amount REAL DEFAULT 0,
+    status TEXT DEFAULT 'PENDING',
+    transmitted_at TEXT DEFAULT (datetime('now')),
+    processed_at TEXT,
+    notes TEXT,
+    created_at TEXT DEFAULT (datetime('now'))
+  )
+`);
+
 module.exports = db;

@@ -51,6 +51,19 @@ const MinistryCases = lazy(() => import("@/pages/ministry/MinistryCases"));
 // Market Observatory
 const MarketObservatory = lazy(() => import("@/pages/MarketObservatory"));
 
+// Institutional home (replaces generic Index on /)
+const InstitutionalHome = lazy(() => import("@/pages/InstitutionalHome"));
+
+// NIMT verification (public)
+const VerifyNimt = lazy(() => import("@/pages/VerifyNimt"));
+
+// Tourism registry (ministry)
+const TourismRegistry = lazy(() => import("@/pages/ministry/TourismRegistry"));
+const TourismRegistrationCreate = lazy(() => import("@/pages/ministry/TourismRegistrationCreate"));
+
+// Finance dashboard
+const FinanceDashboard = lazy(() => import("@/pages/finance/FinanceDashboard"));
+
 // Furnished pages
 const FurnishedListings = lazy(() => import("@/pages/furnished/FurnishedListings"));
 const FurnishedDetail = lazy(() => import("@/pages/furnished/FurnishedDetail"));
@@ -68,13 +81,14 @@ const AppRoutes = () => {
     <Suspense fallback={<LoadingFallback />}>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<InstitutionalHome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/market-observatory" element={<MarketObservatory />} />
+        <Route path="/verify-nimt" element={<VerifyNimt />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/calculator" element={<Calculator />} />
@@ -337,6 +351,30 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_INSPECTOR", "COMPLIANCE_AGENT"]}>
               <MinistryCases />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/tourism-registry"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "MINISTRY_VIEWER", "MINISTRY_INSPECTOR", "COMPLIANCE_AGENT", "TAX_ANALYST"]}>
+              <TourismRegistry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ministry/tourism-registry/new"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN"]}>
+              <TourismRegistrationCreate />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/finance-dashboard"
+          element={
+            <ProtectedRoute roles={["ADMIN", "FINANCE_VIEWER", "TAX_ANALYST"]}>
+              <FinanceDashboard />
             </ProtectedRoute>
           }
         />

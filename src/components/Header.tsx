@@ -29,10 +29,9 @@ const Header = () => {
   };
 
   const navLinks = [
-    { label: "Propriétés", href: "/properties" },
-    { label: "Appartements meublés", href: "/furnished" },
+    { label: "Vérifier un NIMT", href: "/verify-nimt" },
+    { label: "Meublés", href: "/furnished" },
     { label: "Observatoire", href: "/market-observatory" },
-    { label: "Contact", href: "/contact" },
   ];
 
   return (

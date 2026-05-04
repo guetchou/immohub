@@ -15,6 +15,8 @@ const inspectionsRoutes = require('./routes/inspections.routes');
 const complianceRoutes = require('./routes/compliance.routes');
 const taxRoutes = require('./routes/tax.routes');
 const reportsRoutes = require('./routes/reports.routes');
+const tourismRoutes = require('./routes/tourism.routes');
+const financeRoutes = require('./routes/finance.routes');
 
 const app = express();
 
@@ -39,6 +41,28 @@ app.use('/api/inspections', inspectionsRoutes);
 app.use('/api/compliance', complianceRoutes);
 app.use('/api/tax', taxRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/tourism-registry', tourismRoutes);
+app.use('/api/finance', financeRoutes);
+
+// Public NIMT verification (no auth required)
+app.get('/api/verify-nimt/:nimt', (req, res) => {
+  const db = require('./db');
+  const row = db.prepare(
+    `SELECT id, name, district, city, compliance_status, classification_level, total_units, nimt_number
+     FROM furnished_properties WHERE nimt_number = ?`
+  ).get(req.params.nimt.toUpperCase());
+  if (!row) return res.status(404).json({ found: false });
+  res.json({
+    found: true,
+    nimt: row.nimt_number,
+    status: row.compliance_status,
+    district: row.district,
+    city: row.city,
+    type: 'Meublé touristique',
+    totalUnits: row.total_units,
+    classificationLevel: row.classification_level || null,
+  });
+});
 
 // Serve frontend SPA if STATIC_DIR is set and exists
 const staticDir = process.env.STATIC_DIR;

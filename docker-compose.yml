@@ -13,8 +13,13 @@ services:
       DATABASE_PATH: /data/immohub.sqlite
       STATIC_DIR: /app/dist
     volumes:
-      - ./data:/data
+      - immohub_data:/data
       - ./logs:/app/logs
     ports:
       - "127.0.0.1:3011:3011"
     # Note WSL2: si 127.0.0.1 ne bind pas, utiliser "3011:3011"
+
+volumes:
+  immohub_data:
+    external: true
+    name: immohub_data
