@@ -1,48 +1,20 @@
-
-version: '3.8'
-
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
-    depends_on:
-      - mysql
-    env_file:
-      - ./backend/.env
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    restart: always
-
-  frontend:
+  immohub-api:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    volumes:
-      - ./src:/app/src
-      - /app/node_modules
+    container_name: immohub-api
+    restart: unless-stopped
+    env_file:
+      - .env.production
     environment:
-      - VITE_API_URL=http://localhost:3001/api
-    restart: always
-
-  mysql:
-    image: mysql:8.0
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
+      NODE_ENV: production
+      PORT: "3011"
+      DATABASE_PATH: /data/immohub.sqlite
+      STATIC_DIR: /app/dist
     volumes:
-      - mysql-data:/var/lib/mysql
-      - ./backend/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    restart: always
-
-volumes:
-  mysql-data:
+      - ./data:/data
+      - ./logs:/app/logs
+    ports:
+      - "127.0.0.1:3011:3011"
+    # Note WSL2: si 127.0.0.1 ne bind pas, utiliser "3011:3011"
