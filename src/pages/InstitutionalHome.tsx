@@ -118,7 +118,7 @@ export default function InstitutionalHome() {
       <div style={{ backgroundColor: C.cream, color: "#1C1C1C" }} className="min-h-screen overflow-x-hidden">
 
         {/* ══════════ 1. HERO ══════════ */}
-        <section className="relative overflow-hidden" style={{ minHeight: "92vh" }}>
+        <section className="relative overflow-hidden" style={{ minHeight: "70vh" }}>
 
           {/* Photo de fond plein écran */}
           <div className="absolute inset-0"
@@ -142,7 +142,7 @@ export default function InstitutionalHome() {
           }} />
 
           {/* content */}
-          <div className="relative container mx-auto px-4 py-24 md:py-32 flex flex-col justify-center" style={{ minHeight:"92vh" }}>
+          <div className="relative container mx-auto px-4 py-16 md:py-20 flex flex-col justify-center" style={{ minHeight:"70vh" }}>
             <motion.div initial="hidden" animate="show" variants={stagger} className="max-w-3xl">
 
               {/* badges */}
@@ -291,34 +291,33 @@ export default function InstitutionalHome() {
 
             <div className="grid md:grid-cols-2 gap-6">
               {[
-                { icon:<Landmark className="h-10 w-10"/>,  color:C.forest,  bg:"from-[#1A5C38] to-[#0D2E1C]", badge:"Ministère",  title:"Tourisme",       text:"Recensement, NIMT, inspections, classement, statistiques touristiques.",                      href:"/ministry-dashboard",  cta:"Portail ministère" },
-                { icon:<Banknote className="h-10 w-10"/>,  color:C.blue,    bg:"from-[#1B6CA8] to-[#0D3A5C]", badge:"Finances",   title:"Impôts",         text:"Dossiers transmis, risques fiscaux, exports et coordination avec l'assiette fiscale.",         href:"/finance-dashboard",   cta:"Tableau finances" },
-                { icon:<Home className="h-10 w-10"/>,      color:C.gold,    bg:"from-[#C8922A] to-[#7D5A18]", badge:"Opérateurs", title:"Loueurs & agences",text:"Déclarer un meublé, suivre les documents, obtenir un NIMT, déclarer l'activité mensuelle.", href:"/declarer-meuble/nouveau", cta:"Déclarer mon hébergement" },
-                { icon:<Search className="h-10 w-10"/>,    color:C.emerald, bg:"from-[#2E8B57] to-[#1A5C38]", badge:"Public",     title:"Voyageurs",      text:"Rechercher un logement identifié et vérifier un numéro NIMT en toute transparence.",          href:"/verify-nimt",         cta:"Vérifier un NIMT" },
+                { icon:<Landmark className="h-6 w-6"/>,  color:C.forest,  bg:"from-[#1A5C38] to-[#0D2E1C]", badge:"Ministère",  title:"Tourisme",         text:"Recensement, NIMT, inspections, classement, statistiques touristiques.",                      href:"/ministry-dashboard",     cta:"Portail ministère" },
+                { icon:<Banknote className="h-6 w-6"/>,  color:C.blue,    bg:"from-[#1B6CA8] to-[#0D3A5C]", badge:"Finances",   title:"Impôts",           text:"Dossiers transmis, risques fiscaux, exports et coordination avec l'assiette fiscale.",         href:"/finance-dashboard",      cta:"Tableau finances" },
+                { icon:<Home className="h-6 w-6"/>,      color:C.gold,    bg:"from-[#C8922A] to-[#7D5A18]", badge:"Opérateurs", title:"Loueurs & agences", text:"Déclarer un meublé, obtenir un NIMT et déclarer l'activité mensuelle.",                      href:"/declarer-meuble/nouveau",cta:"Déclarer mon hébergement" },
+                { icon:<Search className="h-6 w-6"/>,    color:C.emerald, bg:"from-[#2E8B57] to-[#1A5C38]", badge:"Public",     title:"Voyageurs",         text:"Rechercher un logement identifié et vérifier un numéro NIMT en toute transparence.",          href:"/verify-nimt",            cta:"Vérifier un NIMT" },
               ].map((s) => (
                 <motion.div key={s.title}
                   initial={{ opacity:0, scale:0.96 }} whileInView={{ opacity:1, scale:1 }}
                   viewport={{ once:true, margin:"-60px" }} transition={{ duration:0.45 }}
-                  className="group relative rounded-3xl overflow-hidden cursor-pointer"
-                  style={{ minHeight:220 }}
+                  className="group relative rounded-xl overflow-hidden cursor-pointer"
                 >
                   {/* bg always visible, intensifies on hover */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${s.bg} transition-opacity duration-300`} />
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     style={{ background:`radial-gradient(circle at 30% 50%, rgba(255,255,255,0.12), transparent 70%)` }} />
 
-                  <div className="relative p-8 h-full flex flex-col justify-between text-white">
+                  <div className="relative p-5 h-full flex flex-col justify-between text-white">
                     <div>
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center"
                           style={{ background:"rgba(255,255,255,0.15)" }}>
                           {s.icon}
                         </div>
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold"
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
                           style={{ background:"rgba(255,255,255,0.2)" }}>{s.badge}</span>
                       </div>
-                      <h3 className="text-2xl font-black mb-2">{s.title}</h3>
-                      <p className="text-sm text-white/75 leading-relaxed">{s.text}</p>
+                      <h3 className="text-base font-bold mb-1">{s.title}</h3>
+                      <p className="text-xs text-white/75 leading-relaxed">{s.text}</p>
                     </div>
                     <Link to={s.href} className="mt-6 self-start">
                       <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer"
@@ -495,7 +494,7 @@ export default function InstitutionalHome() {
 
               <Link to="/verify-nimt">
                 <button
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-base text-white transition-all duration-200 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer"
                   style={{ background:`linear-gradient(135deg, ${C.forest}, ${C.emerald})` }}
                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow=`0 8px 24px rgba(26,92,56,0.4)`}
                   onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow="none"}
