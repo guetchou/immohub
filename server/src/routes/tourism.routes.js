@@ -41,14 +41,54 @@ router.get('/', requireRoles(...ministryRoles), (req, res) => {
 });
 
 router.post('/', requireRoles('ADMIN', 'MINISTRY_ADMIN'), (req, res) => {
-  const { name, address, district, city, operator_name, total_units, price_per_night } = req.body;
+  const {
+    name, commercial_name,
+    address, address_voie, address_quartier, address_batiment,
+    district, city,
+    operator_name, operator_phone, operator_email, operator_legal_status, operator_nui,
+    total_units, price_per_night,
+    accommodation_type, residence_type, property_type,
+    guest_capacity, room_count, pmr_accessible,
+    star_rating, star_rating_date, quality_label,
+    availability_type, availability_periods,
+  } = req.body;
+
   if (!name || !operator_name) return res.status(400).json({ message: 'name et operator_name requis' });
 
   const id = crypto.randomUUID();
-  db.prepare(
-    `INSERT INTO furnished_properties (id, name, address, district, city, operator_name, total_units, price_per_night, compliance_status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'UNDECLARED')`
-  ).run(id, name, address || null, district || null, city || 'Brazzaville', operator_name, total_units || 0, price_per_night || 0);
+  db.prepare(`
+    INSERT INTO furnished_properties (
+      id, name, commercial_name,
+      address, address_voie, address_quartier, address_batiment,
+      district, city,
+      operator_name, operator_phone, operator_email, operator_legal_status, operator_nui,
+      total_units, price_per_night, compliance_status,
+      accommodation_type, residence_type, property_type,
+      guest_capacity, room_count, pmr_accessible,
+      star_rating, star_rating_date, quality_label,
+      availability_type, availability_periods
+    ) VALUES (
+      ?, ?, ?,
+      ?, ?, ?, ?,
+      ?, ?,
+      ?, ?, ?, ?, ?,
+      ?, ?, 'UNDECLARED',
+      ?, ?, ?,
+      ?, ?, ?,
+      ?, ?, ?,
+      ?, ?
+    )
+  `).run(
+    id, name, commercial_name || null,
+    address || null, address_voie || null, address_quartier || district || null, address_batiment || null,
+    district || null, city || 'Brazzaville',
+    operator_name, operator_phone || null, operator_email || null, operator_legal_status || null, operator_nui || null,
+    total_units || 0, price_per_night || 0,
+    accommodation_type || 'MEUBLE', residence_type || 'SECONDARY', property_type || 'APPARTEMENT',
+    guest_capacity || 0, room_count || 0, pmr_accessible ? 1 : 0,
+    star_rating || null, star_rating_date || null, quality_label || null,
+    availability_type || 'YEAR_ROUND', availability_periods || null
+  );
 
   res.status(201).json({ id });
 });

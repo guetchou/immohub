@@ -1,10 +1,13 @@
 
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import Index from "@/pages/Index";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { UserRole } from "@/types/user";
 import { Loader2 } from "lucide-react";
+import RentCollection from "@/components/rent/RentCollection";
+import LeasesList from "@/components/leases/LeasesList";
+import MaintenancePageComponent from "@/components/maintenance/MaintenancePage";
+import NotificationCenter from "@/components/notifications/NotificationCenter";
 
 // Lazy loaded pages for better performance
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
@@ -23,7 +26,6 @@ const Terms = lazy(() => import("@/pages/Terms"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
 const Calculator = lazy(() => import("@/pages/Calculator"));
 const Settings = lazy(() => import("@/pages/Settings"));
-const MaintenancePage = lazy(() => import("@/components/maintenance/MaintenancePage"));
 
 // Role-specific dashboards
 const AgencyDashboard = lazy(() => import("@/pages/dashboards/AgencyDashboard"));
@@ -57,12 +59,20 @@ const InstitutionalHome = lazy(() => import("@/pages/InstitutionalHome"));
 // NIMT verification (public)
 const VerifyNimt = lazy(() => import("@/pages/VerifyNimt"));
 
+// Declaration guide (public) + wizard
+const DeclarationGuide = lazy(() => import("@/pages/DeclarationGuide"));
+
 // Tourism registry (ministry)
 const TourismRegistry = lazy(() => import("@/pages/ministry/TourismRegistry"));
 const TourismRegistrationCreate = lazy(() => import("@/pages/ministry/TourismRegistrationCreate"));
 
 // Finance dashboard
 const FinanceDashboard = lazy(() => import("@/pages/finance/FinanceDashboard"));
+
+// Admin — User Management
+const UserManagement = lazy(() => import("@/pages/admin/UserManagement"));
+const UserCreate = lazy(() => import("@/pages/admin/UserCreate"));
+const UserDetail = lazy(() => import("@/pages/admin/UserDetail"));
 
 // Furnished pages
 const FurnishedListings = lazy(() => import("@/pages/furnished/FurnishedListings"));
@@ -89,6 +99,7 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/market-observatory" element={<MarketObservatory />} />
         <Route path="/verify-nimt" element={<VerifyNimt />} />
+        <Route path="/declarer-meuble" element={<DeclarationGuide />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/calculator" element={<Calculator />} />
@@ -365,7 +376,16 @@ const AppRoutes = () => {
         <Route
           path="/ministry/tourism-registry/new"
           element={
-            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN"]}>
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN", "FURNISHED_OPERATOR"]}>
+              <TourismRegistrationCreate />
+            </ProtectedRoute>
+          }
+        />
+        {/* Route publique de déclaration — accessible à tous les rôles connectés */}
+        <Route
+          path="/declarer-meuble/nouveau"
+          element={
+            <ProtectedRoute>
               <TourismRegistrationCreate />
             </ProtectedRoute>
           }
@@ -378,26 +398,63 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* Admin — User Management */}
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN"]}>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users/new"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN"]}>
+              <UserCreate />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users/:id"
+          element={
+            <ProtectedRoute roles={["ADMIN", "MINISTRY_ADMIN"]}>
+              <UserDetail />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Suspense>
   );
 };
 
-// Simple placeholder pages that redirect to specific tabs in the Dashboard
-const RentManagementPage = () => {
-  return <Dashboard initialTab="payments" />;
-};
+// Pages directes — chaque section est une page autonome dans l'AppShell
+const RentManagementPage = () => (
+  <div className="p-6">
+    <h2 className="text-xl font-bold mb-6">Gestion des loyers</h2>
+    <RentCollection />
+  </div>
+);
 
-const LeasesManagementPage = () => {
-  return <Dashboard initialTab="leases" />;
-};
+const LeasesManagementPage = () => (
+  <div className="p-6">
+    <h2 className="text-xl font-bold mb-6">Contrats de location</h2>
+    <LeasesList />
+  </div>
+);
 
-const MaintenanceManagementPage = () => {
-  return <Dashboard initialTab="maintenance" />;
-};
+const MaintenanceManagementPage = () => (
+  <div className="p-6">
+    <MaintenancePageComponent />
+  </div>
+);
 
-const NotificationsPage = () => {
-  return <Dashboard initialTab="notifications" />;
-};
+const NotificationsPage = () => (
+  <div className="p-6">
+    <h2 className="text-xl font-bold mb-6">Notifications</h2>
+    <NotificationCenter />
+  </div>
+);
 
 export default AppRoutes;
