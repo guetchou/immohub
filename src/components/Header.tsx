@@ -10,7 +10,7 @@ import {
   Menu, X, ChevronDown,
   Home, Building2, Sofa, BarChart3, Mail,
   LayoutDashboard, User, Heart, MessageSquare, Settings,
-  Wallet, FileText, Wrench, ShieldCheck,
+  Wallet, FileText, Wrench, ShieldCheck, Phone,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -171,6 +171,30 @@ export default function Header() {
               <LayoutDashboard className="h-3.5 w-3.5" /> Tableau de bord
             </Link>
           )}
+
+          {/* ── Réassurance client ── */}
+          <a
+            href="tel:+242064000000"
+            className="group hidden sm:flex items-center gap-2 pl-2 pr-3 py-1 rounded-xl border border-real-primary/15 hover:border-real-primary/40 hover:bg-real-secondary/60 transition-all duration-200"
+            title="Nous appeler"
+          >
+            {/* Avatar agent — caché sous md, icône seule entre sm et md */}
+            <span className="relative shrink-0">
+              <img
+                src="/agent-callcenter-avatar.png"
+                alt="Agent d'assistance"
+                className="hidden md:block w-7 h-7 rounded-full object-cover ring-1 ring-real-primary/25"
+              />
+              <Phone className="md:hidden h-4 w-4 text-real-primary" />
+            </span>
+            {/* Texte — visible seulement sur desktop */}
+            <span className="hidden md:flex flex-col leading-none">
+              <span className="text-[10px] text-gray-400 dark:text-gray-500">Une question ?</span>
+              <span className="text-xs font-bold text-real-primary group-hover:text-real-dark transition-colors duration-150 tabular-nums">
+                +242 06 400 00 00
+              </span>
+            </span>
+          </a>
 
           <ThemeToggle />
 

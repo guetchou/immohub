@@ -182,18 +182,18 @@ export default function InstitutionalHome() {
                 WebkitTextFillColor:"transparent",
                 animation:"shimmer 5s linear infinite",
               }}>
-              Valorisez votre<br />hébergement touristique.
+              Le hub dédié à<br />l'accompagnement<br />en location meublée.
             </motion.h1>
 
             <motion.p variants={fadeUp}
               className="text-xl font-medium text-white/90 mb-3 leading-snug">
-              Rejoignez le registre officiel de la DGTH et donnez confiance à vos voyageurs.
+              Valorisez votre hébergement touristique dès maintenant.
             </motion.p>
 
             <motion.p variants={fadeUp}
               className="text-base text-white/65 mb-10 max-w-xl leading-relaxed">
               Le Numéro d'Identification Meublé Touristique (NIMT) est le label officiel de la
-              Direction Générale du Tourisme et de l'Hôtellerie du Congo-Brazzaville.
+              Direction Générale du Tourisme et de l'Hôtellerie de la République du Congo.
               Obtenez-le en quelques minutes, <strong className="text-white/90">gratuitement</strong>,
               entièrement <strong className="text-white/90">en ligne</strong>.
             </motion.p>
@@ -283,7 +283,7 @@ export default function InstitutionalHome() {
               <SectionTitle
                 eyebrow="Votre hébergement est éligible"
                 title="Quels hébergements peuvent s'inscrire ?"
-                sub="La plateforme ImmoHub est ouverte à tous les opérateurs touristiques du Congo-Brazzaville. Particuliers, agences et professionnels peuvent s'enregistrer et obtenir leur label NIMT."
+                sub="La plateforme ImmoHub est ouverte à tous les opérateurs touristiques du République du Congo. Particuliers, agences et professionnels peuvent s'enregistrer et obtenir leur label NIMT."
               />
             </motion.div>
 
@@ -391,7 +391,7 @@ export default function InstitutionalHome() {
                   color:C.gold,
                   title:"Gestion administrative simplifiée",
                   points:[
-                    "Taxe de séjour calculée automatiquement",
+                    "Redevance de promotion touristique calculée automatiquement",
                     "Bordereau trimestriel généré en un clic",
                     "Suivi de vos déclarations depuis votre espace personnel",
                     "Rappels automatiques avant les échéances",
@@ -447,7 +447,7 @@ export default function InstitutionalHome() {
                 {
                   n:"01", icon:<ClipboardList className="h-6 w-6"/>,
                   title:"Remplissez le formulaire",
-                  desc:"Identifiez votre hébergement, ses caractéristiques et vos informations d'exploitant. 4 étapes guidées.",
+                  desc:"Identifiez votre hébergement, ses caractéristiques et vos informations d'exploitant. Moins de 5 minutes.",
                 },
                 {
                   n:"02", icon:<CheckCircle2 className="h-6 w-6"/>,
@@ -508,7 +508,7 @@ export default function InstitutionalHome() {
         <div className="container mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { value:0, label:"Hébergements déclarés", suffix:"", note:"en cours d'enregistrement" },
+              { value:0, label:"Hébergements inscrits", suffix:"", note:"déjà enregistrés sur la plateforme" },
               { value:8, label:"Arrondissements couverts", suffix:"", note:"Brazzaville & Pointe-Noire" },
               { value:10, label:"Minutes pour déclarer", suffix:" min", note:"processus entièrement en ligne" },
               { value:100, label:"Gratuit", suffix:" %", note:"aucun frais de déclaration" },
@@ -628,38 +628,56 @@ export default function InstitutionalHome() {
                 },
                 {
                   q:"Combien de temps pour recevoir mon NIMT ?",
-                  a:"Le NIMT est généré automatiquement à la soumission du formulaire. Vous le recevez immédiatement, sans délai d'attente. La déclaration prend en moyenne moins de 10 minutes.",
+                  a:"C'est instantané. Une fois votre formulaire validé en ligne, votre Numéro d'Identification Meublé Touristique est généré automatiquement et disponible immédiatement dans votre espace personnel. Aucun délai d'attente, aucun courrier à recevoir.",
                 },
                 {
-                  q:"Que se passe-t-il si je ne déclare pas ?",
-                  a:"Exercer sans NIMT expose le propriétaire à une amende administrative et à une fermeture temporaire du logement. Les plateformes de réservation partenaires sont tenues de vérifier l'existence d'un NIMT valide avant toute publication d'annonce.",
+                  q:"Que se passe-t-il si je ne m'inscris pas ?",
+                  a:"La déclaration est une obligation légale selon les directives de la DGTH. L'absence de NIMT expose à des sanctions administratives. La plateforme ImmoHub a justement été créée pour faciliter cette démarche et vous accompagner pas à pas.",
                 },
                 {
                   q:"Ma résidence principale est-elle concernée ?",
-                  a:"Si vous louez votre résidence principale à des voyageurs pendant votre absence (moins de 90 jours), la déclaration peut bénéficier d'un régime simplifié. Si vous louez plus de 120 jours par an, la déclaration complète est obligatoire.",
+                  a:"Si vous louez votre résidence principale à des voyageurs pendant votre absence, la déclaration peut bénéficier d'un régime simplifié. En cas de doute, le formulaire vous guide et identifie automatiquement le régime applicable à votre situation.",
                 },
                 {
-                  q:"Puis-je déclarer plusieurs hébergements ?",
-                  a:"Oui. Chaque logement fait l'objet d'une déclaration distincte et reçoit un numéro NIMT propre. Votre tableau de bord opérateur vous permet de gérer l'ensemble de vos hébergements.",
+                  q:"Puis-je inscrire plusieurs hébergements ?",
+                  a:"Oui. Chaque logement fait l'objet d'une inscription distincte et reçoit un numéro NIMT propre. Votre tableau de bord vous permet de gérer l'ensemble de votre portefeuille depuis un seul espace.",
                 },
                 {
                   q:"Le NIMT doit-il être renouvelé ?",
-                  a:"Le NIMT en lui-même n'expire pas. En revanche, l'autorisation d'exercice DGTH qui l'accompagne est valable 2 ans et doit être renouvelée. La plateforme envoie automatiquement un rappel 3 mois avant l'échéance.",
+                  a:"Le NIMT en lui-même n'expire pas. L'autorisation d'exercice DGTH qui l'accompagne est valable 2 ans et doit être renouvelée. La plateforme vous envoie automatiquement un rappel 3 mois avant l'échéance.",
                 },
               ].map((faq, i) => (
                 <div key={i}
-                  className="rounded-xl border border-gray-100 overflow-hidden"
-                  style={{ boxShadow:"0 1px 4px rgba(0,0,0,0.04)" }}
+                  className="rounded-xl overflow-hidden transition-all"
+                  style={{
+                    border: faqOpen === i
+                      ? `1.5px solid ${C.blue}33`
+                      : "1.5px solid #E5E7EB",
+                    boxShadow: faqOpen === i
+                      ? `0 4px 16px rgba(27,108,168,0.08)`
+                      : "0 1px 4px rgba(0,0,0,0.04)",
+                  }}
                 >
                   <button
                     onClick={() => setFaqOpen(faqOpen === i ? null : i)}
-                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer transition-colors"
+                    style={{ background: faqOpen === i ? `${C.blue}08` : "white" }}
                   >
-                    <span className="font-semibold text-sm text-gray-800 pr-4">{faq.q}</span>
-                    {faqOpen === i
-                      ? <ChevronUp className="h-4 w-4 text-gray-400 shrink-0" />
-                      : <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
-                    }
+                    <span className="font-bold text-sm pr-4"
+                      style={{ color: faqOpen === i ? C.blue : "#1E293B" }}>
+                      {faq.q}
+                    </span>
+                    <motion.div
+                      animate={{ rotate: faqOpen === i ? 45 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center font-bold text-lg leading-none"
+                      style={{
+                        background: faqOpen === i ? C.blue : "#F1F5F9",
+                        color: faqOpen === i ? "white" : "#64748B",
+                      }}
+                    >
+                      +
+                    </motion.div>
                   </button>
                   <AnimatePresence initial={false}>
                     {faqOpen === i && (
@@ -670,7 +688,8 @@ export default function InstitutionalHome() {
                         transition={{ duration:0.22, ease:"easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <p className="px-5 pb-5 text-sm text-gray-500 leading-relaxed border-t border-gray-100 pt-3">
+                        <p className="px-5 pb-5 pt-3 text-sm leading-relaxed"
+                          style={{ color:"#374151", borderTop:`1px solid ${C.blue}18` }}>
                           {faq.a}
                         </p>
                       </motion.div>
