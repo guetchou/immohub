@@ -185,7 +185,7 @@ export default function InstitutionalHome() {
                 {[
                   { to:"/declarer-meuble",   icon:<FileCheck className="h-4 w-4"/>, label:"Déclarer un meublé",   primary:true },
                   { to:"/verify-nimt",       icon:<Search className="h-4 w-4"/>,   label:"Vérifier un NIMT",     primary:false },
-                  { to:"/login",             icon:<Landmark className="h-4 w-4"/>, label:"Accès institutionnel", primary:false },
+                  { to:"/market-observatory",icon:<BarChart3 className="h-4 w-4"/>,label:"Observatoire",          primary:false },
                 ].map((cta) => (
                   <Link key={cta.to} to={cta.to}>
                     <button

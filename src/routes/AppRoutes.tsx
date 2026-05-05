@@ -381,15 +381,8 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-        {/* Route publique de déclaration — accessible à tous les rôles connectés */}
-        <Route
-          path="/declarer-meuble/nouveau"
-          element={
-            <ProtectedRoute>
-              <TourismRegistrationCreate />
-            </ProtectedRoute>
-          }
-        />
+        {/* Route publique — auth vérifiée uniquement au submit (étape 4) */}
+        <Route path="/declarer-meuble/nouveau" element={<TourismRegistrationCreate />} />
         <Route
           path="/finance-dashboard"
           element={

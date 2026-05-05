@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Save, Check, Building2, Users, Star,
@@ -672,6 +673,8 @@ function Step4({
 
 const TourismRegistrationCreate = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
@@ -715,6 +718,12 @@ const TourismRegistrationCreate = () => {
   const handleSubmit = async () => {
     const err = validateStep();
     if (err) { toast({ title: "Champ requis", description: err, variant: "destructive" }); return; }
+
+    // Auth check uniquement au moment de soumettre
+    if (!isAuthenticated) {
+      navigate("/login", { state: { from: location.pathname } });
+      return;
+    }
 
     setLoading(true);
     try {
