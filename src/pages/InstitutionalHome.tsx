@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { motion, useInView } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
-  Building2, FileCheck, Search, BarChart3, ShieldCheck, ArrowRight,
-  ClipboardList, TrendingUp, Landmark, Banknote, Home, ChevronRight,
-  BookOpen, CheckCircle2, AlertTriangle, Eye, Globe
+  FileText, ShieldCheck, Search, ArrowRight, CheckCircle2,
+  AlertTriangle, Building2, Home, Users, Landmark, Star,
+  ChevronDown, ChevronUp, Phone, Mail, MapPin, Clock,
+  BadgeCheck, BarChart3, Banknote, Eye, TrendingUp, ClipboardList,
+  Zap, Globe, Lock, Award,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 /* ── palette ── */
 const C = {
@@ -17,496 +20,741 @@ const C = {
   gold:    "#C8922A",
   cream:   "#F8F5F0",
   dark:    "#0D2E1C",
-  alert:   "#D97706",
+  warn:    "#92400E",
+  warnBg:  "#FFFBEB",
 };
 
-/* ── rain drops (fixed values, no Math.random at runtime) ── */
-const DROPS = [
-  { l:"4%",  d:"0s",    t:"2.1s" }, { l:"9%",  d:"0.4s",  t:"1.7s" },
-  { l:"15%", d:"0.8s",  t:"2.3s" }, { l:"22%", d:"0.2s",  t:"1.9s" },
-  { l:"29%", d:"1.1s",  t:"2.0s" }, { l:"35%", d:"0.6s",  t:"1.6s" },
-  { l:"42%", d:"0.1s",  t:"2.4s" }, { l:"50%", d:"0.9s",  t:"1.8s" },
-  { l:"57%", d:"0.3s",  t:"2.2s" }, { l:"64%", d:"1.3s",  t:"1.7s" },
-  { l:"71%", d:"0.7s",  t:"2.0s" }, { l:"78%", d:"0.5s",  t:"1.9s" },
-  { l:"85%", d:"1.0s",  t:"2.3s" }, { l:"91%", d:"0.2s",  t:"1.6s" },
-  { l:"97%", d:"0.8s",  t:"2.1s" },
-];
-
-/* ── animated counter hook ── */
-function useCounter(target: number, active: boolean) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!active || target === 0) return;
-    let cur = 0;
-    const step = Math.ceil(target / 60);
-    const id = setInterval(() => {
-      cur = Math.min(cur + step, target);
-      setCount(cur);
-      if (cur >= target) clearInterval(id);
-    }, 25);
-    return () => clearInterval(id);
-  }, [target, active]);
-  return count;
-}
-
-/* ── stat card ── */
-function StatCard({ label, value, suffix = "" }: { label: string; value: number; suffix?: string }) {
+/* ── animated counter ── */
+function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
-  const count = useCounter(value, inView);
+  const [count, setCount] = useState(0);
+  useRef(() => {
+    if (!inView) return;
+    let cur = 0;
+    const step = Math.ceil(to / 60);
+    const id = setInterval(() => {
+      cur = Math.min(cur + step, to);
+      setCount(cur);
+      if (cur >= to) clearInterval(id);
+    }, 25);
+    return () => clearInterval(id);
+  });
+  // trigger via useInView
+  if (inView && count === 0 && to > 0) {
+    let cur = 0;
+    const step = Math.ceil(to / 60);
+    const id = setInterval(() => {
+      cur = Math.min(cur + step, to);
+      setCount(cur);
+      if (cur >= to) clearInterval(id);
+    }, 25);
+    void id;
+  }
+  return <div ref={ref}>{count.toLocaleString("fr-FR")}{suffix}</div>;
+}
+
+/* ── fade up variant ── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+const stagger = { show: { transition: { staggerChildren: 0.1 } } };
+
+/* ── section title ── */
+function SectionTitle({ eyebrow, title, sub, light = false }: {
+  eyebrow: string; title: string; sub?: string; light?: boolean;
+}) {
   return (
-    <div ref={ref}
-      className="rounded-2xl p-6 text-center"
-      style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
-    >
-      <div className="text-3xl font-black mb-1" style={{ color: C.gold }}>
-        {value ? count.toLocaleString("fr-FR") : "–"}{suffix}
-      </div>
-      <div className="text-xs text-white/70 leading-snug">{label}</div>
+    <div className="text-center max-w-2xl mx-auto mb-12">
+      <span className="text-xs font-bold uppercase tracking-widest mb-3 inline-block"
+        style={{ color: light ? C.gold : C.emerald }}>
+        {eyebrow}
+      </span>
+      <h2 className={`text-3xl md:text-4xl font-black leading-tight mb-3 ${light ? "text-white" : ""}`}
+        style={light ? {} : { color: C.dark }}>
+        {title}
+      </h2>
+      {sub && (
+        <p className={`text-sm leading-relaxed ${light ? "text-white/70" : "text-gray-500"}`}>
+          {sub}
+        </p>
+      )}
     </div>
   );
 }
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
-};
-const stagger = { show: { transition: { staggerChildren: 0.1 } } };
-
-/* ════════════════════════════════════════════════════════════ */
+/* ════════════ MAIN ════════════════════════════════════════════ */
 export default function InstitutionalHome() {
+  const navigate = useNavigate();
+  const [nimtQuery, setNimtQuery] = useState("");
+  const [nimtResult, setNimtResult] = useState<null | { found: boolean; nimt?: string; status?: string; district?: string; city?: string }>(null);
+  const [nimtLoading, setNimtLoading] = useState(false);
+  const [faqOpen, setFaqOpen] = useState<number | null>(0);
+
+  const handleNimtCheck = async () => {
+    if (!nimtQuery.trim()) return;
+    setNimtLoading(true);
+    setNimtResult(null);
+    try {
+      const res = await fetch(`/api/tourism-registry/verify/${nimtQuery.trim().toUpperCase()}`);
+      const data = await res.json();
+      setNimtResult(data);
+    } catch {
+      setNimtResult({ found: false });
+    } finally {
+      setNimtLoading(false);
+    }
+  };
+
   return (
-    <>
-      {/* ── CSS keyframes injected once ── */}
-      <style>{`
-        @keyframes grad-shift {
-          0%,100% { background-position: 0% 50%; }
-          50%      { background-position: 100% 50%; }
-        }
-        @keyframes float-a {
-          0%,100% { transform: translateY(0) rotate(0deg); }
-          50%     { transform: translateY(-22px) rotate(8deg); }
-        }
-        @keyframes float-b {
-          0%,100% { transform: translateY(0) rotate(0deg); }
-          50%     { transform: translateY(18px) rotate(-6deg); }
-        }
-        @keyframes float-c {
-          0%,100% { transform: translateY(0) rotate(12deg); }
-          50%     { transform: translateY(-14px) rotate(-4deg); }
-        }
-        @keyframes rain-fall {
-          0%   { transform: translateY(-120px); opacity:0; }
-          8%   { opacity:.35; }
-          92%  { opacity:.35; }
-          100% { transform: translateY(calc(100vh + 40px)); opacity:0; }
-        }
-        @keyframes pulse-ring {
-          0%   { transform:scale(1);   opacity:.7; }
-          100% { transform:scale(2.2); opacity:0; }
-        }
-        @keyframes shimmer-text {
-          0%   { background-position: -200% center; }
-          100% { background-position:  200% center; }
-        }
-        @keyframes chain-grow {
-          from { width: 0; }
-          to   { width: 100%; }
-        }
-      `}</style>
+    <div style={{ backgroundColor: C.cream, color: "#1C1C1C" }} className="min-h-screen overflow-x-hidden">
 
-      <div style={{ backgroundColor: C.cream, color: "#1C1C1C" }} className="min-h-screen overflow-x-hidden">
+      {/* ═══════════════════════════════════════════════════════
+          1. HERO
+      ════════════════════════════════════════════════════════ */}
+      <section className="relative overflow-hidden" style={{ minHeight: "100vh" }}>
 
-        {/* ══════════ 1. HERO ══════════ */}
-        <section className="relative overflow-hidden" style={{ minHeight: "70vh" }}>
+        {/* background photo */}
+        <div className="absolute inset-0"
+          style={{ backgroundImage:"url('/hero-immohub.png')", backgroundSize:"cover", backgroundPosition:"center" }} />
 
-          {/* Photo de fond plein écran */}
-          <div className="absolute inset-0"
+        {/* dark overlay */}
+        <div className="absolute inset-0"
+          style={{ background:`linear-gradient(135deg, rgba(13,46,28,0.93) 0%, rgba(26,92,56,0.85) 55%, rgba(27,108,168,0.70) 100%)` }} />
+
+        {/* gold ambient glow */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background:`radial-gradient(ellipse 60% 50% at 10% 60%, rgba(200,146,42,0.13) 0%, transparent 70%)` }} />
+
+        {/* rain drops */}
+        {[4,12,21,33,45,56,67,78,88,95].map((l, i) => (
+          <div key={i} className="absolute top-0 w-px opacity-20 pointer-events-none"
             style={{
-              backgroundImage: "url('/hero-immohub.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
+              left:`${l}%`, height:"100%",
+              background:`linear-gradient(to bottom, transparent, ${C.gold}, transparent)`,
+              animation:`rainFall ${1.6 + i * 0.15}s linear ${i * 0.3}s infinite`,
+            }} />
+        ))}
 
-          {/* Overlay gradient sombre pour lisibilité */}
-          <div className="absolute inset-0" style={{
-            background: `linear-gradient(120deg, rgba(13,46,28,0.82) 0%, rgba(26,92,56,0.70) 50%, rgba(27,108,168,0.55) 100%)`,
-          }} />
+        <style>{`
+          @keyframes rainFall {
+            0%   { transform:translateY(-100%); opacity:0; }
+            10%  { opacity:.25; }
+            90%  { opacity:.25; }
+            100% { transform:translateY(100vh); opacity:0; }
+          }
+          @keyframes shimmer {
+            0%   { background-position:-200% center; }
+            100% { background-position: 200% center; }
+          }
+          @keyframes pulse-badge {
+            0%,100% { box-shadow:0 0 0 0 rgba(200,146,42,0.4); }
+            50%     { box-shadow:0 0 0 8px rgba(200,146,42,0); }
+          }
+        `}</style>
 
-          {/* Légère animation de lumière ambiante */}
-          <div className="absolute inset-0 pointer-events-none" style={{
-            background: `radial-gradient(ellipse 80% 60% at 15% 50%, rgba(200,146,42,0.10) 0%, transparent 70%)`,
-            animation: "grad-shift 12s ease infinite",
-            backgroundSize: "300% 300%",
-          }} />
+        <div className="relative flex flex-col justify-center min-h-screen container mx-auto px-4 py-20">
+          <motion.div initial="hidden" animate="show" variants={stagger} className="max-w-3xl">
 
-          {/* content */}
-          <div className="relative container mx-auto px-4 py-16 md:py-20 flex flex-col justify-center" style={{ minHeight:"70vh" }}>
-            <motion.div initial="hidden" animate="show" variants={stagger} className="max-w-3xl">
-
-              {/* badges */}
-              <motion.div variants={fadeUp} className="flex flex-wrap gap-2 mb-7">
-                {[
-                  { label: "Plateforme institutionnelle", color: C.gold },
-                  { label: "NIMT vérifiable publiquement" },
-                  { label: "Tourisme · Finances · Conformité" },
-                  { label: "Production active" },
-                ].map((b) => (
-                  <span key={b.label} className="px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm"
-                    style={{ background: b.color ? b.color : "rgba(255,255,255,0.15)", color:"#fff" }}>
-                    {b.label}
-                  </span>
-                ))}
-              </motion.div>
-
-              {/* title */}
-              <motion.h1 variants={fadeUp}
-                className="font-black leading-none mb-4"
-                style={{ fontSize:"clamp(2.8rem,7vw,5.5rem)",
-                  background:`linear-gradient(90deg, #fff 0%, ${C.gold} 50%, #fff 100%)`,
-                  backgroundSize:"200% auto",
-                  WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
-                  animation:"shimmer-text 4s linear infinite",
-                }}>
-                ImmoHub Congo
-              </motion.h1>
-
-              <motion.p variants={fadeUp} className="text-2xl font-medium mb-3 text-white/90">
-                Registre national des locations meublées touristiques
-              </motion.p>
-              <motion.p variants={fadeUp} className="text-base text-white/65 mb-10 max-w-xl leading-relaxed">
-                Plateforme numérique de recensement, déclaration, contrôle et pilotage
-                des meublés touristiques au Congo-Brazzaville.
-              </motion.p>
-
-              {/* CTAs */}
-              <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
-                {[
-                  { to:"/declarer-meuble/nouveau",   icon:<FileCheck className="h-4 w-4"/>, label:"Déclarer un meublé",   primary:true },
-                  { to:"/verify-nimt",       icon:<Search className="h-4 w-4"/>,   label:"Vérifier un NIMT",     primary:false },
-                  { to:"/market-observatory",icon:<BarChart3 className="h-4 w-4"/>,label:"Observatoire",          primary:false },
-                ].map((cta) => (
-                  <Link key={cta.to} to={cta.to}>
-                    <button
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 cursor-pointer"
-                      style={cta.primary
-                        ? { background:C.gold, color:"#fff" }
-                        : { background:"rgba(255,255,255,0.12)", color:"#fff", border:"1px solid rgba(255,255,255,0.25)" }}
-                      onMouseEnter={e => {
-                        if (cta.primary) (e.currentTarget as HTMLElement).style.filter="brightness(1.1)";
-                        else (e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.22)";
-                      }}
-                      onMouseLeave={e => {
-                        if (cta.primary) (e.currentTarget as HTMLElement).style.filter="none";
-                        else (e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.12)";
-                      }}
-                    >
-                      {cta.icon} {cta.label}
-                    </button>
-                  </Link>
-                ))}
-              </motion.div>
-
-              {/* hero mini-stats strip */}
-              <motion.div variants={fadeUp} className="mt-14 grid grid-cols-3 gap-4 max-w-lg">
-                {[
-                  { n:"1", u:"registre national" },
-                  { n:"NIMT", u:"identification publique" },
-                  { n:"360°", u:"chaîne institutionnelle" },
-                ].map((s) => (
-                  <div key={s.u} className="text-center p-3 rounded-xl" style={{ background:"rgba(255,255,255,0.08)" }}>
-                    <div className="text-xl font-black text-white">{s.n}</div>
-                    <div className="text-xs text-white/60 mt-1">{s.u}</div>
-                  </div>
-                ))}
-              </motion.div>
+            {/* top badge */}
+            <motion.div variants={fadeUp} className="mb-8 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold"
+                style={{ background:`rgba(200,146,42,0.2)`, border:`1px solid rgba(200,146,42,0.4)`, color:C.gold, animation:"pulse-badge 2.5s infinite" }}>
+                <Landmark className="h-3.5 w-3.5" />
+                République du Congo · DGTH · Portail officiel
+              </span>
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-white/70"
+                style={{ background:"rgba(255,255,255,0.1)", border:"1px solid rgba(255,255,255,0.2)" }}>
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Plateforme sécurisée
+              </span>
             </motion.div>
-          </div>
 
-          {/* bottom wave */}
-          <div className="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 70" preserveAspectRatio="none" className="w-full h-12 md:h-16">
-              <path d="M0,40 C360,80 1080,0 1440,40 L1440,70 L0,70 Z" fill={C.cream}/>
-            </svg>
-          </div>
-        </section>
+            {/* headline */}
+            <motion.h1 variants={fadeUp}
+              className="font-black leading-none mb-6"
+              style={{
+                fontSize:"clamp(2.6rem,7vw,5.2rem)",
+                background:`linear-gradient(90deg, #ffffff 0%, ${C.gold} 45%, #ffffff 100%)`,
+                backgroundSize:"200% auto",
+                WebkitBackgroundClip:"text",
+                WebkitTextFillColor:"transparent",
+                animation:"shimmer 5s linear infinite",
+              }}>
+              Déclarez votre<br />hébergement touristique.
+            </motion.h1>
 
-        {/* ══════════ 2. POURQUOI ══════════ */}
-        <section className="py-20" style={{ background:`linear-gradient(160deg, ${C.cream} 0%, #E6F2EC 100%)` }}>
-          <div className="container mx-auto px-4">
-            <motion.div initial="hidden" whileInView="show" viewport={{ once:true, margin:"-80px" }} variants={stagger}>
-              <motion.div variants={fadeUp} className="text-center mb-14">
-                <h2 className="text-3xl md:text-4xl font-black mb-3" style={{ color:C.forest }}>
-                  Pourquoi ImmoHub ?
-                </h2>
-                <p className="text-muted-foreground max-w-xl mx-auto text-sm leading-relaxed">
-                  La structuration des meublés touristiques au Congo-Brazzaville présente plusieurs
-                  défis administratifs que cette plateforme vise à adresser progressivement.
-                </p>
-              </motion.div>
+            <motion.p variants={fadeUp}
+              className="text-xl font-medium text-white/90 mb-3 leading-snug">
+              Obtenez votre numéro NIMT en moins de 10 minutes.
+            </motion.p>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {[
-                  { icon:<ClipboardList/>, color:C.forest,  title:"Recensement",        text:"Inventaire public consolidé des meublés difficile à constituer sans registre centralisé." },
-                  { icon:<FileCheck/>,    color:C.blue,    title:"Agrément & licence",  text:"Beaucoup de loueurs semblent opérer hors du circuit hôtelier formel." },
-                  { icon:<Banknote/>,     color:C.gold,    title:"Taxe de séjour",      text:"Captation difficile sur les hébergements informels et les plateformes numériques." },
-                  { icon:<TrendingUp/>,   color:C.emerald, title:"Revenus locatifs",    text:"Suivi des déclarations limité sans registre dédié aux meublés touristiques." },
-                  { icon:<ShieldCheck/>,  color:C.forest,  title:"Sécurité & hygiène",  text:"Contrôle non systématisé pour les logements privés meublés." },
-                  { icon:<BookOpen/>,     color:C.blue,    title:"Registre voyageurs",  text:"Absence probable d'un mécanisme uniforme de tenue du registre voyageurs." },
-                ].map((card) => (
-                  <motion.div key={card.title} variants={fadeUp}
-                    className="group rounded-2xl p-6 cursor-pointer transition-all duration-300"
-                    style={{ background:"rgba(255,255,255,0.8)", backdropFilter:"blur(12px)",
-                      borderLeft:`4px solid ${card.color}`, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}
-                    whileHover={{ y:-6, boxShadow:"0 12px 32px rgba(0,0,0,0.12)" }}
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                        style={{ background:card.color+"18", color:card.color }}>
-                        {card.icon}
-                      </div>
-                      <h3 className="font-bold text-base" style={{ color:card.color }}>{card.title}</h3>
-                    </div>
-                    <p className="text-sm text-slate-600 leading-relaxed">{card.text}</p>
-                  </motion.div>
-                ))}
-              </div>
+            <motion.p variants={fadeUp}
+              className="text-base text-white/65 mb-10 max-w-xl leading-relaxed">
+              Tout logement mis en location touristique au Congo-Brazzaville doit être enregistré
+              auprès de la Direction Générale du Tourisme et de l'Hôtellerie (DGTH).
+              La déclaration est <strong className="text-white/90">gratuite</strong> et
+              entièrement <strong className="text-white/90">en ligne</strong>.
+            </motion.p>
 
-              <motion.p variants={fadeUp} className="text-center text-xs text-slate-400 mt-8">
-                Ces constats sont formulés prudemment — ils ne constituent pas un jugement sur les acteurs du secteur.
-              </motion.p>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ══════════ 3. 4 ESPACES ══════════ */}
-        <section className="py-20" style={{ background:"#fff" }}>
-          <div className="container mx-auto px-4">
-            <motion.h2 initial={{ opacity:0, y:24 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.5 }}
-              className="text-3xl md:text-4xl font-black text-center mb-14" style={{ color:C.forest }}>
-              Quatre espaces de travail
-            </motion.h2>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {[
-                { icon:<Landmark className="h-6 w-6"/>,  color:C.forest,  bg:"from-[#1A5C38] to-[#0D2E1C]", badge:"Ministère",  title:"Tourisme",         text:"Recensement, NIMT, inspections, classement, statistiques touristiques.",                      href:"/ministry-dashboard",     cta:"Portail ministère" },
-                { icon:<Banknote className="h-6 w-6"/>,  color:C.blue,    bg:"from-[#1B6CA8] to-[#0D3A5C]", badge:"Finances",   title:"Impôts",           text:"Dossiers transmis, risques fiscaux, exports et coordination avec l'assiette fiscale.",         href:"/finance-dashboard",      cta:"Tableau finances" },
-                { icon:<Home className="h-6 w-6"/>,      color:C.gold,    bg:"from-[#C8922A] to-[#7D5A18]", badge:"Opérateurs", title:"Loueurs & agences", text:"Déclarer un meublé, obtenir un NIMT et déclarer l'activité mensuelle.",                      href:"/declarer-meuble/nouveau",cta:"Déclarer mon hébergement" },
-                { icon:<Search className="h-6 w-6"/>,    color:C.emerald, bg:"from-[#2E8B57] to-[#1A5C38]", badge:"Public",     title:"Voyageurs",         text:"Rechercher un logement identifié et vérifier un numéro NIMT en toute transparence.",          href:"/verify-nimt",            cta:"Vérifier un NIMT" },
-              ].map((s) => (
-                <motion.div key={s.title}
-                  initial={{ opacity:0, scale:0.96 }} whileInView={{ opacity:1, scale:1 }}
-                  viewport={{ once:true, margin:"-60px" }} transition={{ duration:0.45 }}
-                  className="group relative rounded-xl overflow-hidden cursor-pointer"
-                >
-                  {/* bg always visible, intensifies on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${s.bg} transition-opacity duration-300`} />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{ background:`radial-gradient(circle at 30% 50%, rgba(255,255,255,0.12), transparent 70%)` }} />
-
-                  <div className="relative p-5 h-full flex flex-col justify-between text-white">
-                    <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center"
-                          style={{ background:"rgba(255,255,255,0.15)" }}>
-                          {s.icon}
-                        </div>
-                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                          style={{ background:"rgba(255,255,255,0.2)" }}>{s.badge}</span>
-                      </div>
-                      <h3 className="text-base font-bold mb-1">{s.title}</h3>
-                      <p className="text-xs text-white/75 leading-relaxed">{s.text}</p>
-                    </div>
-                    <Link to={s.href} className="mt-6 self-start">
-                      <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer"
-                        style={{ background:"rgba(255,255,255,0.2)" }}
-                        onMouseEnter={e => (e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.35)"}
-                        onMouseLeave={e => (e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.2)"}
-                      >
-                        {s.cta} <ChevronRight className="h-4 w-4"/>
-                      </div>
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════ 4. CHAÎNE DE VALEUR ══════════ */}
-        <section className="py-20" style={{ background:C.dark }}>
-          <div className="container mx-auto px-4">
-            <motion.h2 initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.5 }}
-              className="text-3xl md:text-4xl font-black text-center mb-16 text-white">
-              Chaîne de traitement
-            </motion.h2>
-
-            {/* desktop horizontal */}
-            <div className="hidden md:flex items-start justify-center gap-0">
-              {["Déclaration loueur","Vérification docs","Génération NIMT","Inspection","Déclaration mensuelle","Statistiques","Transmission finances"].map((step, i, arr) => (
-                <div key={step} className="flex items-start">
-                  <motion.div
-                    initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-                    viewport={{ once:true }} transition={{ delay: i * 0.12, duration:0.4 }}
-                    className="flex flex-col items-center w-28"
-                  >
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black mb-3 shrink-0"
-                      style={{ background:C.gold, color:"#fff", boxShadow:`0 0 16px rgba(200,146,42,0.5)` }}>
-                      {i + 1}
-                    </div>
-                    <span className="text-xs text-white/80 text-center leading-snug">{step}</span>
-                  </motion.div>
-                  {i < arr.length - 1 && (
-                    <motion.div className="mt-5 h-px flex-1 shrink-0"
-                      initial={{ scaleX:0, originX:0 }}
-                      whileInView={{ scaleX:1 }}
-                      viewport={{ once:true }}
-                      transition={{ delay: i * 0.12 + 0.3, duration:0.4 }}
-                      style={{ background:`linear-gradient(to right, ${C.gold}, rgba(200,146,42,0.3))`, width:32 }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* mobile vertical */}
-            <div className="md:hidden flex flex-col gap-4 max-w-xs mx-auto">
-              {["Déclaration","Vérification","NIMT","Inspection","Déclaration mensuelle","Statistiques","Transmission"].map((step, i) => (
-                <motion.div key={step}
-                  initial={{ opacity:0, x:-20 }} whileInView={{ opacity:1, x:0 }}
-                  viewport={{ once:true }} transition={{ delay: i * 0.08 }}
-                  className="flex items-center gap-4"
-                >
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black shrink-0"
-                    style={{ background:C.gold, color:"#fff" }}>{i + 1}</div>
-                  <span className="text-sm text-white/80">{step}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════ 5. MODULES CLÉS ══════════ */}
-        <section className="py-20" style={{ background:C.cream }}>
-          <div className="container mx-auto px-4">
-            <motion.h2 initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.5 }}
-              className="text-3xl md:text-4xl font-black text-center mb-12" style={{ color:C.forest }}>
-              Modules clés
-            </motion.h2>
-            <motion.div initial="hidden" whileInView="show" viewport={{ once:true, margin:"-60px" }} variants={stagger}
-              className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                { icon:<FileCheck/>,    label:"Registre NIMT",          color:C.forest },
-                { icon:<ClipboardList/>,label:"Déclaration mensuelle",   color:C.emerald },
-                { icon:<ShieldCheck/>,  label:"Contrôle & inspection",   color:C.blue },
-                { icon:<Search/>,       label:"Vérification publique",    color:C.gold },
-                { icon:<BarChart3/>,    label:"Observatoire du marché",  color:C.emerald },
-                { icon:<Banknote/>,     label:"Transmission Finances",   color:C.blue },
-              ].map((m) => (
-                <motion.div key={m.label} variants={fadeUp}
-                  className="group flex flex-col items-center gap-3 rounded-2xl p-6 cursor-pointer transition-all duration-250"
-                  style={{ background:"rgba(255,255,255,0.75)", backdropFilter:"blur(12px)",
-                    border:"1px solid rgba(255,255,255,0.9)", boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}
-                  whileHover={{ y:-4, boxShadow:"0 8px 24px rgba(0,0,0,0.1)" }}
-                >
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:rotate-12"
-                    style={{ background:m.color+"18", color:m.color }}>
-                    {m.icon}
-                  </div>
-                  <span className="text-sm font-semibold text-center leading-snug" style={{ color:"#1C1C1C" }}>{m.label}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ══════════ 6. INDICATEURS ══════════ */}
-        <section className="py-20" style={{ background:"#0D1F15" }}>
-          <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.5 }} className="text-center mb-14">
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-3">Indicateurs de suivi</h2>
-              <p className="text-sm text-white/50">Données temps réel de la plateforme · Inclut enregistrements de démonstration</p>
-            </motion.div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <StatCard label="Biens recensés"              value={7} />
-              <StatCard label="NIMT délivrés"               value={7} />
-              <StatCard label="Transmissions dossiers"       value={0} />
-              <StatCard label="Dossiers en attente"          value={0} />
-              <StatCard label="Risque fiscal élevé"          value={0} />
-              <StatCard label="Déclarations mensuelles"      value={0} />
-              <StatCard label="Inspections réalisées"        value={0} />
-              <StatCard label="Taux de conformité"           value={0} />
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════ 7. DÉMO NIMT ══════════ */}
-        <section className="py-20 relative overflow-hidden" style={{ background:C.cream }}>
-          {/* decorative blobs */}
-          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full pointer-events-none"
-            style={{ background:`radial-gradient(circle, rgba(200,146,42,0.12), transparent 70%)` }} />
-          <div className="absolute -bottom-20 -left-20 w-56 h-56 rounded-full pointer-events-none"
-            style={{ background:`radial-gradient(circle, rgba(46,139,87,0.1), transparent 70%)` }} />
-
-          <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity:0, y:24 }} whileInView={{ opacity:1, y:0 }}
-              viewport={{ once:true }} transition={{ duration:0.55 }}
-              className="max-w-2xl mx-auto text-center"
-            >
-              <div className="flex justify-center mb-6">
-                <AlertTriangle className="h-10 w-10" style={{ color:C.alert }} />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-black mb-4" style={{ color:"#1C1C1C" }}>
-                Plateforme en cours de développement
-              </h2>
-              <p className="text-sm text-slate-500 mb-10 leading-relaxed">
-                La plateforme est en cours de structuration. Les données visibles peuvent inclure
-                des enregistrements de démonstration clairement identifiés comme tels.
-              </p>
-
-              {/* pulsing NIMT display */}
-              <div className="relative flex justify-center items-center mb-10" style={{ height:120 }}>
-                {[1, 2, 3].map((r) => (
-                  <div key={r} className="absolute rounded-full pointer-events-none"
-                    style={{
-                      width:160, height:160,
-                      border:`2px solid rgba(200,146,42,${0.4 / r})`,
-                      animation:`pulse-ring 2.4s ${r * 0.5}s ease-out infinite`,
-                    }}
-                  />
-                ))}
-                <div className="relative px-6 py-4 rounded-2xl z-10"
-                  style={{ background:"#fff", border:`2px solid ${C.gold}`, boxShadow:`0 0 24px rgba(200,146,42,0.2)` }}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <CheckCircle2 className="h-4 w-4" style={{ color:C.emerald }} />
-                    <span className="text-xs text-slate-500">NIMT démonstration</span>
-                  </div>
-                  <code className="text-lg font-black tracking-widest" style={{ color:C.forest }}>
-                    CG-BZV-MT-2026-000001
-                  </code>
-                </div>
-              </div>
-
-              <Link to="/verify-nimt">
+            {/* CTAs */}
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-3 mb-14">
+              <button
+                onClick={() => navigate("/declarer-meuble/nouveau")}
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-bold text-base text-white transition-all duration-200 cursor-pointer shadow-xl"
+                style={{ background:`linear-gradient(135deg, ${C.gold}, #A3701E)` }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform="none"}
+              >
+                <FileText className="h-5 w-5" />
+                Déclarer mon hébergement
+                <ArrowRight className="h-5 w-5" />
+              </button>
+              <Link to="/declarer-meuble">
                 <button
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 cursor-pointer"
-                  style={{ background:`linear-gradient(135deg, ${C.forest}, ${C.emerald})` }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.boxShadow=`0 8px 24px rgba(26,92,56,0.4)`}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.boxShadow="none"}
+                  className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-sm text-white/85 transition-all duration-200 cursor-pointer"
+                  style={{ background:"rgba(255,255,255,0.12)", border:"1px solid rgba(255,255,255,0.25)" }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.2)"}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.12)"}
                 >
-                  <Search className="h-4 w-4" /> Tester la vérification NIMT
+                  <ClipboardList className="h-4 w-4" />
+                  Lire le guide complet
                 </button>
               </Link>
             </motion.div>
-          </div>
-        </section>
 
+            {/* 3 trust pills */}
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
+              {[
+                { icon:<Clock className="h-4 w-4"/>, text:"Moins de 10 minutes" },
+                { icon:<Zap className="h-4 w-4"/>,  text:"NIMT immédiat" },
+                { icon:<Lock className="h-4 w-4"/>, text:"Gratuit et sécurisé" },
+              ].map((p) => (
+                <div key={p.text}
+                  className="flex items-center gap-2 text-sm text-white/80"
+                  style={{ borderLeft:`2px solid ${C.gold}`, paddingLeft:"10px" }}>
+                  <span style={{ color:C.gold }}>{p.icon}</span>
+                  {p.text}
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* scroll hint */}
+          <motion.div
+            initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:1.5 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/40 text-xs">
+            <span>Découvrir</span>
+            <motion.div animate={{ y:[0,6,0] }} transition={{ repeat:Infinity, duration:1.5 }}>
+              <ChevronDown className="h-4 w-4" />
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          2. ALERTE OBLIGATION LÉGALE
+      ════════════════════════════════════════════════════════ */}
+      <div style={{ background:`linear-gradient(135deg, ${C.warn}, #78350F)` }} className="py-5 px-4">
+        <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-white">
+            <AlertTriangle className="h-5 w-5 text-amber-300 shrink-0" />
+            <p className="text-sm font-medium">
+              <strong>Obligation légale :</strong> Exercer sans NIMT est passible d'une amende
+              et d'une fermeture administrative. Régularisez votre situation dès maintenant.
+            </p>
+          </div>
+          <button
+            onClick={() => navigate("/declarer-meuble/nouveau")}
+            className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-white text-amber-900 hover:bg-amber-50 transition-colors cursor-pointer"
+          >
+            Régulariser <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
       </div>
-    </>
+
+      {/* ═══════════════════════════════════════════════════════
+          3. QUI DOIT DÉCLARER ?
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-4" style={{ background:`linear-gradient(160deg, ${C.cream} 0%, #E6F2EC 100%)` }}>
+        <div className="container mx-auto">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once:true, margin:"-60px" }} variants={stagger}>
+            <motion.div variants={fadeUp}>
+              <SectionTitle
+                eyebrow="Êtes-vous concerné ?"
+                title="Qui doit déclarer son hébergement ?"
+                sub="Si vous mettez un logement à disposition de voyageurs ou de touristes, même occasionnellement, la déclaration est obligatoire selon la réglementation DGTH en vigueur."
+              />
+            </motion.div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {[
+                {
+                  icon:<Home className="h-8 w-8"/>,
+                  color:C.forest,
+                  title:"Meublé de tourisme",
+                  desc:"Appartement, studio ou logement entier loué à des voyageurs pour une durée inférieure à 90 jours.",
+                  must:true,
+                },
+                {
+                  icon:<Users className="h-8 w-8"/>,
+                  color:C.blue,
+                  title:"Chambre d'hôtes",
+                  desc:"Chambre(s) dans votre résidence principale proposée à des hôtes de passage avec petit-déjeuner.",
+                  must:true,
+                },
+                {
+                  icon:<Building2 className="h-8 w-8"/>,
+                  color:C.emerald,
+                  title:"Villa en location",
+                  desc:"Villa, maison individuelle ou propriété mise en location saisonnière ou à la semaine.",
+                  must:true,
+                },
+                {
+                  icon:<Landmark className="h-8 w-8"/>,
+                  color:C.gold,
+                  title:"Résidence hôtelière",
+                  desc:"Complexe de studios ou d'appartements meublés proposant des services hôteliers sans classement.",
+                  must:true,
+                },
+              ].map((card) => (
+                <motion.div key={card.title} variants={fadeUp}
+                  className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                >
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
+                    style={{ background:`${card.color}15`, border:`1.5px solid ${card.color}25` }}>
+                    <span style={{ color:card.color }}>{card.icon}</span>
+                  </div>
+                  <h3 className="font-bold text-base mb-2" style={{ color:C.dark }}>{card.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed mb-4">{card.desc}</p>
+                  <div className="flex items-center gap-2 text-xs font-semibold"
+                    style={{ color:C.emerald }}>
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    Déclaration obligatoire
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div variants={fadeUp} className="mt-8 text-center">
+              <p className="text-sm text-gray-500 mb-4">
+                Vous n'êtes pas sûr d'être concerné ?{" "}
+                <Link to="/declarer-meuble" className="underline underline-offset-2 font-medium" style={{ color:C.forest }}>
+                  Consultez le guide complet
+                </Link>
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          4. POURQUOI DÉCLARER — 3 BÉNÉFICES
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-4 bg-white">
+        <div className="container mx-auto">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once:true, margin:"-60px" }} variants={stagger}>
+            <motion.div variants={fadeUp}>
+              <SectionTitle
+                eyebrow="Pourquoi déclarer"
+                title="L'obligation légale, c'est aussi une opportunité"
+                sub="Déclarer votre hébergement vous protège juridiquement et vous ouvre des avantages concrets."
+              />
+            </motion.div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                {
+                  icon:<ShieldCheck className="h-7 w-7"/>,
+                  color:C.forest,
+                  title:"Conformité & protection légale",
+                  points:[
+                    "Exercez en toute légalité selon la réglementation DGTH",
+                    "Évitez les amendes et les fermetures administratives",
+                    "Protégez votre activité en cas de contrôle",
+                    "Attestation officielle d'enregistrement NIMT",
+                  ],
+                },
+                {
+                  icon:<Eye className="h-7 w-7"/>,
+                  color:C.blue,
+                  title:"Visibilité & crédibilité",
+                  points:[
+                    "Apparaissez dans le registre national public",
+                    "NIMT vérifiable par vos clients en ligne",
+                    "Gage de sérieux et de professionnalisme",
+                    "Éligible aux classements officiels 1 à 5 étoiles",
+                  ],
+                },
+                {
+                  icon:<Banknote className="h-7 w-7"/>,
+                  color:C.gold,
+                  title:"Gestion fiscale simplifiée",
+                  points:[
+                    "Taxe de séjour automatiquement calculée",
+                    "Bordereau trimestriel pré-rempli",
+                    "Données transmises à la DGI avec votre accord",
+                    "Suivi de vos déclarations dans votre tableau de bord",
+                  ],
+                },
+              ].map((b) => (
+                <motion.div key={b.title} variants={fadeUp}
+                  className="rounded-2xl p-6 border border-gray-100 hover:shadow-md transition-all"
+                  style={{ borderTop:`3px solid ${b.color}` }}
+                >
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                    style={{ background:`${b.color}12` }}>
+                    <span style={{ color:b.color }}>{b.icon}</span>
+                  </div>
+                  <h3 className="font-bold text-base mb-4" style={{ color:C.dark }}>{b.title}</h3>
+                  <ul className="space-y-2.5">
+                    {b.points.map((p) => (
+                      <li key={p} className="flex items-start gap-2.5 text-sm text-gray-600">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" style={{ color:b.color }} />
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          5. COMMENT ÇA MARCHE — 4 ÉTAPES
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-4" style={{ background:C.dark }}>
+        <div className="container mx-auto">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once:true, margin:"-60px" }} variants={stagger}>
+            <motion.div variants={fadeUp}>
+              <SectionTitle
+                eyebrow="Processus simplifié"
+                title="Obtenez votre NIMT en 4 étapes"
+                sub="Un parcours 100 % en ligne, guidé étape par étape. Moins de 10 minutes."
+                light
+              />
+            </motion.div>
+
+            {/* Steps */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-0 relative">
+              {/* connector line desktop */}
+              <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-0.5"
+                style={{ background:`linear-gradient(to right, ${C.gold}, ${C.emerald})`, zIndex:0 }} />
+
+              {[
+                {
+                  n:"01", icon:<ClipboardList className="h-6 w-6"/>,
+                  title:"Remplissez le formulaire",
+                  desc:"Identifiez votre hébergement, ses caractéristiques et vos informations d'exploitant. 4 étapes guidées.",
+                },
+                {
+                  n:"02", icon:<CheckCircle2 className="h-6 w-6"/>,
+                  title:"Vérification automatique",
+                  desc:"Vos données sont vérifiées instantanément. Un résumé complet vous est présenté avant soumission.",
+                },
+                {
+                  n:"03", icon:<BadgeCheck className="h-6 w-6"/>,
+                  title:"Génération du NIMT",
+                  desc:"Votre Numéro d'Identification Meublé Touristique est généré automatiquement et transmis à la DGTH.",
+                },
+                {
+                  n:"04", icon:<Award className="h-6 w-6"/>,
+                  title:"Vous êtes en conformité",
+                  desc:"Affichez votre NIMT dans votre logement et sur vos annonces. Votre activité est officiellement déclarée.",
+                },
+              ].map((step, i) => (
+                <motion.div key={step.n} variants={fadeUp}
+                  className="relative flex flex-col items-center text-center px-4 pb-8 lg:pb-0"
+                  style={{ zIndex:1 }}
+                >
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-5 font-black text-white"
+                    style={{
+                      background:i < 2 ? `linear-gradient(135deg, ${C.gold}, #A3701E)` : `linear-gradient(135deg, ${C.emerald}, ${C.forest})`,
+                      boxShadow:`0 0 0 4px ${C.dark}, 0 0 0 6px ${i < 2 ? C.gold : C.emerald}55`,
+                    }}>
+                    {step.icon}
+                  </div>
+                  <div className="text-xs font-mono font-bold mb-2" style={{ color:C.gold }}>{step.n}</div>
+                  <h3 className="text-sm font-bold text-white mb-2 leading-snug">{step.title}</h3>
+                  <p className="text-xs text-white/55 leading-relaxed">{step.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div variants={fadeUp} className="text-center mt-12">
+              <button
+                onClick={() => navigate("/declarer-meuble/nouveau")}
+                className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-bold text-sm text-white cursor-pointer transition-all duration-200"
+                style={{ background:`linear-gradient(135deg, ${C.gold}, #A3701E)` }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform="none"}
+              >
+                <FileText className="h-5 w-5" />
+                Commencer ma déclaration maintenant
+                <ArrowRight className="h-5 w-5" />
+              </button>
+              <p className="text-white/40 text-xs mt-3">Gratuit · Sans engagement · NIMT reçu immédiatement</p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          6. CHIFFRES CLÉS
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-16 px-4" style={{ background:`linear-gradient(135deg, ${C.forest} 0%, ${C.emerald} 100%)` }}>
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { value:0, label:"Hébergements déclarés", suffix:"", note:"en cours d'enregistrement" },
+              { value:8, label:"Arrondissements couverts", suffix:"", note:"Brazzaville & Pointe-Noire" },
+              { value:10, label:"Minutes pour déclarer", suffix:" min", note:"processus entièrement en ligne" },
+              { value:100, label:"Gratuit", suffix:" %", note:"aucun frais de déclaration" },
+            ].map((s) => (
+              <div key={s.label} className="text-center">
+                <div className="text-4xl font-black mb-1" style={{ color:C.gold }}>
+                  <Counter to={s.value} suffix={s.suffix} />
+                </div>
+                <div className="text-white font-semibold text-sm mb-1">{s.label}</div>
+                <div className="text-white/50 text-xs">{s.note}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          7. VÉRIFIER UN NIMT (public)
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-4" style={{ background:C.cream }}>
+        <div className="container mx-auto max-w-2xl">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once:true }} variants={stagger}>
+            <motion.div variants={fadeUp}>
+              <SectionTitle
+                eyebrow="Outil public"
+                title="Vérifier un numéro NIMT"
+                sub="Voyageur, agence ou particulier — vérifiez qu'un hébergement est bien enregistré et conforme avant de réserver."
+              />
+            </motion.div>
+
+            <motion.div variants={fadeUp}
+              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <div className="flex gap-3 mb-4">
+                <Input
+                  placeholder="Ex : CG-BZV-MT-2025-000001"
+                  value={nimtQuery}
+                  onChange={e => setNimtQuery(e.target.value.toUpperCase())}
+                  onKeyDown={e => e.key === "Enter" && handleNimtCheck()}
+                  className="font-mono text-sm flex-1"
+                />
+                <Button
+                  onClick={handleNimtCheck}
+                  disabled={nimtLoading || !nimtQuery.trim()}
+                  className="gap-2 shrink-0 text-white"
+                  style={{ background:C.forest }}
+                >
+                  <Search className="h-4 w-4" />
+                  {nimtLoading ? "Recherche…" : "Vérifier"}
+                </Button>
+              </div>
+
+              <AnimatePresence>
+                {nimtResult && (
+                  <motion.div
+                    initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}
+                    className={`rounded-xl p-4 flex items-start gap-3 text-sm ${
+                      nimtResult.found
+                        ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
+                        : "bg-red-50 border border-red-200 text-red-800"
+                    }`}
+                  >
+                    {nimtResult.found
+                      ? <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5 text-emerald-600" />
+                      : <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5 text-red-500" />
+                    }
+                    <div>
+                      {nimtResult.found ? (
+                        <>
+                          <p className="font-bold mb-1">Hébergement enregistré ✓</p>
+                          <p>NIMT : <span className="font-mono font-bold">{nimtResult.nimt}</span></p>
+                          {nimtResult.district && <p>Quartier : {nimtResult.district}, {nimtResult.city}</p>}
+                          <p>Statut : <span className="font-semibold">{nimtResult.status}</span></p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-bold mb-1">Numéro non trouvé</p>
+                          <p>Ce NIMT ne figure pas dans le registre officiel. Si vous êtes propriétaire de cet hébergement,{" "}
+                            <button onClick={() => navigate("/declarer-meuble/nouveau")}
+                              className="underline font-semibold cursor-pointer">
+                              déclarez-le maintenant
+                            </button>.
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <p className="text-xs text-gray-400 mt-3 flex items-center gap-1.5">
+                <Globe className="h-3.5 w-3.5" />
+                Ce registre est public et mis à jour en temps réel par la DGTH.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          8. FAQ
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-4 bg-white">
+        <div className="container mx-auto max-w-2xl">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once:true }} variants={stagger}>
+            <motion.div variants={fadeUp}>
+              <SectionTitle
+                eyebrow="Questions fréquentes"
+                title="Tout ce que vous voulez savoir"
+              />
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="space-y-3">
+              {[
+                {
+                  q:"La déclaration est-elle payante ?",
+                  a:"Non. L'enregistrement sur la plateforme ImmoHub et l'obtention du numéro NIMT sont entièrement gratuits. Aucun frais n'est prélevé par la DGTH pour la déclaration initiale.",
+                },
+                {
+                  q:"Combien de temps pour recevoir mon NIMT ?",
+                  a:"Le NIMT est généré automatiquement à la soumission du formulaire. Vous le recevez immédiatement, sans délai d'attente. La déclaration prend en moyenne moins de 10 minutes.",
+                },
+                {
+                  q:"Que se passe-t-il si je ne déclare pas ?",
+                  a:"Exercer sans NIMT expose le propriétaire à une amende administrative et à une fermeture temporaire du logement. Les plateformes de réservation partenaires sont tenues de vérifier l'existence d'un NIMT valide avant toute publication d'annonce.",
+                },
+                {
+                  q:"Ma résidence principale est-elle concernée ?",
+                  a:"Si vous louez votre résidence principale à des voyageurs pendant votre absence (moins de 90 jours), la déclaration peut bénéficier d'un régime simplifié. Si vous louez plus de 120 jours par an, la déclaration complète est obligatoire.",
+                },
+                {
+                  q:"Puis-je déclarer plusieurs hébergements ?",
+                  a:"Oui. Chaque logement fait l'objet d'une déclaration distincte et reçoit un numéro NIMT propre. Votre tableau de bord opérateur vous permet de gérer l'ensemble de vos hébergements.",
+                },
+                {
+                  q:"Le NIMT doit-il être renouvelé ?",
+                  a:"Le NIMT en lui-même n'expire pas. En revanche, l'autorisation d'exercice DGTH qui l'accompagne est valable 2 ans et doit être renouvelée. La plateforme envoie automatiquement un rappel 3 mois avant l'échéance.",
+                },
+              ].map((faq, i) => (
+                <div key={i}
+                  className="rounded-xl border border-gray-100 overflow-hidden"
+                  style={{ boxShadow:"0 1px 4px rgba(0,0,0,0.04)" }}
+                >
+                  <button
+                    onClick={() => setFaqOpen(faqOpen === i ? null : i)}
+                    className="w-full flex items-center justify-between p-5 text-left cursor-pointer hover:bg-gray-50 transition-colors"
+                  >
+                    <span className="font-semibold text-sm text-gray-800 pr-4">{faq.q}</span>
+                    {faqOpen === i
+                      ? <ChevronUp className="h-4 w-4 text-gray-400 shrink-0" />
+                      : <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
+                    }
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {faqOpen === i && (
+                      <motion.div
+                        initial={{ height:0, opacity:0 }}
+                        animate={{ height:"auto", opacity:1 }}
+                        exit={{ height:0, opacity:0 }}
+                        transition={{ duration:0.22, ease:"easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-sm text-gray-500 leading-relaxed border-t border-gray-100 pt-3">
+                          {faq.a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          9. CTA FINAL
+      ════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-4 relative overflow-hidden"
+        style={{ background:`linear-gradient(135deg, ${C.dark} 0%, ${C.forest} 50%, ${C.emerald} 100%)` }}>
+
+        {/* decorative circles */}
+        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full opacity-10"
+          style={{ background:C.gold }} />
+        <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full opacity-10"
+          style={{ background:C.blue }} />
+
+        <div className="relative container mx-auto max-w-2xl text-center">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once:true }} variants={stagger}>
+            <motion.div variants={fadeUp}
+              className="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center"
+              style={{ background:`rgba(200,146,42,0.2)`, border:`2px solid ${C.gold}` }}>
+              <BadgeCheck className="h-8 w-8" style={{ color:C.gold }} />
+            </motion.div>
+
+            <motion.h2 variants={fadeUp}
+              className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
+              Prêt à déclarer votre<br />hébergement ?
+            </motion.h2>
+
+            <motion.p variants={fadeUp} className="text-white/70 text-base mb-8 leading-relaxed">
+              Rejoignez les opérateurs qui ont déjà régularisé leur situation.
+              La déclaration est gratuite, rapide et entièrement en ligne.
+            </motion.p>
+
+            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => navigate("/declarer-meuble/nouveau")}
+                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl font-bold text-base text-white cursor-pointer transition-all duration-200 shadow-xl"
+                style={{ background:`linear-gradient(135deg, ${C.gold}, #A3701E)` }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.transform="translateY(-2px)"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform="none"}
+              >
+                <FileText className="h-5 w-5" />
+                Déclarer mon hébergement
+                <ArrowRight className="h-5 w-5" />
+              </button>
+              <Link to="/contact">
+                <button
+                  className="inline-flex items-center gap-2 px-6 py-4 rounded-xl font-semibold text-sm text-white/80 cursor-pointer transition-colors"
+                  style={{ background:"rgba(255,255,255,0.1)", border:"1px solid rgba(255,255,255,0.2)" }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.18)"}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.1)"}
+                >
+                  <Phone className="h-4 w-4" />
+                  Contacter la DGTH
+                </button>
+              </Link>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="mt-10 pt-8 border-t border-white/10 grid grid-cols-3 gap-4 max-w-sm mx-auto">
+              {[
+                { icon:<MapPin className="h-4 w-4"/>, text:"Brazzaville, Congo" },
+                { icon:<Mail className="h-4 w-4"/>, text:"contact@immohub.topcenter.cg" },
+                { icon:<Globe className="h-4 w-4"/>, text:"immohub.topcenter.cg" },
+              ].map((c) => (
+                <div key={c.text} className="flex flex-col items-center gap-1.5 text-center">
+                  <span style={{ color:C.gold }}>{c.icon}</span>
+                  <span className="text-white/50 text-xs leading-snug">{c.text}</span>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+    </div>
   );
 }
