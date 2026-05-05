@@ -182,19 +182,19 @@ export default function InstitutionalHome() {
                 WebkitTextFillColor:"transparent",
                 animation:"shimmer 5s linear infinite",
               }}>
-              Déclarez votre<br />hébergement touristique.
+              Valorisez votre<br />hébergement touristique.
             </motion.h1>
 
             <motion.p variants={fadeUp}
               className="text-xl font-medium text-white/90 mb-3 leading-snug">
-              Obtenez votre numéro NIMT en moins de 10 minutes.
+              Rejoignez le registre officiel de la DGTH et donnez confiance à vos voyageurs.
             </motion.p>
 
             <motion.p variants={fadeUp}
               className="text-base text-white/65 mb-10 max-w-xl leading-relaxed">
-              Tout logement mis en location touristique au Congo-Brazzaville doit être enregistré
-              auprès de la Direction Générale du Tourisme et de l'Hôtellerie (DGTH).
-              La déclaration est <strong className="text-white/90">gratuite</strong> et
+              Le Numéro d'Identification Meublé Touristique (NIMT) est le label officiel de la
+              Direction Générale du Tourisme et de l'Hôtellerie du Congo-Brazzaville.
+              Obtenez-le en quelques minutes, <strong className="text-white/90">gratuitement</strong>,
               entièrement <strong className="text-white/90">en ligne</strong>.
             </motion.p>
 
@@ -254,23 +254,22 @@ export default function InstitutionalHome() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════
-          2. ALERTE OBLIGATION LÉGALE
+          2. BANDE CONFIANCE
       ════════════════════════════════════════════════════════ */}
-      <div style={{ background:`linear-gradient(135deg, ${C.warn}, #78350F)` }} className="py-5 px-4">
-        <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-white">
-            <AlertTriangle className="h-5 w-5 text-amber-300 shrink-0" />
-            <p className="text-sm font-medium">
-              <strong>Obligation légale :</strong> Exercer sans NIMT est passible d'une amende
-              et d'une fermeture administrative. Régularisez votre situation dès maintenant.
-            </p>
-          </div>
-          <button
-            onClick={() => navigate("/declarer-meuble/nouveau")}
-            className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-white text-amber-900 hover:bg-amber-50 transition-colors cursor-pointer"
-          >
-            Régulariser <ArrowRight className="h-4 w-4" />
-          </button>
+      <div style={{ background:C.forest }} className="py-4 px-4">
+        <div className="container mx-auto flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+          {[
+            { icon:<CheckCircle2 className="h-4 w-4"/>, text:"Démarche 100 % gratuite" },
+            { icon:<Zap className="h-4 w-4"/>,          text:"NIMT obtenu immédiatement" },
+            { icon:<Globe className="h-4 w-4"/>,        text:"Entièrement en ligne" },
+            { icon:<BadgeCheck className="h-4 w-4"/>,   text:"Label officiel reconnu DGTH" },
+            { icon:<Lock className="h-4 w-4"/>,         text:"Plateforme sécurisée" },
+          ].map((p) => (
+            <div key={p.text} className="flex items-center gap-2 text-white/85 text-xs font-medium">
+              <span style={{ color:C.gold }}>{p.icon}</span>
+              {p.text}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -282,9 +281,9 @@ export default function InstitutionalHome() {
           <motion.div initial="hidden" whileInView="show" viewport={{ once:true, margin:"-60px" }} variants={stagger}>
             <motion.div variants={fadeUp}>
               <SectionTitle
-                eyebrow="Êtes-vous concerné ?"
-                title="Qui doit déclarer son hébergement ?"
-                sub="Si vous mettez un logement à disposition de voyageurs ou de touristes, même occasionnellement, la déclaration est obligatoire selon la réglementation DGTH en vigueur."
+                eyebrow="Votre hébergement est éligible"
+                title="Quels hébergements peuvent s'inscrire ?"
+                sub="La plateforme ImmoHub est ouverte à tous les opérateurs touristiques du Congo-Brazzaville. Particuliers, agences et professionnels peuvent s'enregistrer et obtenir leur label NIMT."
               />
             </motion.div>
 
@@ -331,7 +330,7 @@ export default function InstitutionalHome() {
                   <div className="flex items-center gap-2 text-xs font-semibold"
                     style={{ color:C.emerald }}>
                     <CheckCircle2 className="h-3.5 w-3.5" />
-                    Déclaration obligatoire
+                    Éligible au label NIMT
                   </div>
                 </motion.div>
               ))}
@@ -339,7 +338,7 @@ export default function InstitutionalHome() {
 
             <motion.div variants={fadeUp} className="mt-8 text-center">
               <p className="text-sm text-gray-500 mb-4">
-                Vous n'êtes pas sûr d'être concerné ?{" "}
+                Vous souhaitez en savoir plus avant de vous inscrire ?{" "}
                 <Link to="/declarer-meuble" className="underline underline-offset-2 font-medium" style={{ color:C.forest }}>
                   Consultez le guide complet
                 </Link>
@@ -357,45 +356,45 @@ export default function InstitutionalHome() {
           <motion.div initial="hidden" whileInView="show" viewport={{ once:true, margin:"-60px" }} variants={stagger}>
             <motion.div variants={fadeUp}>
               <SectionTitle
-                eyebrow="Pourquoi déclarer"
-                title="L'obligation légale, c'est aussi une opportunité"
-                sub="Déclarer votre hébergement vous protège juridiquement et vous ouvre des avantages concrets."
+                eyebrow="Les avantages du NIMT"
+                title="Un label qui travaille pour vous"
+                sub="En rejoignant le registre officiel DGTH, vous bénéficiez de la crédibilité d'une plateforme nationale et d'outils qui simplifient votre quotidien d'opérateur."
               />
             </motion.div>
 
             <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
-                  icon:<ShieldCheck className="h-7 w-7"/>,
+                  icon:<BadgeCheck className="h-7 w-7"/>,
                   color:C.forest,
-                  title:"Conformité & protection légale",
+                  title:"Un label officiel reconnu",
                   points:[
-                    "Exercez en toute légalité selon la réglementation DGTH",
-                    "Évitez les amendes et les fermetures administratives",
-                    "Protégez votre activité en cas de contrôle",
-                    "Attestation officielle d'enregistrement NIMT",
+                    "Votre hébergement rejoint le registre national DGTH",
+                    "Attestation officielle transmise par voie électronique",
+                    "NIMT affiché sur votre annonce — signal de confiance fort",
+                    "Éligible aux classements officiels 1 à 5 étoiles",
                   ],
                 },
                 {
-                  icon:<Eye className="h-7 w-7"/>,
+                  icon:<TrendingUp className="h-7 w-7"/>,
                   color:C.blue,
-                  title:"Visibilité & crédibilité",
+                  title:"Plus de visibilité, plus de clients",
                   points:[
-                    "Apparaissez dans le registre national public",
-                    "NIMT vérifiable par vos clients en ligne",
-                    "Gage de sérieux et de professionnalisme",
-                    "Éligible aux classements officiels 1 à 5 étoiles",
+                    "Apparaissez dans le registre public consultable en ligne",
+                    "Les voyageurs peuvent vérifier votre NIMT avant de réserver",
+                    "Priorité d'affichage sur les plateformes partenaires",
+                    "Profil opérateur dédié dans votre tableau de bord",
                   ],
                 },
                 {
                   icon:<Banknote className="h-7 w-7"/>,
                   color:C.gold,
-                  title:"Gestion fiscale simplifiée",
+                  title:"Gestion administrative simplifiée",
                   points:[
-                    "Taxe de séjour automatiquement calculée",
-                    "Bordereau trimestriel pré-rempli",
-                    "Données transmises à la DGI avec votre accord",
-                    "Suivi de vos déclarations dans votre tableau de bord",
+                    "Taxe de séjour calculée automatiquement",
+                    "Bordereau trimestriel généré en un clic",
+                    "Suivi de vos déclarations depuis votre espace personnel",
+                    "Rappels automatiques avant les échéances",
                   ],
                 },
               ].map((b) => (
@@ -493,10 +492,10 @@ export default function InstitutionalHome() {
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform="none"}
               >
                 <FileText className="h-5 w-5" />
-                Commencer ma déclaration maintenant
+                Inscrire mon hébergement
                 <ArrowRight className="h-5 w-5" />
               </button>
-              <p className="text-white/40 text-xs mt-3">Gratuit · Sans engagement · NIMT reçu immédiatement</p>
+              <p className="text-white/40 text-xs mt-3">Gratuit · Sans engagement · Label NIMT reçu immédiatement</p>
             </motion.div>
           </motion.div>
         </div>
@@ -706,12 +705,12 @@ export default function InstitutionalHome() {
 
             <motion.h2 variants={fadeUp}
               className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
-              Prêt à déclarer votre<br />hébergement ?
+              Prêt à rejoindre le registre<br />officiel du tourisme ?
             </motion.h2>
 
             <motion.p variants={fadeUp} className="text-white/70 text-base mb-8 leading-relaxed">
-              Rejoignez les opérateurs qui ont déjà régularisé leur situation.
-              La déclaration est gratuite, rapide et entièrement en ligne.
+              Des centaines d'opérateurs congolais ont déjà obtenu leur NIMT.
+              Inscrivez votre hébergement aujourd'hui — c'est gratuit, rapide et entièrement en ligne.
             </motion.p>
 
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -723,7 +722,7 @@ export default function InstitutionalHome() {
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform="none"}
               >
                 <FileText className="h-5 w-5" />
-                Déclarer mon hébergement
+                Inscrire mon hébergement
                 <ArrowRight className="h-5 w-5" />
               </button>
               <Link to="/contact">
