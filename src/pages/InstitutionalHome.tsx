@@ -183,7 +183,7 @@ export default function InstitutionalHome() {
               {/* CTAs */}
               <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
                 {[
-                  { to:"/declarer-meuble",   icon:<FileCheck className="h-4 w-4"/>, label:"Déclarer un meublé",   primary:true },
+                  { to:"/declarer-meuble/nouveau",   icon:<FileCheck className="h-4 w-4"/>, label:"Déclarer un meublé",   primary:true },
                   { to:"/verify-nimt",       icon:<Search className="h-4 w-4"/>,   label:"Vérifier un NIMT",     primary:false },
                   { to:"/market-observatory",icon:<BarChart3 className="h-4 w-4"/>,label:"Observatoire",          primary:false },
                 ].map((cta) => (
@@ -293,7 +293,7 @@ export default function InstitutionalHome() {
               {[
                 { icon:<Landmark className="h-10 w-10"/>,  color:C.forest,  bg:"from-[#1A5C38] to-[#0D2E1C]", badge:"Ministère",  title:"Tourisme",       text:"Recensement, NIMT, inspections, classement, statistiques touristiques.",                      href:"/ministry-dashboard",  cta:"Portail ministère" },
                 { icon:<Banknote className="h-10 w-10"/>,  color:C.blue,    bg:"from-[#1B6CA8] to-[#0D3A5C]", badge:"Finances",   title:"Impôts",         text:"Dossiers transmis, risques fiscaux, exports et coordination avec l'assiette fiscale.",         href:"/finance-dashboard",   cta:"Tableau finances" },
-                { icon:<Home className="h-10 w-10"/>,      color:C.gold,    bg:"from-[#C8922A] to-[#7D5A18]", badge:"Opérateurs", title:"Loueurs & agences",text:"Déclarer un meublé, suivre les documents, obtenir un NIMT, déclarer l'activité mensuelle.", href:"/declarer-meuble", cta:"Déclarer mon hébergement" },
+                { icon:<Home className="h-10 w-10"/>,      color:C.gold,    bg:"from-[#C8922A] to-[#7D5A18]", badge:"Opérateurs", title:"Loueurs & agences",text:"Déclarer un meublé, suivre les documents, obtenir un NIMT, déclarer l'activité mensuelle.", href:"/declarer-meuble/nouveau", cta:"Déclarer mon hébergement" },
                 { icon:<Search className="h-10 w-10"/>,    color:C.emerald, bg:"from-[#2E8B57] to-[#1A5C38]", badge:"Public",     title:"Voyageurs",      text:"Rechercher un logement identifié et vérifier un numéro NIMT en toute transparence.",          href:"/verify-nimt",         cta:"Vérifier un NIMT" },
               ].map((s) => (
                 <motion.div key={s.title}

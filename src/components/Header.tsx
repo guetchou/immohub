@@ -74,7 +74,7 @@ export default function Header() {
 
   /* ── liens "Services" ── */
   const serviceLinks = [
-    { label: "Déclarer un meublé",  href: "/declarer-meuble",      Icon: FileText },
+    { label: "Déclarer un meublé",  href: "/declarer-meuble/nouveau",      Icon: FileText },
     { label: "Vérifier un NIMT",   href: "/verify-nimt",          Icon: ShieldCheck },
     { label: "Observatoire marché", href: "/market-observatory",   Icon: BarChart3 },
     { label: "Contact",             href: "/contact",              Icon: Mail },
@@ -205,7 +205,7 @@ export default function Header() {
             { label: "Accueil",          href: "/",                   Icon: Home },
             { label: "Propriétés",       href: "/properties",          Icon: Building2 },
             { label: "Meublés",          href: "/furnished",           Icon: Sofa },
-            { label: "Déclarer un meublé", href: "/declarer-meuble",   Icon: FileText },
+            { label: "Déclarer un meublé", href: "/declarer-meuble/nouveau",   Icon: FileText },
             { label: "Vérifier NIMT",    href: "/verify-nimt",         Icon: ShieldCheck },
             { label: "Observatoire",     href: "/market-observatory",  Icon: BarChart3 },
             { label: "Contact",          href: "/contact",             Icon: Mail },

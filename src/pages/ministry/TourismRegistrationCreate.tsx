@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -812,7 +812,12 @@ const TourismRegistrationCreate = () => {
           </Button>
           <div className="flex-1">
             <h1 className="text-xl font-bold tracking-tight">Déclaration — Meublé touristique</h1>
-            <p className="text-sm text-muted-foreground">Enregistrement NIMT · DGTH Congo-Brazzaville</p>
+            <p className="text-sm text-muted-foreground">
+              Enregistrement NIMT · DGTH Congo-Brazzaville ·{" "}
+              <Link to="/declarer-meuble" className="underline underline-offset-2 hover:text-emerald-600">
+                Guide complet
+              </Link>
+            </p>
           </div>
           {hasDraft && !generatedNimt && (
             <Badge variant="secondary" className="gap-1">
